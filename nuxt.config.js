@@ -35,7 +35,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ["~/plugins/font-awesome"],
+  plugins: ["~/plugins/font-awesome", "~/plugins/vue-steemconnect"],
   /*
    ** Nuxt.js modules
    */

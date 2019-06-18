@@ -1,8 +1,11 @@
 <template>
   <div class="container d-flex pt-5">
-    <div v-if="connected" class="flex-fill">
+    <div v-if="user" class="flex-fill">
       <h1 class="text-center">
         Hi <a href="https://github.com/mktcode">@mktcode</a>!
+        <a href="#" @click.prevent="$store.dispatch('steemconnect/logout')">
+          logout
+        </a>
       </h1>
       <h3 class="text-center">Wallet: 451.68 STEEM ($309)</h3>
       <div class="card">
@@ -35,7 +38,9 @@
     <div v-else class="flex-fill text-center">
       <h1>Commit Tokens</h1>
       <a class="btn btn-primary" href="#">Connect with GitHub</a>
-      <a class="btn btn-primary" href="#">Connect with Steem</a>
+      <a class="btn btn-primary" :href="$steemconnect.getLoginURL()">
+        Connect with Steem
+      </a>
       <p>Connect your Accounts to claim your rewards.</p>
     </div>
   </div>
@@ -47,11 +52,14 @@
 </style>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  data() {
-    return {
-      connected: true
-    };
+  computed: {
+    ...mapGetters("steemconnect", ["user"])
+  },
+  mounted() {
+    console.log(this.$store);
   }
 };
 </script>
