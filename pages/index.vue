@@ -38,7 +38,7 @@
         !
       </h1>
       <h3 class="text-center">Wallet: 451.68 STEEM ($309)</h3>
-      <div class="card">
+      <div class="card mb-5">
         <div class="card-header d-flex align-items-center">
           <h5 class="m-0">Pull Requests</h5>
           <ul class="nav nav-pills card-header-pills ml-auto">
@@ -54,12 +54,27 @@
           </ul>
         </div>
         <div class="list-group list-group-flush">
-          <div class="list-group-item d-flex align-items-center">
-            <font-awesome-icon icon="code-branch" class="merged" fixed-width />
-            <div>Cras justo odio</div>
-            <div class="ml-auto">
+          <div
+            v-for="pr in pullRequests"
+            class="list-group-item d-flex align-items-center"
+          >
+            <font-awesome-icon
+              icon="code-branch"
+              :class="
+                pr.merged
+                  ? 'merged'
+                  : pr.closed
+                  ? 'text-danger'
+                  : 'text-success'
+              "
+              fixed-width
+            />
+            <div class="text-truncate px-3">{{ pr.title }}</div>
+            <div class="ml-auto text-nowrap">
               <b>Score: 84 %</b> / 1.46 STEEM
-              <a href="#" class="btn btn-sm btn-primary">Claim</a>
+              <a v-if="pr.merged" href="#" class="btn btn-sm btn-primary">
+                Claim
+              </a>
             </div>
           </div>
         </div>
@@ -77,6 +92,11 @@
 import { mapGetters } from "vuex";
 
 export default {
+  data() {
+    return {
+      pullRequests: []
+    };
+  },
   computed: {
     ...mapGetters("steemconnect", { steemUser: "user" }),
     ...mapGetters("github", {
@@ -86,7 +106,40 @@ export default {
   },
   mounted() {
     this.$store.dispatch("steemconnect/login");
-    this.$store.dispatch("github/login");
+    this.$store.dispatch("github/login").then(() => {
+      this.$axios
+        .$post(
+          "https://api.github.com/graphql",
+          {
+            query: `query {
+    user(login: "mktcode") {
+    pullRequests(first: 10, orderBy: { field: CREATED_AT, direction: DESC}) {
+      totalCount
+      nodes {
+        createdAt
+        number
+        title
+        merged
+        closed
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}`
+          },
+          {
+            headers: {
+              Authorization: "bearer " + this.githubAccessToken
+            }
+          }
+        )
+        .then(response => {
+          this.pullRequests = response.data.user.pullRequests.nodes;
+        });
+    });
   }
 };
 </script>
