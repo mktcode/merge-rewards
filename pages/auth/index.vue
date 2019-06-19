@@ -7,7 +7,7 @@ export default {
   mounted() {
     let accessToken = this.$route.query["access_token"];
     if (accessToken) {
-      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("steemconnect_access_token", accessToken);
       this.$store
         .dispatch("steemconnect/login")
         .then(() => this.$router.push("/"));

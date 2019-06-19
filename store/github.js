@@ -32,26 +32,27 @@ export const actions = {
       // don't do anything if user data is already set
       if (!state.user) {
         // in that case we look for an access token in localStorage
-        const accessToken = localStorage.getItem("steemconnect_access_token");
+        const accessToken = localStorage.getItem("github_access_token");
         if (accessToken) {
-          // set access token and try to fetch user object
-          Vue.SteemConnect().setAccessToken(accessToken);
-          Vue.SteemConnect().me((err, user) => {
-            if (err) reject(err);
-            else {
+          // try to fetch user object
+          this.$axios
+            .$get("https://api.github.com/user", {
+              params: { access_token: accessToken }
+            })
+            .then(response => {
               // save user object in store
-              commit("login", user);
+              commit("login", response);
               commit("setAccessToken", accessToken);
               resolve();
-            }
-          });
+            })
+            .catch(e => reject(e));
         }
       }
     });
   },
   logout({ commit }) {
     // remove access token and unset user in store
-    localStorage.removeItem("steemconnect_access_token");
+    localStorage.removeItem("github_access_token");
     commit("logout");
     commit("setAccessToken", null);
   }

@@ -1,5 +1,8 @@
 export default {
   mode: "universal",
+
+  serverMiddleware: ["~/api/index"],
+
   /*
    ** Headers of the page
    */
@@ -39,7 +42,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [],
+  modules: ["@nuxtjs/axios"],
   /*
    ** Build configuration
    */

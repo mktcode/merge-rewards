@@ -1,11 +1,41 @@
 <template>
-  <div class="container d-flex pt-5">
-    <div v-if="user" class="flex-fill">
-      <h1 class="text-center">
-        Hi <a href="https://github.com/mktcode">@mktcode</a>!
+  <div class="container d-flex flex-column pt-5">
+    <h1 class="text-center">Commit Tokens</h1>
+    <div class="flex-fill text-center">
+      <div v-if="githubUser">
+        <font-awesome-icon :icon="['fab', 'github']" full-width />
+        <a href="#" @click.prevent="$store.dispatch('github/logout')">
+          logout
+        </a>
+      </div>
+      <a
+        v-else
+        class="btn btn-primary"
+        :href="
+          'https://github.com/login/oauth/authorize?scope=user:email&client_id=cc26e30001cc702f5663'
+        "
+      >
+        Connect with GitHub
+      </a>
+
+      <div v-if="steemUser">
+        STEEM
         <a href="#" @click.prevent="$store.dispatch('steemconnect/logout')">
           logout
         </a>
+      </div>
+      <a v-else class="btn btn-primary" :href="$steemconnect.getLoginURL()">
+        Connect with Steem
+      </a>
+      <p v-if="!steemUser || !githubUser">
+        Connect your Accounts to claim your rewards.
+      </p>
+    </div>
+    <div v-if="steemUser && githubUser" class="flex-fill">
+      <h1 class="text-center">
+        Hi
+        <a href="https://github.com/mktcode">{{ githubUser.login }}</a>
+        !
       </h1>
       <h3 class="text-center">Wallet: 451.68 STEEM ($309)</h3>
       <div class="card">
@@ -35,14 +65,6 @@
         </div>
       </div>
     </div>
-    <div v-else class="flex-fill text-center">
-      <h1>Commit Tokens</h1>
-      <a class="btn btn-primary" href="#">Connect with GitHub</a>
-      <a class="btn btn-primary" :href="$steemconnect.getLoginURL()">
-        Connect with Steem
-      </a>
-      <p>Connect your Accounts to claim your rewards.</p>
-    </div>
   </div>
 </template>
 
@@ -56,10 +78,15 @@ import { mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters("steemconnect", ["user"])
+    ...mapGetters("steemconnect", { steemUser: "user" }),
+    ...mapGetters("github", {
+      githubUser: "user",
+      githubAccessToken: "accessToken"
+    })
   },
   mounted() {
-    console.log(this.$store);
+    this.$store.dispatch("steemconnect/login");
+    this.$store.dispatch("github/login");
   }
 };
 </script>
