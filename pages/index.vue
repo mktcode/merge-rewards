@@ -69,7 +69,18 @@
               "
               fixed-width
             />
-            <div class="text-truncate px-3">{{ pr.title }}</div>
+            <div class="text-truncate d-flex flex-column px-3">
+              <a :href="pr.permalink" target="_blank" class="text-dark">
+                {{ pr.title }}
+              </a>
+              <a
+                :href="'https://github.com/' + pr.repository.nameWithOwner"
+                target="_blank"
+                class="small"
+              >
+                {{ pr.repository.nameWithOwner }}
+              </a>
+            </div>
             <div class="ml-auto text-nowrap">
               <b>Score: 84 %</b> / 1.46 STEEM
               <a v-if="pr.merged" href="#" class="btn btn-sm btn-primary">
@@ -117,10 +128,14 @@ export default {
       totalCount
       nodes {
         createdAt
+        repository {
+          nameWithOwner
+        }
         number
         title
         merged
         closed
+        permalink
       }
       pageInfo {
         hasNextPage
