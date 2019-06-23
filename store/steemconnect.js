@@ -46,6 +46,8 @@ export const actions = {
             }
           });
         }
+      } else {
+        resolve();
       }
     });
   },

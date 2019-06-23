@@ -47,6 +47,8 @@ export const actions = {
             })
             .catch(e => reject(e));
         }
+      } else {
+        resolve();
       }
     });
   },
