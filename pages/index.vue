@@ -12,7 +12,8 @@
         v-else
         class="btn btn-primary"
         :href="
-          'https://github.com/login/oauth/authorize?scope=user:email&client_id=cc26e30001cc702f5663'
+          'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
+            githubClientId
         "
       >
         Connect with GitHub
@@ -56,6 +57,7 @@
         <div class="list-group list-group-flush">
           <div
             v-for="pr in pullRequests"
+            :key="pr.id"
             class="list-group-item d-flex align-items-center"
           >
             <font-awesome-icon
@@ -83,9 +85,20 @@
             </div>
             <div class="ml-auto text-nowrap">
               <b>Score: 84 %</b> / 1.46 STEEM
-              <a v-if="pr.merged" href="#" class="btn btn-sm btn-primary">
+              <button
+                v-if="pr.merged && !claimed.includes(pr.id)"
+                class="btn btn-sm btn-primary"
+                @click="claim(pr)"
+              >
                 Claim
-              </a>
+              </button>
+              <button
+                v-if="pr.merged && claimed.includes(pr.id)"
+                class="btn btn-sm btn-primary"
+                disabled
+              >
+                Claimed
+              </button>
             </div>
           </div>
         </div>
@@ -105,7 +118,10 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      pullRequests: []
+      database: [],
+      pullRequests: [],
+      claimed: [],
+      githubClientId: process.env.GITHUB_CLIENT_ID
     };
   },
   computed: {
@@ -115,45 +131,70 @@ export default {
       githubAccessToken: "accessToken"
     })
   },
-  mounted() {
-    this.$store.dispatch("steemconnect/login");
-    this.$store.dispatch("github/login").then(() => {
+  methods: {
+    claim(pr) {
       this.$axios
-        .$post(
-          "https://api.github.com/graphql",
-          {
-            query: `query {
-    user(login: "mktcode") {
-    pullRequests(first: 10, orderBy: { field: CREATED_AT, direction: DESC}) {
-      totalCount
-      nodes {
-        createdAt
-        repository {
-          nameWithOwner
-        }
-        number
-        title
-        merged
-        closed
-        permalink
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
+        .$post("/api/claim", { pr, githubAccessToken: this.githubAccessToken })
+        .then(() => {
+          this.claimed.push(pr.id);
+        })
+        .catch(e => console.log(e.response));
     }
-  }
-}`
-          },
-          {
-            headers: {
-              Authorization: "bearer " + this.githubAccessToken
+  },
+  mounted() {
+    this.$axios.$get("/api/database").then(database => {
+      this.database = database;
+      Promise.all([
+        this.$store.dispatch("steemconnect/login"),
+        this.$store.dispatch("github/login")
+      ]).then(() => {
+        this.$axios
+          .$post(
+            "https://api.github.com/graphql",
+            {
+              query: `query {
+      user(login: "${this.githubUser.login}") {
+      pullRequests(first: 10, orderBy: { field: CREATED_AT, direction: DESC}) {
+        totalCount
+        nodes {
+          id
+          createdAt
+          repository {
+            name
+            nameWithOwner
+            owner {
+              login
             }
           }
-        )
-        .then(response => {
-          this.pullRequests = response.data.user.pullRequests.nodes;
-        });
+          number
+          title
+          merged
+          closed
+          permalink
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }`
+            },
+            {
+              headers: {
+                Authorization: "bearer " + this.githubAccessToken
+              }
+            }
+          )
+          .then(response => {
+            this.pullRequests = response.data.user.pullRequests.nodes;
+            this.pullRequests.forEach(pr => {
+              if (this.database.find(p => p.id === pr.id)) {
+                this.claimed.push(pr.id);
+              }
+            });
+          });
+      });
     });
   }
 };
