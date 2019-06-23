@@ -125,7 +125,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("steemconnect", { steemUser: "user" }),
+    ...mapGetters("steemconnect", {
+      steemUser: "user",
+      steemconnectAccessToken: "accessToken"
+    }),
     ...mapGetters("github", {
       githubUser: "user",
       githubAccessToken: "accessToken"
@@ -133,12 +136,22 @@ export default {
   },
   methods: {
     claim(pr) {
-      this.$axios
-        .$post("/api/claim", { pr, githubAccessToken: this.githubAccessToken })
-        .then(() => {
-          this.claimed.push(pr.id);
-        })
-        .catch(e => console.log(e.response));
+      if (!this.blockClaiming) {
+        this.$axios
+          .$post("/api/claim", {
+            pr,
+            githubAccessToken: this.githubAccessToken,
+            steemconnectAccessToken: this.steemconnectAccessToken
+          })
+          .then(() => {
+            this.blockClaiming = true;
+            setTimeout(() => {
+              this.blockClaiming = false;
+            }, 30000);
+            this.claimed.push(pr.id);
+          })
+          .catch(e => console.log(e.response));
+      }
     }
   },
   mounted() {
