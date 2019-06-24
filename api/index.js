@@ -28,8 +28,41 @@ const updateDatabase = database => {
   );
 };
 
-const calculateScore = repo => {
-  return 100;
+const getAge = createdAt =>
+  (new Date().getTime() - new Date(createdAt).getTime()) /
+  (60 * 60 * 24 * 1000);
+
+const getMergedPRsLastMonth = pullRequests => {
+  const mergedLastMonth = 0;
+  pullRequests.forEach(pr => {
+    const age = getAge(pr.createdAt);
+    if (pr.merged && age <= 30) {
+      mergedLastMonth++;
+    }
+  });
+  return mergedLastMonth;
+};
+
+const calculateScore = (repo, user) => {
+  const userAge = getAge(user.createdAt);
+  const mergedPRsLastMonth = getMergedPRsLastMonth(user.pullRequests.nodes);
+  const repoAge = getAge(repo.createdAt);
+  const repoStars = repo.stargazers.totalCount;
+  const repoForks = repo.forkCount;
+  let points = 0;
+
+  if (userAge > 365) points += 1;
+  if (userAge > 365 * 5) points += 2;
+  if (mergedPRsLastMonth > 2) points += 1;
+  if (mergedPRsLastMonth > 10) points += 2;
+  if (repoAge > 90) points += 1;
+  if (repoAge > 365) points += 2;
+  if (repoStars > 50) points += 1;
+  if (repoStars > 250) points += 2;
+  if (repoForks > 10) points += 1;
+  if (repoForks > 50) points += 2;
+
+  return Math.round((points / 15) * 100);
 };
 
 app.post("/github/access-token", (req, res) => {
@@ -68,10 +101,24 @@ app.post("/claim", (req, res) => {
         "https://api.github.com/graphql",
         {
           query: `{
+  viewer {
+    createdAt,
+    pullRequests(first: 100) {
+      nodes {
+        mergedAt
+      }
+    }
+  }
   repository(owner: "${pullRequest.repository.owner.login}", name: "${
             pullRequest.repository.name
           }") {
     name
+    createdAt
+    forkCount
+    viewerCanAdminister
+    stargazers {
+      totalCount
+    }
     pullRequest(number: ${pullRequest.number}) {
       id
       merged
@@ -88,49 +135,57 @@ app.post("/claim", (req, res) => {
       )
       .then(response => {
         const repo = response.data.data.repository;
+        const user = response.data.data.viewer;
 
         if (repo.pullRequest.merged) {
-          const score = calculateScore(repo);
-          steemconnectClient.setAccessToken(steemconnectAccessToken);
-          steemconnectClient.me((error, steemUser) => {
-            if (error) {
-              res.status(400);
-              res.send(
-                `Bad request: Unable to connect to steem: ${
-                  error.error_description
-                }`
-              );
-            } else {
-              const permlink = crypto
-                .createHash("md5")
-                .update(repo.pullRequest.permalink)
-                .digest("hex");
-              steemconnectClient.comment(
-                "mkt",
-                "mobile-optimization-hotfix-for-steem-engine-com",
-                steemUser.user,
-                permlink,
-                "PR: " + repo.pullRequest.permalink,
-                "PR: " + repo.pullRequest.permalink,
-                null,
-                (error, response) => {
-                  if (error) {
-                    res.status(400);
-                    res.send(`Error: Posting to STEEM blockchain failed.`);
-                  } else {
-                    database.push({
-                      id: repo.pullRequest.id,
-                      score: score,
-                      post: null
-                    });
-                    updateDatabase(database);
-                    res.status(201);
-                    res.send(`Pull request accepted: Score: ${score}`);
+          if (!repo.viewerCanAdminister) {
+            steemconnectClient.setAccessToken(steemconnectAccessToken);
+            steemconnectClient.me((error, steemUser) => {
+              if (error) {
+                res.status(400);
+                res.send(
+                  `Bad request: Unable to connect to steem: ${
+                    error.error_description
+                  }`
+                );
+              } else {
+                const score = calculateScore(repo, user);
+                const permlink = crypto
+                  .createHash("md5")
+                  .update(repo.pullRequest.permalink)
+                  .digest("hex");
+                steemconnectClient.comment(
+                  "mkt",
+                  "mobile-optimization-hotfix-for-steem-engine-com",
+                  steemUser.user,
+                  permlink,
+                  "PR: " + repo.pullRequest.permalink,
+                  "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
+                  { score },
+                  (error, response) => {
+                    if (error) {
+                      res.status(400);
+                      res.send(`Error: Posting to STEEM blockchain failed.`);
+                    } else {
+                      database.push({
+                        id: repo.pullRequest.id,
+                        score,
+                        permlink
+                      });
+                      updateDatabase(database);
+                      res.status(201);
+                      res.send(`Pull request accepted: Score: ${score}`);
+                    }
                   }
-                }
-              );
-            }
-          });
+                );
+              }
+            });
+          } else {
+            res.status(400);
+            res.send(
+              "Bad request: Unmet requirements: Pull request is for your own repository."
+            );
+          }
         } else {
           res.status(400);
           res.send(
