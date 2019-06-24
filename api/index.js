@@ -94,7 +94,6 @@ app.post("/claim", (req, res) => {
           steemconnectClient.setAccessToken(steemconnectAccessToken);
           steemconnectClient.me((error, steemUser) => {
             if (error) {
-              console.log(error);
               res.status(400);
               res.send(
                 `Bad request: Unable to connect to steem: ${
@@ -116,11 +115,9 @@ app.post("/claim", (req, res) => {
                 null,
                 (error, response) => {
                   if (error) {
-                    console.log(error);
                     res.status(400);
                     res.send(`Error: Posting to STEEM blockchain failed.`);
                   } else {
-                    console.log(response);
                     database.push({
                       id: repo.pullRequest.id,
                       score: score,
