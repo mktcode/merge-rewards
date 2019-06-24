@@ -1,10 +1,33 @@
-# commit-tokens
+# Commit Tokens
 
 > Rewards for open source collaboration
 
+## Score Criteria
+
+### Repository
+
+- Number of stars
+- Number of projects using it (and their "score")
+- Number of collaborators
+- Age
+
+### Account
+
+- Age
+- Activity (in foreign repositories)
+
+### Pull Request
+
+- Number of comments
+- Reactions of project owners
+- Closing an issue
+- Number of commits
+- Avg. length of commit messages
+- Comments in code
+
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 $ npm install
 
@@ -19,4 +42,4 @@ $ npm start
 $ npm run generate
 ```
 
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
+[Nuxt.js docs](https://nuxtjs.org)
