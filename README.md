@@ -74,6 +74,11 @@ Account:
 
 **Score: 75 - 100 %**
 
+## Notes
+
+- Publish post about statistics and stuff every X rewarded PRs to generate a new root post.
+  (Because I don't know how the APIs behave if there are thousends of 1st-level-comments under a post.)
+
 ## Build Setup
 
 ```bash
