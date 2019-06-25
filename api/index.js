@@ -17,15 +17,12 @@ app.use(express.json());
 
 const getDatabase = () => {
   return JSON.parse(
-    fs.readFileSync(__dirname + "/../database.json", { encoding: "utf-8" })
+    fs.readFileSync(process.env.DATABASE, { encoding: "utf-8" })
   );
 };
 
 const updateDatabase = database => {
-  fs.writeFileSync(
-    __dirname + "/../database.json",
-    JSON.stringify(database, null, 2)
-  );
+  fs.writeFileSync(process.env.DATABASE, JSON.stringify(database, null, 2));
 };
 
 const getAge = createdAt =>
@@ -161,7 +158,7 @@ app.post("/claim", (req, res) => {
                   permlink,
                   "PR: " + repo.pullRequest.permalink,
                   "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
-                  { score },
+                  { score, prId: repo.pullRequest.id },
                   (error, response) => {
                     if (error) {
                       res.status(400);
