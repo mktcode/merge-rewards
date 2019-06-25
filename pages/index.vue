@@ -4,30 +4,45 @@
     <div class="flex-fill text-center">
       <div v-if="githubUser">
         <font-awesome-icon :icon="['fab', 'github']" full-width />
+        connected
         <a href="#" @click.prevent="$store.dispatch('github/logout')">
           logout
         </a>
       </div>
-      <a
-        v-else
-        class="btn btn-primary"
-        :href="
-          'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
-            githubClientId
-        "
-      >
-        Connect with GitHub
-      </a>
-
       <div v-if="steemUser">
-        STEEM
+        STEEM connected
         <a href="#" @click.prevent="$store.dispatch('steemconnect/logout')">
           logout
         </a>
       </div>
-      <a v-else class="btn btn-primary" :href="$steemconnect.getLoginURL()">
-        Connect with Steem
-      </a>
+      <div class="d-flex justify-content-center">
+        <div v-if="!githubUser" class="d-flex flex-column mr-1">
+          <a
+            class="btn btn-primary"
+            :href="
+              'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
+                githubClientId
+            "
+          >
+            Connect with GitHub
+          </a>
+          <a href="https://github.com/signup" target="_blank">
+            create account
+          </a>
+        </div>
+
+        <div v-if="!steemUser" class="d-flex flex-column ml-1">
+          <a class="btn btn-primary" :href="$steemconnect.getLoginURL()">
+            Connect with Steem
+          </a>
+          <a
+            href="https://account.steem.ninja?ref=commit-tokens"
+            target="_blank"
+          >
+            create account
+          </a>
+        </div>
+      </div>
       <p v-if="!steemUser || !githubUser">
         Connect your Accounts to claim your rewards.
       </p>
