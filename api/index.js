@@ -161,7 +161,6 @@ app.post("/claim", (req, res) => {
                   { score, prId: repo.pullRequest.id },
                   (error, response) => {
                     if (error) {
-                      console.log(error);
                       res.status(400);
                       res.send(`Error: Posting to STEEM blockchain failed.`);
                     } else {
