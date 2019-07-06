@@ -153,7 +153,7 @@ export default {
     claim(pr) {
       if (!this.blockClaiming) {
         this.$axios
-          .$post("/api/claim", {
+          .$post(process.env.API_URL + "/claim", {
             pr,
             githubAccessToken: this.githubAccessToken,
             steemconnectAccessToken: this.steemconnectAccessToken
@@ -170,7 +170,7 @@ export default {
     }
   },
   mounted() {
-    this.$axios.$get("/api/database").then(database => {
+    this.$axios.$get(process.env.API_URL + "/database").then(database => {
       this.database = database;
       Promise.all([
         this.$store.dispatch("steemconnect/login"),

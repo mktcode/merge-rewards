@@ -8,7 +8,7 @@ export default {
     let code = this.$route.query["code"];
     if (code) {
       this.$axios
-        .$post("/api/github/access-token", {
+        .$post(process.env.API_URL + "/github/access-token", {
           client_id: "cc26e30001cc702f5663",
           client_secret: "2780f183b62c742b08c66e4f2182ba01ae0553f0",
           code,
