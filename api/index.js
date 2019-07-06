@@ -6,8 +6,9 @@ const steemconnect = require("steemconnect");
 const crypto = require("crypto");
 
 const steemconnectClient = new steemconnect.Client({
-  app: "mkt.test",
-  callbackURL: "http://localhost:3000/auth",
+  app: "merge-rewards",
+  callbackURL:
+    process.env.SC_REDIRECT_URL || "http://localhost:3000/auth/steemconnect",
   scope: ["vote", "comment"]
 });
 
@@ -152,8 +153,8 @@ app.post("/claim", (req, res) => {
                   .update(repo.pullRequest.permalink)
                   .digest("hex");
                 steemconnectClient.comment(
-                  "commit-tokens",
-                  "commit-tokens-beta-root-post",
+                  "merge-rewards",
+                  "merge-rewards-beta-root-post",
                   steemUser.user,
                   permlink,
                   "PR: " + repo.pullRequest.permalink,

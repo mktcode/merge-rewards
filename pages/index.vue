@@ -1,6 +1,6 @@
 <template>
   <div class="container d-flex flex-column pt-5">
-    <h1 class="text-center">Commit Tokens</h1>
+    <h1 class="text-center">Merge Rewards</h1>
     <div class="flex-fill text-center">
       <div v-if="githubUser">
         <font-awesome-icon :icon="['fab', 'github']" full-width />
@@ -36,7 +36,7 @@
             Connect with Steem
           </a>
           <a
-            href="https://account.steem.ninja?ref=commit-tokens"
+            href="https://account.steem.ninja?ref=merge-rewards"
             target="_blank"
           >
             create account

@@ -1,4 +1,4 @@
-# Commit Tokens
+# Merge Rewards
 
 Rewards for open source collaboration
 
