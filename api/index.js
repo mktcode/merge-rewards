@@ -130,20 +130,8 @@ app.post("/score", (req, res) => {
   getPullRequest(pullRequest, githubAccessToken).then(response => {
     const repo = response.data.data.repository;
     const user = response.data.data.viewer;
-    if (repo.pullRequest.merged) {
-      if (!repo.viewerCanAdminister) {
-        const score = calculateScore(repo, user);
-        res.json({ score });
-      } else {
-        res.status(400);
-        res.send(
-          "Bad request: Unmet requirements: Pull request is for your own repository."
-        );
-      }
-    } else {
-      res.status(400);
-      res.send("Bad request: Unmet requirements: Pull request is not merged.");
-    }
+    const score = calculateScore(repo, user);
+    res.json({ score });
   });
 });
 
