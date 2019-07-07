@@ -57,7 +57,7 @@
       <div class="card mb-5">
         <div class="card-header d-flex align-items-center">
           <h5 class="m-0">Pull Requests</h5>
-          <ul class="nav nav-pills card-header-pills ml-auto">
+          <!-- <ul class="nav nav-pills card-header-pills ml-auto">
             <li class="nav-item">
               <a class="nav-link active" href="#">all</a>
             </li>
@@ -67,7 +67,7 @@
             <li class="nav-item">
               <a class="nav-link" href="#">open</a>
             </li>
-          </ul>
+          </ul> -->
         </div>
         <div class="list-group list-group-flush">
           <div
