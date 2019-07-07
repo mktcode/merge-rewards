@@ -53,7 +53,7 @@
         <a href="https://github.com/mktcode">{{ githubUser.login }}</a>
         !
       </h1>
-      <h3 class="text-center">Wallet: 451.68 STEEM ($309)</h3>
+      <h3 class="text-center">Wallet: {{ steemUser.account.balance }}</h3>
       <div class="card mb-5">
         <div class="card-header d-flex align-items-center">
           <h5 class="m-0">Pull Requests</h5>
