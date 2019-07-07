@@ -130,7 +130,7 @@
                 class="btn btn-sm btn-dark"
                 disabled
               >
-                to old
+                too old
               </button>
             </div>
           </div>
