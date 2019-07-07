@@ -98,10 +98,10 @@
                 {{ pr.repository.nameWithOwner }}
               </a>
             </div>
-            <div class="ml-auto text-nowrap">
+            <div class="ml-auto text-nowrap d-flex">
               <span
                 v-if="pr.merged"
-                class="btn btn-sm btn-outline-primary disabled"
+                class="btn btn-sm btn-outline-primary disabled mr-1"
               >
                 Score:
                 <span v-if="scores.find(s => s.id === pr.id)">
@@ -109,19 +109,28 @@
                 </span>
                 <font-awesome-icon v-else icon="spinner" spin />
               </span>
+              <div v-if="getAge(pr.mergedAt) <= 14">
+                <button
+                  v-if="pr.merged && !claimed.includes(pr.id)"
+                  class="btn btn-sm btn-primary"
+                  @click="claim(pr)"
+                >
+                  Claim
+                </button>
+                <button
+                  v-if="pr.merged && claimed.includes(pr.id)"
+                  class="btn btn-sm btn-primary"
+                  disabled
+                >
+                  Claimed
+                </button>
+              </div>
               <button
-                v-if="pr.merged && !claimed.includes(pr.id)"
-                class="btn btn-sm btn-primary"
-                @click="claim(pr)"
-              >
-                Claim
-              </button>
-              <button
-                v-if="pr.merged && claimed.includes(pr.id)"
+                v-else-if="pr.merged"
                 class="btn btn-sm btn-primary"
                 disabled
               >
-                Claimed
+                to old
               </button>
             </div>
           </div>
@@ -177,6 +186,12 @@ export default {
           })
           .catch(e => console.log(e.response));
       }
+    },
+    getAge(createdAt) {
+      return (
+        (new Date().getTime() - new Date(createdAt).getTime()) /
+        (60 * 60 * 24 * 1000)
+      );
     }
   },
   mounted() {
@@ -192,7 +207,7 @@ export default {
             {
               query: `query {
       user(login: "${this.githubUser.login}") {
-      pullRequests(first: 10, orderBy: { field: CREATED_AT, direction: DESC}) {
+      pullRequests(first: 100, orderBy: { field: CREATED_AT, direction: DESC}) {
         totalCount
         nodes {
           id
@@ -207,6 +222,7 @@ export default {
           number
           title
           merged
+          mergedAt
           closed
           permalink
         }

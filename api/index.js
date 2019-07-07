@@ -89,6 +89,7 @@ repository(owner: "${pullRequest.repository.owner.login}", name: "${
   pullRequest(number: ${pullRequest.number}) {
     id
     merged
+    mergedAt
     permalink
   }
 }
@@ -129,7 +130,6 @@ app.post("/score", (req, res) => {
   getPullRequest(pullRequest, githubAccessToken).then(response => {
     const repo = response.data.data.repository;
     const user = response.data.data.viewer;
-
     if (repo.pullRequest.merged) {
       if (!repo.viewerCanAdminister) {
         const score = calculateScore(repo, user);
@@ -161,59 +161,66 @@ app.post("/claim", (req, res) => {
       const repo = response.data.data.repository;
       const user = response.data.data.viewer;
 
-      if (repo.pullRequest.merged) {
-        if (!repo.viewerCanAdminister) {
-          steemconnectClient.setAccessToken(steemconnectAccessToken);
-          steemconnectClient.me((error, steemUser) => {
-            if (error) {
-              res.status(400);
-              res.send(
-                `Bad request: Unable to connect to steem: ${
-                  error.error_description
-                }`
-              );
-            } else {
-              const score = calculateScore(repo, user);
-              const permlink = crypto
-                .createHash("md5")
-                .update(repo.pullRequest.permalink)
-                .digest("hex");
-              steemconnectClient.comment(
-                "merge-rewards",
-                "merge-rewards-beta-root-post",
-                steemUser.user,
-                permlink,
-                "PR: " + repo.pullRequest.permalink,
-                "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
-                { score, prId: repo.pullRequest.id },
-                (error, response) => {
-                  if (error) {
-                    res.status(400);
-                    res.send(`Error: Posting to STEEM blockchain failed.`);
-                  } else {
-                    database.push({
-                      id: repo.pullRequest.id,
-                      score,
-                      permlink
-                    });
-                    updateDatabase(database);
-                    res.status(201);
-                    res.send(`Pull request accepted: Score: ${score}`);
+      if (getAge(repo.pullRequest.mergedAt) <= 14) {
+        if (repo.pullRequest.merged) {
+          if (!repo.viewerCanAdminister) {
+            steemconnectClient.setAccessToken(steemconnectAccessToken);
+            steemconnectClient.me((error, steemUser) => {
+              if (error) {
+                res.status(400);
+                res.send(
+                  `Bad request: Unable to connect to steem: ${
+                    error.error_description
+                  }`
+                );
+              } else {
+                const score = calculateScore(repo, user);
+                const permlink = crypto
+                  .createHash("md5")
+                  .update(repo.pullRequest.permalink)
+                  .digest("hex");
+                steemconnectClient.comment(
+                  "merge-rewards",
+                  "merge-rewards-beta-root-post",
+                  steemUser.user,
+                  permlink,
+                  "PR: " + repo.pullRequest.permalink,
+                  "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
+                  { score, prId: repo.pullRequest.id },
+                  (error, response) => {
+                    if (error) {
+                      res.status(400);
+                      res.send(`Error: Posting to STEEM blockchain failed.`);
+                    } else {
+                      database.push({
+                        id: repo.pullRequest.id,
+                        score,
+                        permlink
+                      });
+                      updateDatabase(database);
+                      res.status(201);
+                      res.send(`Pull request accepted: Score: ${score}`);
+                    }
                   }
-                }
-              );
-            }
-          });
+                );
+              }
+            });
+          } else {
+            res.status(400);
+            res.send(
+              "Bad request: Unmet requirements: Pull request is for your own repository."
+            );
+          }
         } else {
           res.status(400);
           res.send(
-            "Bad request: Unmet requirements: Pull request is for your own repository."
+            "Bad request: Unmet requirements: Pull request is not merged."
           );
         }
       } else {
         res.status(400);
         res.send(
-          "Bad request: Unmet requirements: Pull request is not merged."
+          "Bad request: Unmet requirements: Pull request was merged more than 14 days ago."
         );
       }
     });
