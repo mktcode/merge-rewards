@@ -99,7 +99,7 @@
               </a>
             </div>
             <div class="ml-auto text-nowrap">
-              <b>Score: 84 %</b>
+              <b v-if="pr.merged">Score: 84 %</b>
               <button
                 v-if="pr.merged && !claimed.includes(pr.id)"
                 class="btn btn-sm btn-primary"
