@@ -18,7 +18,7 @@
       <div class="d-flex justify-content-center">
         <div v-if="!githubUser" class="d-flex flex-column mr-1">
           <a
-            class="btn btn-primary"
+            class="btn btn-dark"
             :href="
               'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
                 githubClientId
@@ -32,7 +32,7 @@
         </div>
 
         <div v-if="!steemUser" class="d-flex flex-column ml-1">
-          <a class="btn btn-primary" :href="$steemconnect.getLoginURL()">
+          <a class="btn btn-dark" :href="$steemconnect.getLoginURL()">
             Connect with Steem
           </a>
           <a
@@ -101,7 +101,7 @@
             <div class="ml-auto text-nowrap d-flex">
               <span
                 v-if="pr.merged"
-                class="btn btn-sm btn-outline-primary disabled mr-1"
+                class="btn btn-sm btn-outline-dark disabled mr-1"
               >
                 Score:
                 <span v-if="scores.find(s => s.id === pr.id)">
@@ -112,14 +112,14 @@
               <div v-if="getAge(pr.mergedAt) <= 14">
                 <button
                   v-if="pr.merged && !claimed.includes(pr.id)"
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-dark"
                   @click="claim(pr)"
                 >
                   Claim
                 </button>
                 <button
                   v-if="pr.merged && claimed.includes(pr.id)"
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-dark"
                   disabled
                 >
                   Claimed
@@ -127,7 +127,7 @@
               </div>
               <button
                 v-else-if="pr.merged"
-                class="btn btn-sm btn-primary"
+                class="btn btn-sm btn-dark"
                 disabled
               >
                 to old
