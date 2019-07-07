@@ -63,6 +63,45 @@ const calculateScore = (repo, user) => {
   return Math.round((points / 15) * 100);
 };
 
+const getPullRequest = (pullRequest, githubAccessToken) => {
+  return axios.post(
+    "https://api.github.com/graphql",
+    {
+      query: `{
+viewer {
+  createdAt,
+  pullRequests(first: 100) {
+    nodes {
+      mergedAt
+    }
+  }
+}
+repository(owner: "${pullRequest.repository.owner.login}", name: "${
+        pullRequest.repository.name
+      }") {
+  name
+  createdAt
+  forkCount
+  viewerCanAdminister
+  stargazers {
+    totalCount
+  }
+  pullRequest(number: ${pullRequest.number}) {
+    id
+    merged
+    permalink
+  }
+}
+}`
+    },
+    {
+      headers: {
+        Authorization: "bearer " + githubAccessToken
+      }
+    }
+  );
+};
+
 app.post("/github/access-token", (req, res) => {
   let code = req.body.code;
   axios
@@ -84,6 +123,30 @@ app.get("/database", (req, res) => {
   res.json(database);
 });
 
+app.post("/score", (req, res) => {
+  const pullRequest = req.body.pr;
+  const githubAccessToken = req.body.githubAccessToken;
+  getPullRequest(pullRequest, githubAccessToken).then(response => {
+    const repo = response.data.data.repository;
+    const user = response.data.data.viewer;
+
+    if (repo.pullRequest.merged) {
+      if (!repo.viewerCanAdminister) {
+        const score = calculateScore(repo, user);
+        res.json({ score });
+      } else {
+        res.status(400);
+        res.send(
+          "Bad request: Unmet requirements: Pull request is for your own repository."
+        );
+      }
+    } else {
+      res.status(400);
+      res.send("Bad request: Unmet requirements: Pull request is not merged.");
+    }
+  });
+});
+
 app.post("/claim", (req, res) => {
   const pullRequest = req.body.pr;
   const githubAccessToken = req.body.githubAccessToken;
@@ -94,103 +157,66 @@ app.post("/claim", (req, res) => {
     res.status(400);
     res.send("Bad request: Already claimed rewards for this pull request.");
   } else {
-    axios
-      .post(
-        "https://api.github.com/graphql",
-        {
-          query: `{
-  viewer {
-    createdAt,
-    pullRequests(first: 100) {
-      nodes {
-        mergedAt
-      }
-    }
-  }
-  repository(owner: "${pullRequest.repository.owner.login}", name: "${
-            pullRequest.repository.name
-          }") {
-    name
-    createdAt
-    forkCount
-    viewerCanAdminister
-    stargazers {
-      totalCount
-    }
-    pullRequest(number: ${pullRequest.number}) {
-      id
-      merged
-      permalink
-    }
-  }
-}`
-        },
-        {
-          headers: {
-            Authorization: "bearer " + githubAccessToken
-          }
-        }
-      )
-      .then(response => {
-        const repo = response.data.data.repository;
-        const user = response.data.data.viewer;
+    getPullRequest(pullRequest, githubAccessToken).then(response => {
+      const repo = response.data.data.repository;
+      const user = response.data.data.viewer;
 
-        if (repo.pullRequest.merged) {
-          if (!repo.viewerCanAdminister) {
-            steemconnectClient.setAccessToken(steemconnectAccessToken);
-            steemconnectClient.me((error, steemUser) => {
-              if (error) {
-                res.status(400);
-                res.send(
-                  `Bad request: Unable to connect to steem: ${
-                    error.error_description
-                  }`
-                );
-              } else {
-                const score = calculateScore(repo, user);
-                const permlink = crypto
-                  .createHash("md5")
-                  .update(repo.pullRequest.permalink)
-                  .digest("hex");
-                steemconnectClient.comment(
-                  "merge-rewards",
-                  "merge-rewards-beta-root-post",
-                  steemUser.user,
-                  permlink,
-                  "PR: " + repo.pullRequest.permalink,
-                  "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
-                  { score, prId: repo.pullRequest.id },
-                  (error, response) => {
-                    if (error) {
-                      res.status(400);
-                      res.send(`Error: Posting to STEEM blockchain failed.`);
-                    } else {
-                      database.push({
-                        id: repo.pullRequest.id,
-                        score,
-                        permlink
-                      });
-                      updateDatabase(database);
-                      res.status(201);
-                      res.send(`Pull request accepted: Score: ${score}`);
-                    }
+      if (repo.pullRequest.merged) {
+        if (!repo.viewerCanAdminister) {
+          steemconnectClient.setAccessToken(steemconnectAccessToken);
+          steemconnectClient.me((error, steemUser) => {
+            if (error) {
+              res.status(400);
+              res.send(
+                `Bad request: Unable to connect to steem: ${
+                  error.error_description
+                }`
+              );
+            } else {
+              const score = calculateScore(repo, user);
+              const permlink = crypto
+                .createHash("md5")
+                .update(repo.pullRequest.permalink)
+                .digest("hex");
+              steemconnectClient.comment(
+                "merge-rewards",
+                "merge-rewards-beta-root-post",
+                steemUser.user,
+                permlink,
+                "PR: " + repo.pullRequest.permalink,
+                "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
+                { score, prId: repo.pullRequest.id },
+                (error, response) => {
+                  if (error) {
+                    res.status(400);
+                    res.send(`Error: Posting to STEEM blockchain failed.`);
+                  } else {
+                    database.push({
+                      id: repo.pullRequest.id,
+                      score,
+                      permlink
+                    });
+                    updateDatabase(database);
+                    res.status(201);
+                    res.send(`Pull request accepted: Score: ${score}`);
                   }
-                );
-              }
-            });
-          } else {
-            res.status(400);
-            res.send(
-              "Bad request: Unmet requirements: Pull request is for your own repository."
-            );
-          }
+                }
+              );
+            }
+          });
         } else {
           res.status(400);
           res.send(
-            "Bad request: Unmet requirements: Pull request is not merged."
+            "Bad request: Unmet requirements: Pull request is for your own repository."
           );
         }
-      });
+      } else {
+        res.status(400);
+        res.send(
+          "Bad request: Unmet requirements: Pull request is not merged."
+        );
+      }
+    });
   }
 });
 

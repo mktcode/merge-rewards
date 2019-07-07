@@ -99,7 +99,16 @@
               </a>
             </div>
             <div class="ml-auto text-nowrap">
-              <b v-if="pr.merged">Score: 84 %</b>
+              <span
+                v-if="pr.merged"
+                class="btn btn-sm btn-outline-primary disabled"
+              >
+                Score:
+                <span v-if="scores.find(s => s.id === pr.id)">
+                  {{ scores.find(s => s.id === pr.id).score }} %
+                </span>
+                <font-awesome-icon v-else icon="spinner" spin />
+              </span>
               <button
                 v-if="pr.merged && !claimed.includes(pr.id)"
                 class="btn btn-sm btn-primary"
@@ -135,6 +144,7 @@ export default {
     return {
       database: [],
       pullRequests: [],
+      scores: [],
       claimed: [],
       githubClientId: process.env.GITHUB_CLIENT_ID
     };
@@ -217,8 +227,21 @@ export default {
           .then(response => {
             this.pullRequests = response.data.user.pullRequests.nodes;
             this.pullRequests.forEach(pr => {
+              // check if already claimed
               if (this.database.find(p => p.id === pr.id)) {
                 this.claimed.push(pr.id);
+              }
+              // get score
+              if (pr.merged) {
+                this.$axios
+                  .$post(process.env.API_URL + "/score", {
+                    pr,
+                    githubAccessToken: this.githubAccessToken
+                  })
+                  .then(response => {
+                    this.scores.push({ id: pr.id, score: response.score });
+                  })
+                  .catch(e => console.log(e.response.data));
               }
             });
           });
