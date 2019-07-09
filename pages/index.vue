@@ -43,11 +43,8 @@
           </a>
         </div>
       </div>
-      <p v-if="!steemUser || !githubUser">
-        Connect your Accounts to claim your rewards.
-      </p>
     </div>
-    <div v-if="steemUser && githubUser" class="flex-fill">
+    <div v-if="githubUser" class="flex-fill">
       <h1 class="text-center">
         Hi
         <a :href="'https://github.com/' + githubUser.login">
@@ -55,7 +52,9 @@
         </a>
         !
       </h1>
-      <h3 class="text-center">Wallet: {{ steemUser.account.balance }}</h3>
+      <h3 class="text-center" v-if="steemUser">
+        Wallet: {{ steemUser.account.balance }}
+      </h3>
       <div class="card mb-5">
         <div class="card-header d-flex align-items-center">
           <h5 class="m-0">Pull Requests</h5>
@@ -111,7 +110,7 @@
                 </span>
                 <font-awesome-icon v-else icon="spinner" spin />
               </span>
-              <div v-if="getAge(pr.mergedAt) <= prMaxAge">
+              <div v-if="getAge(pr.mergedAt) <= prMaxAge && steemUser">
                 <button
                   v-if="pr.merged && !claimed.includes(pr.id)"
                   class="btn btn-sm btn-dark"
@@ -128,7 +127,7 @@
                 </button>
               </div>
               <button
-                v-else-if="pr.merged"
+                v-else-if="pr.merged && steemUser"
                 class="btn btn-sm btn-dark"
                 disabled
               >
@@ -200,10 +199,9 @@ export default {
   mounted() {
     this.$axios.$get(process.env.API_URL + "/database").then(database => {
       this.database = database;
-      Promise.all([
-        this.$store.dispatch("steemconnect/login"),
-        this.$store.dispatch("github/login")
-      ]).then(() => {
+      this.$store.dispatch("steemconnect/login");
+
+      this.$store.dispatch("github/login").then(() => {
         this.$axios
           .$post(
             "https://api.github.com/graphql",
