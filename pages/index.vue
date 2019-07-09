@@ -50,7 +50,9 @@
     <div v-if="steemUser && githubUser" class="flex-fill">
       <h1 class="text-center">
         Hi
-        <a href="https://github.com/mktcode">{{ githubUser.login }}</a>
+        <a :href="'https://github.com/' + githubUser.login">
+          {{ githubUser.login }}
+        </a>
         !
       </h1>
       <h3 class="text-center">Wallet: {{ steemUser.account.balance }}</h3>
