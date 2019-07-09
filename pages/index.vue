@@ -110,7 +110,7 @@
                 </span>
                 <font-awesome-icon v-else icon="spinner" spin />
               </span>
-              <div v-if="getAge(pr.mergedAt) <= prMaxAge && steemUser">
+              <div v-if="getAge(pr.mergedAt) <= prMaxAge">
                 <button
                   v-if="pr.merged && !claimed.includes(pr.id)"
                   class="btn btn-sm btn-dark"
@@ -127,7 +127,7 @@
                 </button>
               </div>
               <button
-                v-else-if="pr.merged && steemUser"
+                v-else-if="pr.merged"
                 class="btn btn-sm btn-dark"
                 disabled
               >

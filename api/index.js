@@ -3,6 +3,7 @@ const axios = require("axios");
 const fs = require("fs");
 const app = express();
 const steemconnect = require("steemconnect");
+const steem = require("steem");
 const crypto = require("crypto");
 
 const steemconnectClient = new steemconnect.Client({
@@ -72,6 +73,7 @@ const getPullRequest = (pullRequest, githubAccessToken) => {
     {
       query: `{
 viewer {
+  login
   createdAt,
   followers {
     totalCount
@@ -158,47 +160,76 @@ app.post("/claim", (req, res) => {
       if (getAge(repo.pullRequest.mergedAt) <= process.env.PR_MAX_AGE) {
         if (repo.pullRequest.merged) {
           if (!repo.viewerCanAdminister) {
-            steemconnectClient.setAccessToken(steemconnectAccessToken);
-            steemconnectClient.me((error, steemUser) => {
-              if (error) {
-                res.status(400);
-                res.send(
-                  `Bad request: Unable to connect to steem: ${
-                    error.error_description
-                  }`
-                );
-              } else {
-                const score = calculateScore(repo, user);
-                const permlink = crypto
-                  .createHash("md5")
-                  .update(repo.pullRequest.permalink)
-                  .digest("hex");
-                steemconnectClient.comment(
-                  "merge-rewards",
-                  "merge-rewards-beta-root-post",
-                  steemUser.user,
-                  permlink,
-                  "PR: " + repo.pullRequest.permalink,
-                  "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`,
-                  { score, prId: repo.pullRequest.id },
-                  (error, response) => {
-                    if (error) {
-                      res.status(400);
-                      res.send(`Error: Posting to STEEM blockchain failed.`);
-                    } else {
-                      database.push({
-                        id: repo.pullRequest.id,
-                        score,
-                        permlink
-                      });
-                      updateDatabase(database);
-                      res.status(201);
-                      res.send(`Pull request accepted: Score: ${score}`);
-                    }
+            const score = calculateScore(repo, user);
+            const permlink = crypto
+              .createHash("md5")
+              .update(repo.pullRequest.permalink)
+              .digest("hex");
+            const title = "PR: " + repo.pullRequest.permalink;
+            const body =
+              "PR: " + `${repo.pullRequest.permalink} (Score: ${score})`;
+            const jsonMetadata = {
+              id: repo.pullRequest.id,
+              score,
+              permlink,
+              githubUser: user.login
+            };
+            if (!steemconnectAccessToken) {
+              steem.broadcast.comment(
+                process.env.ACCOUNT_KEY,
+                "merge-rewards",
+                "merge-rewards-beta-root-post",
+                "merge-rewards",
+                permlink,
+                title,
+                body,
+                jsonMetadata,
+                (error, response) => {
+                  if (error) {
+                    res.status(400);
+                    res.send(`Error: Posting to STEEM blockchain failed.`);
+                  } else {
+                    database.push(jsonMetadata);
+                    updateDatabase(database);
+                    res.status(201);
+                    res.send(`Pull request accepted: Score: ${score}`);
                   }
-                );
-              }
-            });
+                }
+              );
+            } else {
+              steemconnectClient.setAccessToken(steemconnectAccessToken);
+              steemconnectClient.me((error, steemUser) => {
+                if (error) {
+                  res.status(400);
+                  res.send(
+                    `Bad request: Unable to connect to steem: ${
+                      error.error_description
+                    }`
+                  );
+                } else {
+                  steemconnectClient.comment(
+                    "merge-rewards",
+                    "merge-rewards-beta-root-post",
+                    steemUser.user,
+                    permlink,
+                    title,
+                    body,
+                    jsonMetadata,
+                    (error, response) => {
+                      if (error) {
+                        res.status(400);
+                        res.send(`Error: Posting to STEEM blockchain failed.`);
+                      } else {
+                        database.push(jsonMetadata);
+                        updateDatabase(database);
+                        res.status(201);
+                        res.send(`Pull request accepted: Score: ${score}`);
+                      }
+                    }
+                  );
+                }
+              });
+            }
           } else {
             res.status(400);
             res.send(
