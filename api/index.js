@@ -155,7 +155,7 @@ app.post("/claim", (req, res) => {
       const repo = response.data.data.repository;
       const user = response.data.data.viewer;
 
-      if (getAge(repo.pullRequest.mergedAt) <= 14) {
+      if (getAge(repo.pullRequest.mergedAt) <= process.env.PR_MAX_AGE) {
         if (repo.pullRequest.merged) {
           if (!repo.viewerCanAdminister) {
             steemconnectClient.setAccessToken(steemconnectAccessToken);
@@ -214,7 +214,9 @@ app.post("/claim", (req, res) => {
       } else {
         res.status(400);
         res.send(
-          "Bad request: Unmet requirements: Pull request was merged more than 14 days ago."
+          "Bad request: Unmet requirements: Pull request was merged more than " +
+            process.env.PR_MAX_AGE +
+            " days ago."
         );
       }
     });

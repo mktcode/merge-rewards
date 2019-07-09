@@ -109,7 +109,7 @@
                 </span>
                 <font-awesome-icon v-else icon="spinner" spin />
               </span>
-              <div v-if="getAge(pr.mergedAt) <= 14">
+              <div v-if="getAge(pr.mergedAt) <= prMaxAge">
                 <button
                   v-if="pr.merged && !claimed.includes(pr.id)"
                   class="btn btn-sm btn-dark"
@@ -155,7 +155,8 @@ export default {
       pullRequests: [],
       scores: [],
       claimed: [],
-      githubClientId: process.env.GITHUB_CLIENT_ID
+      githubClientId: process.env.GITHUB_CLIENT_ID,
+      prMaxAge: process.env.PR_MAX_AGE || 14
     };
   },
   computed: {
