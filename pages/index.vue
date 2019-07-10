@@ -197,7 +197,7 @@ export default {
     }
   },
   mounted() {
-    this.$axios.$get(process.env.API_URL + "/database").then(database => {
+    this.$axios.$get(process.env.API_URL + "/pull-requests").then(database => {
       this.database = database;
       this.$store.dispatch("steemconnect/login");
 
