@@ -172,7 +172,10 @@ app.post("/claim", (req, res) => {
               id: repo.pullRequest.id,
               score,
               permlink,
-              githubUser: user.login
+              githubUser: user.login,
+              steemUser: "merge-rewards",
+              pendingRewards: null,
+              rewards: null
             };
             if (!steemconnectAccessToken) {
               steem.broadcast.comment(
@@ -199,6 +202,7 @@ app.post("/claim", (req, res) => {
             } else {
               steemconnectClient.setAccessToken(steemconnectAccessToken);
               steemconnectClient.me((error, steemUser) => {
+                jsonMetadata.steemUser = steemUser.account.name;
                 if (error) {
                   res.status(400);
                   res.send(
