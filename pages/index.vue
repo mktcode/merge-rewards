@@ -52,9 +52,12 @@
         </a>
         !
       </h1>
-      <h3 class="text-center" v-if="steemUser">
-        Wallet: {{ steemUser.account.balance }}
-      </h3>
+      <h4 class="text-center mb-0" v-if="githubUser">
+        Rewards: ${{ balance.rewards }}
+      </h4>
+      <h5 class="text-center" v-if="githubUser">
+        (Pending: ${{ balance.pending }})
+      </h5>
       <div class="card mb-5">
         <div class="card-header d-flex align-items-center">
           <h5 class="m-0">Pull Requests</h5>
@@ -156,6 +159,10 @@ export default {
       pullRequests: [],
       scores: [],
       claimed: [],
+      balance: {
+        rewards: 0,
+        pending: 0
+      },
       githubClientId: process.env.GITHUB_CLIENT_ID,
       prMaxAge: process.env.PR_MAX_AGE || 14
     };
@@ -202,6 +209,9 @@ export default {
       this.$store.dispatch("steemconnect/login");
 
       this.$store.dispatch("github/login").then(() => {
+        this.$axios
+          .$get(process.env.API_URL + "/rewards/" + this.githubUser.login)
+          .then(balance => (this.balance = balance));
         this.$axios
           .$post(
             "https://api.github.com/graphql",
