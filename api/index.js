@@ -17,19 +17,14 @@ require("dotenv").config();
 
 app.use(express.json());
 
-const getDatabase = table => {
+const getDatabase = () => {
   return JSON.parse(
-    fs.readFileSync(`${process.env.DATABASE}/${table}.json`, {
-      encoding: "utf-8"
-    })
+    fs.readFileSync(process.env.DATABASE, { encoding: "utf-8" })
   );
 };
 
-const updateDatabase = (data, table) => {
-  fs.writeFileSync(
-    `${process.env.DATABASE}/${table}.json`,
-    JSON.stringify(data, null, 2)
-  );
+const updateDatabase = database => {
+  fs.writeFileSync(process.env.DATABASE, JSON.stringify(database, null, 2));
 };
 
 const getAge = createdAt =>
@@ -132,20 +127,9 @@ app.post("/github/access-token", (req, res) => {
     });
 });
 
-app.get("/pull-requests", (req, res) => {
-  const database = getDatabase("pull-requests");
+app.get("/database", (req, res) => {
+  const database = getDatabase();
   res.json(database);
-});
-
-app.get("/rewards/:githubUser", (req, res) => {
-  const database = getDatabase("rewards");
-  const rewards = database.find(r => r.githubUser === req.params.githubUser);
-  if (rewards) {
-    res.json(rewards);
-  } else {
-    res.status(400);
-    res.send(`Error: No rewards generated for this GitHub account.`);
-  }
 });
 
 app.post("/score", (req, res) => {
@@ -163,7 +147,7 @@ app.post("/claim", (req, res) => {
   const pullRequest = req.body.pr;
   const githubAccessToken = req.body.githubAccessToken;
   const steemconnectAccessToken = req.body.steemconnectAccessToken;
-  const database = getDatabase("pull-requests");
+  const database = getDatabase();
   const existingPr = database.find(pr => pr.id === pullRequest.id);
   if (existingPr) {
     res.status(400);
@@ -206,7 +190,7 @@ app.post("/claim", (req, res) => {
                     res.send(`Error: Posting to STEEM blockchain failed.`);
                   } else {
                     database.push(jsonMetadata);
-                    updateDatabase(database, "pull-requests");
+                    updateDatabase(database);
                     res.status(201);
                     res.send(`Pull request accepted: Score: ${score}`);
                   }
@@ -237,7 +221,7 @@ app.post("/claim", (req, res) => {
                         res.send(`Error: Posting to STEEM blockchain failed.`);
                       } else {
                         database.push(jsonMetadata);
-                        updateDatabase(database, "pull-requests");
+                        updateDatabase(database);
                         res.status(201);
                         res.send(`Pull request accepted: Score: ${score}`);
                       }
