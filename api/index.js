@@ -132,6 +132,19 @@ app.get("/database", (req, res) => {
   res.json(database);
 });
 
+app.get("/rewards/:githubUser", (req, res) => {
+  const database = getDatabase();
+  const rewards = database.reduce(
+    (r, pr) => {
+      if (pr.rewards) r.rewards += parseFloat(pr.rewards);
+      if (pr.pendingRewards) r.pending += parseFloat(pr.pendingRewards);
+      return r;
+    },
+    { rewards: 0, pending: 0 }
+  );
+  res.json(rewards);
+});
+
 app.post("/score", (req, res) => {
   const pullRequest = req.body.pr;
   const githubAccessToken = req.body.githubAccessToken;
