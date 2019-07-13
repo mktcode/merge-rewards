@@ -44,7 +44,7 @@
     </header>
     <div class="container py-5">
       <div class="row">
-        <div class="col-6">
+        <div class="col-md-6 mb-3">
           <h2 class="mb-4">Contribute!</h2>
           <p>
             Contribute to other people's Open Source projects on GitHub. Your
@@ -62,12 +62,12 @@
             About Pull Requests
           </a>
         </div>
-        <div class="col-6">
+        <div class="col-md-6">
           <img src="/pull-requests.png" alt="pull-requests.png" class="w-100" />
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-6 order-2">
+        <div class="col-md-6 order-md-2 mb-3">
           <h2 class="mb-4">Raise your score!</h2>
           <p>
             Your pull requests are scored by a
@@ -86,7 +86,7 @@
             About Scores
           </a>
         </div>
-        <div class="col-6 order-1">
+        <div class="col-md-6 order-md-1">
           <img src="/scores.png" alt="scores.png" class="w-100" />
         </div>
       </div>
@@ -109,10 +109,10 @@
       </div>
     </div>
     <div class="container-fluid steem text-light py-5">
-      <div class="container d-flex align-items-center">
-        <div class="d-flex flex-column mr-5">
+      <div class="container d-flex flex-column flex-md-row align-items-center">
+        <div class="d-flex flex-column mr-0 mr-md-5">
           <img src="/steem.png" alt="steem.png" class="float-left mb-4" />
-          <div class="text-nowrap">
+          <div class="text-nowrap mb-4">
             <a href="#" target="_blank" class="btn btn-outline-light">
               Connect
             </a>
@@ -184,4 +184,12 @@ header
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1c06b4', endColorstr='#0293ff',GradientType=1 )
 footer
   font-size: 2rem
+
+@media screen and (max-width: 768px)
+  header
+    h1
+      font-size: 2.5rem
+    h2
+      font-size: 1.7rem
+      text-align: center
 </style>
