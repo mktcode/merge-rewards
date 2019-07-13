@@ -43,9 +43,9 @@
       </a>
     </header>
     <div class="container py-5">
-      <div class="row">
+      <div class="row my-5">
         <div class="col-md-6 mb-3">
-          <h2 class="mb-4">Contribute!</h2>
+          <h1 class="mb-4">Contribute!</h1>
           <p>
             Contribute to other people's Open Source projects on GitHub. Your
             contributions can be anything, from developing new features to
@@ -66,9 +66,9 @@
           <img src="/pull-requests.png" alt="pull-requests.png" class="w-100" />
         </div>
       </div>
-      <div class="row mt-5">
+      <div class="row my-5">
         <div class="col-md-6 order-md-2 mb-3">
-          <h2 class="mb-4">Raise your score!</h2>
+          <h1 class="mb-4">Raise your score!</h1>
           <p>
             Your pull requests are scored by a
             <b>transparent algorithm</b> which is constantly improved by the
@@ -90,9 +90,9 @@
           <img src="/scores.png" alt="scores.png" class="w-100" />
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-12">
-          <h2 class="mb-4">And claim your rewards!</h2>
+      <div class="row my-5">
+        <div class="col-md-6">
+          <h1 class="mb-4">Claim your rewards!</h1>
           <p>
             You can withdraw your rewards in Bitcoin, Ethereum and other
             Cryptocurrencies at any time. We also offer an exchange service to
@@ -106,6 +106,9 @@
             About Rewards
           </a>
         </div>
+        <div class="col-md-6 text-center">
+          <img src="/crypto-logos.png" alt="crypto-logos.png" class="mw-100" />
+        </div>
       </div>
     </div>
     <div class="container-fluid steem text-light py-5">
@@ -113,7 +116,7 @@
         <div class="d-flex flex-column mr-0 mr-md-5">
           <img src="/steem.png" alt="steem.png" class="float-left mb-4" />
           <div class="text-nowrap mb-4">
-            <a href="#" target="_blank" class="btn btn-outline-light">
+            <a href="#" target="_blank" class="btn btn-light">
               Connect
             </a>
             <a
@@ -145,11 +148,20 @@
         </div>
       </div>
     </div>
-    <footer class="p-5 bg-dark text-center">
+    <footer
+      class="p-5 bg-dark text-center d-flex align-items-center justify-content-center"
+    >
+      <span class="small text-muted mr-auto">
+        Made with <font-awesome-icon icon="heart" />
+        by
+        <a href="https://steemit.com/@mkt" target="_blank" class="text-muted">
+          @mkt
+        </a>
+      </span>
       <a
         href="https://github.com/mktcode/merge-rewards"
         target="_blank"
-        class="text-light"
+        class="text-light social-icon"
       >
         <font-awesome-icon :icon="['fab', 'github']" />
       </a>
@@ -183,7 +195,8 @@ header
   background: linear-gradient(to right,  #1c06b4 0%,#0293ff 100%)
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1c06b4', endColorstr='#0293ff',GradientType=1 )
 footer
-  font-size: 2rem
+  .social-icon
+    font-size: 2rem
 
 @media screen and (max-width: 768px)
   header
