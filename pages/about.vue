@@ -29,7 +29,10 @@
       <h1>Merge Rewards</h1>
       <h2>Rewarding Social Development</h2>
       <p class="lead">Earn money with your pull requests on GitHub!</p>
-      <a href="#" class="btn btn-success btn-lg">Get Started!</a>
+      <a href="#" class="btn btn-success btn-lg">
+        <font-awesome-icon :icon="['fab', 'github']" />
+        Connect
+      </a>
     </header>
     <div class="container py-5">
       <div class="row">
@@ -37,7 +40,7 @@
           <h3>Contribute!</h3>
           <p>
             Contribute to other people's Open Source projects on GitHub by
-            submitting changes via pull requests. You contributions can be
+            submitting changes via pull requests. Your contributions can be
             anything, from developing new features to fixing typos in a
             project's documentation.<br />
             <br />
@@ -55,17 +58,16 @@
           </a>
         </div>
         <div class="col-6">
-          <h3>And claim your rewards!</h3>
+          <h3>Raise your score!</h3>
           <p>
-            Once your pull requests get merged you can visit this website and
-            claim your rewards. An algorithm calculates a score for your
-            contribution, which determines the size of your reward.<br />
+            Your pull requests are scored by a
+            <b>transparent algorithm</b> which is constantly improved by the
+            community, to prevent abuse and to distribute rewards in a most fair
+            way.<br />
             <br />
-            The popularity of the project and your own reputation on GitHub are
-            the most important factors. Your actual contribution is secondary.
-            That might change in the future but for now Merge Rewards assumes
-            that a small fix in a README file can be as valuable as some big new
-            feature, depending on the number of people who benefit from it.
+            On top of that, every member of the community can affect your reward
+            by simply voting for it. The weight of these votes is based on how
+            much a person already contributed to other projects.
           </p>
           <a
             href="https://help.github.com/en/articles/about-pull-requests"
@@ -79,20 +81,56 @@
       </div>
       <div class="row mt-5">
         <div class="col-12">
-          <h2>Your Rewards</h2>
+          <h2>And claim your rewards!</h2>
           <p>
-            Your rewards will be paid in STEEM. STEEM is a decentralized content
-            network as well as a digital currency to reward creators of good
-            content. The intrinsic value of STEEM lies in its possibility to be
-            used as influence on how rewards are distributed.<br />
-            <br />
-            Merge Rewards considers your merged pull requests as good "content"
-            and uses its influence to distribute STEEM tokens to you, which you
-            can then use to gain more influence yourself, to buy goods and
-            services from other STEEM users or exchange for "real money", like
-            USD or Euro, by selling it to others who want to invest in the STEEM
-            currency or in their influence in the network.
+            You can withdraw your rewards in Bitcoin, Ethereum and other
+            Cryptocurrencies at any time. We also offer an exchange service to
+            <b>Euro or Dollar</b> for withdrawals greater than 100 $/€ (for
+            free).
           </p>
+          <a
+            href="https://help.github.com/en/articles/about-pull-requests"
+            target="_blank"
+            class="btn btn-outline-dark"
+          >
+            <font-awesome-icon icon="tasks" />
+            About Scores
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid bg-primary text-light py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2>The STEEM blockchain</h2>
+            <p>
+              Your rewards will be generated in STEEM. STEEM is a decentralized
+              content network as well as a digital currency to reward creators
+              of good content. The intrinsic value of STEEM lies in its
+              possibility to be used as influence on how rewards are
+              distributed.<br />
+              <br />
+              Merge Rewards considers your merged pull requests as good
+              "content" and uses its influence to distribute STEEM tokens to
+              you, which you can then use to buy goods and services from other
+              STEEM users, exchange it for "real money", like USD or Euro or to
+              gain more influence in the voting process yourself.
+            </p>
+            <a href="#" target="_blank" class="btn btn-outline-light">
+              Connect
+            </a>
+            <a
+              href="https://signup.steemit.com"
+              target="_blank"
+              class="btn btn-outline-light"
+            >
+              Sign Up
+            </a>
+            <a href="#" target="_blank" class="btn btn-outline-light">
+              About STEEM
+            </a>
+          </div>
         </div>
       </div>
     </div>
