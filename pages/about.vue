@@ -39,10 +39,9 @@
         <div class="col-6">
           <h3>Contribute!</h3>
           <p>
-            Contribute to other people's Open Source projects on GitHub by
-            submitting changes via pull requests. Your contributions can be
-            anything, from developing new features to fixing typos in a
-            project's documentation.<br />
+            Contribute to other people's Open Source projects on GitHub. Your
+            contributions can be anything, from developing new features to
+            fixing typos in a project's documentation.<br />
             <br />
             As long as there's a pull request that the project owner decided to
             merge into his/her project, you'll be able to claim your rewards by
