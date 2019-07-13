@@ -26,6 +26,11 @@ export default {
         type: "text/css",
         href:
           "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      },
+      {
+        rel: "stylesheet",
+        type: "text/css",
+        href: "https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       }
     ],
     script: [
