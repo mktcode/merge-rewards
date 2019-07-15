@@ -45,6 +45,8 @@ export const actions = {
               resolve();
             }
           });
+        } else {
+          resolve();
         }
       } else {
         resolve();

@@ -46,6 +46,8 @@ export const actions = {
               resolve();
             })
             .catch(e => reject(e));
+        } else {
+          resolve();
         }
       } else {
         resolve();

@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 export default {
-  mode: "universal",
+  mode: "spa",
 
   serverMiddleware: ["~/api/index"],
 
@@ -55,11 +55,15 @@ export default {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ["assets/main.sass"],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ["~/plugins/font-awesome", "~/plugins/vue-steemconnect"],
+  plugins: [
+    "~/plugins/font-awesome",
+    "~/plugins/vue-steemconnect",
+    "~/plugins/load"
+  ],
   /*
    ** Nuxt.js modules
    */
