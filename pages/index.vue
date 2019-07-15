@@ -136,7 +136,8 @@
               favorite currency. STEEM is a decentralized content network as
               well as a digital currency to reward creators of good content. The
               intrinsic value of STEEM lies in its possibility to be used as
-              influence on how rewards are distributed.<br />
+              influence on how rewards are distributed and how content is
+              ranked.<br />
               <br />
               Merge Rewards considers your merged pull requests as "good
               content" and uses its influence to distribute STEEM tokens to you,
