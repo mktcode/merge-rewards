@@ -72,43 +72,79 @@
       </div>
     </div>
     <div class="container-fluid steem text-light py-5">
-      <div class="container d-flex flex-column flex-md-row align-items-center">
-        <div class="d-flex flex-column mr-0 mr-md-5">
-          <img src="/steem.png" alt="steem.png" class="float-left mb-4" />
-          <div class="text-nowrap mb-4">
-            <a href="#" target="_blank" class="btn btn-light">
-              Connect
-            </a>
-            <a
-              href="https://signup.steemit.com"
-              target="_blank"
-              class="btn btn-outline-light"
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <img
+              src="/steem.png"
+              alt="steem.png"
+              class="mb-3 w-100"
+              style="max-width: 300px;"
+            />
+            <div
+              class="mb-4 text-primary text-center text-md-left text-white-50"
+              v-if="steemUser"
             >
-              Sign Up
-            </a>
-            <a
-              href="https://steem.com"
-              target="_blank"
-              class="btn btn-outline-light"
-            >
-              About STEEM
-            </a>
+              <h5>
+                Hi
+                <a
+                  :href="'https://steemit.com/@' + steemUser.account.name"
+                  class="text-white-50"
+                >
+                  @{{ steemUser.account.name }} </a
+                >!
+              </h5>
+              <p>
+                Rewards you claim while being connected to your STEEM account
+                will go directly there and they will not show up in your wallet
+                here.
+              </p>
+              <button
+                @click.prevent="$store.dispatch('steemconnect/logout')"
+                class="btn btn-sm btn-outline-primary"
+              >
+                disconnect
+              </button>
+            </div>
+            <div class="text-nowrap mb-4" v-else>
+              <a
+                :href="$steemconnect.getLoginURL()"
+                target="_blank"
+                class="btn btn-light"
+              >
+                Connect
+              </a>
+              <a
+                href="https://signup.steemit.com"
+                target="_blank"
+                class="btn btn-outline-light"
+              >
+                Sign Up
+              </a>
+              <a
+                href="https://steem.com"
+                target="_blank"
+                class="btn btn-outline-light"
+              >
+                About STEEM
+              </a>
+            </div>
           </div>
-        </div>
-        <div>
-          <p>
-            Your rewards will be generated in STEEM and then converted to your
-            favorite currency. STEEM is a decentralized content network as well
-            as a digital currency to reward creators of good content. The
-            intrinsic value of STEEM lies in its possibility to be used as
-            influence on how rewards are distributed.<br />
-            <br />
-            Merge Rewards considers your merged pull requests as "good content"
-            and uses its influence to distribute STEEM tokens to you, which you
-            can then use to buy goods and services from other STEEM users,
-            exchange it for "real money", like USD or Euro or to gain more
-            influence in the voting process yourself.
-          </p>
+          <div class="col-md-8">
+            <p>
+              Your rewards will be generated in STEEM and then converted to your
+              favorite currency. STEEM is a decentralized content network as
+              well as a digital currency to reward creators of good content. The
+              intrinsic value of STEEM lies in its possibility to be used as
+              influence on how rewards are distributed.<br />
+              <br />
+              Merge Rewards considers your merged pull requests as "good
+              content" and uses its influence to distribute STEEM tokens to you,
+              which you can then use to buy goods and services from other STEEM
+              users, exchange it for "real money", like USD or Euro or to gain
+              more influence in the voting process yourself.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -117,11 +153,16 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   components: {
     Navbar: () => import("@/components/Navbar"),
     Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer")
+  },
+  computed: {
+    ...mapGetters("steemconnect", { steemUser: "user" })
   }
 };
 </script>
