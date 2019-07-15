@@ -136,8 +136,10 @@ app.get("/rewards/:githubUser", (req, res) => {
   const database = getDatabase();
   const rewards = database.reduce(
     (r, pr) => {
-      if (pr.rewards) r.rewards += parseFloat(pr.rewards);
-      if (pr.pendingRewards) r.pending += parseFloat(pr.pendingRewards);
+      if (pr.steemUser === "merge-rewards") {
+        if (pr.rewards) r.rewards += parseFloat(pr.rewards);
+        if (pr.pendingRewards) r.pending += parseFloat(pr.pendingRewards);
+      }
       return r;
     },
     { rewards: 0, pending: 0 }
