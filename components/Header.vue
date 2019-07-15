@@ -15,13 +15,13 @@
     </div>
     <button
       @click.prevent="$store.dispatch('github/logout')"
-      class="btn btn-sm btn-primary"
+      class="btn btn-sm btn-outline-light"
     >
       logout
     </button>
-    <nuxt-link to="/" class="btn btn-sm btn-success">
+    <!-- <nuxt-link to="/" class="btn btn-sm btn-success">
       Withdraw
-    </nuxt-link>
+    </nuxt-link> -->
   </header>
   <header class="p-5 bg-secondary text-light" v-else>
     <h1 class="d-flex align-items-center font-weight-bold">

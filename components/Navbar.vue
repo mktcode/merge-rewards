@@ -20,14 +20,14 @@
         <li class="nav-item">
           <nuxt-link class="nav-link" to="/claim">Claim</nuxt-link>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <nuxt-link class="nav-link" to="/pull-requests"
             >Pull Requests</nuxt-link
           >
         </li>
         <li class="nav-item">
           <nuxt-link class="nav-link" to="/projects">Projects</nuxt-link>
-        </li>
+        </li> -->
       </ul>
     </div>
   </nav>
