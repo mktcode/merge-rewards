@@ -11,8 +11,8 @@
         class="py-2 border-top"
       />
     </div>
-    <div v-else class="container py-5">
-      <p class="lead">
+    <div v-else class="container py-5 text-center">
+      <p class="lead mb-5">
         To claim rewards for your pull requests you must connect with your
         GitHub account.
       </p>
