@@ -9,7 +9,7 @@
     </h1>
     <div v-if="balance">
       <h4 class="mb-0" v-if="githubUser">Wallet: ${{ balance.rewards }}</h4>
-      <h5 v-if="githubUser" class="text-muted">
+      <h5 v-if="githubUser" class="mb-4 text-muted">
         Pending: ${{ balance.pending }}
       </h5>
     </div>
@@ -19,9 +19,14 @@
     >
       logout
     </button>
-    <!-- <nuxt-link to="/" class="btn btn-sm btn-success">
+    <button
+      data-toggle="modal"
+      data-target="#withdraw-modal"
+      class="btn btn-sm btn-outline-success"
+    >
       Withdraw
-    </nuxt-link> -->
+    </button>
+    <Withdraw />
   </header>
   <header class="p-5 bg-secondary text-light" v-else>
     <h1 class="d-flex align-items-center font-weight-bold">
@@ -50,6 +55,9 @@
 import { mapGetters } from "vuex";
 
 export default {
+  components: {
+    Withdraw: () => import("@/components/Withdraw")
+  },
   data() {
     return {
       githubClientId: process.env.GITHUB_CLIENT_ID

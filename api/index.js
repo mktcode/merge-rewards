@@ -147,6 +147,85 @@ app.get("/rewards/:githubUser", (req, res) => {
   res.json(rewards);
 });
 
+app.post("/withdraw", (req, res) => {
+  const database = getDatabase();
+  const githubUser = req.body.githubUser;
+  const amount = req.body.amount;
+  const formattedAmount = amount.toFixed(3) + " SBD";
+  const currency = req.body.currency;
+  const address = req.body.address;
+  axios
+    .get(process.env.API_URL + "/rewards/" + githubUser)
+    .then(response => {
+      const balance = response.data;
+      if (balance.rewards >= amount) {
+        if (currency === "btc") {
+          if (amount >= 5) {
+            axios
+              .post("https://blocktrades.us/api/v2/sessions")
+              .then(response => {
+                const session = response.data;
+                axios
+                  .post(
+                    "https://blocktrades.us/api/v2/simple-api/initiate-trade",
+                    {
+                      inputCoinType: "sbd",
+                      outputCoinType: "btc",
+                      outputAddress: address,
+                      affiliateId: "b8ac630a-5e6e-4b00-a8a8-46c33cb7488a",
+                      refundAddress: "merge-rewards",
+                      sessionToken: session.token
+                    }
+                  )
+                  .then(response => {
+                    const transfer = response.data;
+                    steem.broadcast.transfer(
+                      process.env.ACCOUNT_KEY,
+                      "merge-rewards",
+                      transfer.inputAddress,
+                      formattedAmount,
+                      transfer.inputMemo,
+                      (err, result) => {
+                        if (err) {
+                          res.status(500);
+                          res.json(err);
+                        } else {
+                          res.json(result);
+                        }
+                      }
+                    );
+                  })
+                  .catch(e => {
+                    res.status(400);
+                    res.json(e.response.data.error);
+                  });
+              })
+              .catch(e => {
+                res.status(400);
+                res.json(e.response.data.error);
+              });
+          } else {
+            res.status(400);
+            res.send(
+              "Bad request: For bitcoin withdrawals the amount needs to be at least 5 $."
+            );
+          }
+        } else if (currency === "ether") {
+        } else {
+          res.status(400);
+          res.send("Bad Request: No supported currency was selected.");
+        }
+      } else {
+        res.status(400);
+        res.send("Bad Request: Balance not sufficiant.");
+      }
+    })
+    .catch(e => {
+      res.status(500);
+      res.send("Error: Could not fetch balance for GitHub user " + githubUser);
+    });
+});
+
 app.post("/score", (req, res) => {
   const pullRequest = req.body.pr;
   const githubAccessToken = req.body.githubAccessToken;
