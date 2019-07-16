@@ -138,10 +138,12 @@ app.get("/database/:table", (req, res) => {
 });
 
 app.get("/rewards/:githubUser", (req, res) => {
-  const pullRequests = getDatabase("claims");
-  const rewards = pullRequests.reduce(
+  const githubUser = req.params.githubUser;
+  // sum all claimed rewards
+  const claims = getDatabase("claims");
+  const rewards = claims.reduce(
     (r, pr) => {
-      if (pr.steemUser === "merge-rewards") {
+      if (pr.githubUser === githubUser && pr.steemUser === "merge-rewards") {
         if (pr.rewards) r.rewards += parseFloat(pr.rewards);
         if (pr.pendingRewards) r.pending += parseFloat(pr.pendingRewards);
       }
@@ -149,6 +151,13 @@ app.get("/rewards/:githubUser", (req, res) => {
     },
     { rewards: 0, pending: 0 }
   );
+  // substract all withdrawn rewards
+  const withdrawals = getDatabase("withdrawals");
+  withdrawals.forEach(w => {
+    if (w.githubUser === githubUser) {
+      rewards.rewards -= w.amount;
+    }
+  });
   res.json(rewards);
 });
 
@@ -158,6 +167,7 @@ app.post("/withdraw", (req, res) => {
   const formattedAmount = amount.toFixed(3) + " SBD";
   const currency = req.body.currency;
   const address = req.body.address;
+  const withdrawals = getDatabase("withdrawals");
   axios
     .get(process.env.API_URL + "/rewards/" + githubUser)
     .then(response => {
@@ -194,6 +204,8 @@ app.post("/withdraw", (req, res) => {
                           res.status(500);
                           res.json(err);
                         } else {
+                          withdrawals.push({ amount, githubUser });
+                          updateDatabase("withdrawals", withdrawals);
                           res.json(result);
                         }
                       }
