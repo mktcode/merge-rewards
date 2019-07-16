@@ -1,7 +1,8 @@
 import Vue from "vue";
 
 export const state = () => ({
-  database: [],
+  claims: [],
+  withdrawals: [],
   balance: {
     rewards: 0,
     pending: 0
@@ -10,8 +11,11 @@ export const state = () => ({
 });
 
 export const getters = {
-  database(state) {
-    return state.database;
+  claims(state) {
+    return state.claims;
+  },
+  withdrawals(state) {
+    return state.withdrawals;
   },
   balance(state) {
     return state.balance;
@@ -22,8 +26,11 @@ export const getters = {
 };
 
 export const mutations = {
-  database(state, database) {
-    state.database = database;
+  claims(state, claims) {
+    state.claims = claims;
+  },
+  withdrawals(state, withdrawals) {
+    state.withdrawals = withdrawals;
   },
   balance(state, balance) {
     state.balance = balance;
@@ -60,11 +67,13 @@ export const actions = {
     });
   },
   loadDatabase({ commit }) {
-    return this.$axios
-      .$get(process.env.API_URL + "/database")
-      .then(database => {
-        commit("database", database);
-      });
+    return Promise.all([
+      this.$axios.$get(process.env.API_URL + "/database/claims"),
+      this.$axios.$get(process.env.API_URL + "/database/withdrawals")
+    ]).then(values => {
+      commit("claims", values[0]);
+      commit("withdrawals", values[1]);
+    });
   },
   loadBalance({ commit }, githubUser) {
     return this.$axios
@@ -113,11 +122,11 @@ export const actions = {
       )
       .then(response => {
         const pullRequests = response.data.user.pullRequests.nodes;
-        const database = getters.database;
+        const claims = getters.claims;
         pullRequests.forEach(pr => {
           // check if already claimed
           pr.claimed = false;
-          if (database.find(p => p.id === pr.id)) {
+          if (claims.find(p => p.id === pr.id)) {
             pr.claimed = true;
           }
         });
