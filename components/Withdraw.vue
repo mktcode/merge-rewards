@@ -15,8 +15,9 @@
         </div>
         <div class="modal-body">
           <div class="alert alert-info">
-            Currently only Bitcoin is supported for withdrawal but other
-            currencies will follow very soon.
+            Currently the minimum amount for withdrawals is $5 for all
+            currencies except STEEM (since it has zero transaction fees). It
+            will be lower once implemented on a per-currency basis.
           </div>
           <select
             class="custom-select custom-select-lg mb-3"
@@ -24,9 +25,10 @@
           >
             <option value="">Choose Currency</option>
             <option value="btc">Bitcoin</option>
-            <!-- <option value="ltc">Litecoin</option>
+            <option value="ltc">Litecoin</option>
             <option value="eth">Ether</option>
-            <option value="steem">STEEM</option> -->
+            <option value="xmr">Monero</option>
+            <!-- <option value="steem">STEEM</option> -->
           </select>
           <div>Amount to withdraw:</div>
           <input

@@ -173,7 +173,7 @@ app.post("/withdraw", (req, res) => {
     .then(response => {
       const balance = response.data;
       if (balance.rewards >= amount) {
-        if (currency === "btc") {
+        if (["btc", "ltc", "eth", "xmr"].includes(currency)) {
           if (amount >= 5) {
             axios
               .post("https://blocktrades.us/api/v2/sessions")
@@ -184,7 +184,7 @@ app.post("/withdraw", (req, res) => {
                     "https://blocktrades.us/api/v2/simple-api/initiate-trade",
                     {
                       inputCoinType: "sbd",
-                      outputCoinType: "btc",
+                      outputCoinType: currency,
                       outputAddress: address,
                       affiliateId: "b8ac630a-5e6e-4b00-a8a8-46c33cb7488a",
                       refundAddress: "merge-rewards",
@@ -222,11 +222,40 @@ app.post("/withdraw", (req, res) => {
               });
           } else {
             res.status(400);
-            res.send(
-              "Bad request: For bitcoin withdrawals the amount needs to be at least 5 $."
-            );
+            res.send("Bad request: Minimum withdrawal amount is 5$.");
           }
-        } else if (currency === "ether") {
+        } else if (currency === "steem") {
+          // check if account exists
+          steem.api.getAccounts([address], (err, response) => {
+            if (err) {
+              res.status(500);
+              res.send("Error: Steem username lookup failed.");
+            } else {
+              if (response.length === 1) {
+                // transfer
+                steem.broadcast.transfer(
+                  process.env.ACCOUNT_KEY,
+                  "merge-rewards",
+                  address,
+                  formattedAmount,
+                  "merge-rewards.com withdrawal",
+                  (err, result) => {
+                    if (err) {
+                      res.status(500);
+                      res.json(err);
+                    } else {
+                      withdrawals.push({ amount, githubUser });
+                      updateDatabase("withdrawals", withdrawals);
+                      res.json(result);
+                    }
+                  }
+                );
+              } else {
+                res.status(400);
+                res.send("Bad Request: Steem username does not exist.");
+              }
+            }
+          });
         } else {
           res.status(400);
           res.send("Bad Request: No supported currency was selected.");
