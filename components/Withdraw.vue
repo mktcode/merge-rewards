@@ -28,7 +28,7 @@
             <option value="ltc">Litecoin</option>
             <option value="eth">Ether</option>
             <option value="xmr">Monero</option>
-            <!-- <option value="steem">STEEM</option> -->
+            <option value="steem">STEEM</option>
           </select>
           <div>Amount to withdraw:</div>
           <input
