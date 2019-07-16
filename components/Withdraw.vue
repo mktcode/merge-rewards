@@ -14,15 +14,19 @@
           </button>
         </div>
         <div class="modal-body">
+          <div class="alert alert-info">
+            Currently only Bitcoin is supported for withdrawal but other
+            currencies will follow very soon.
+          </div>
           <select
             class="custom-select custom-select-lg mb-3"
             v-model="currency"
           >
             <option value="">Choose Currency</option>
             <option value="btc">Bitcoin</option>
-            <option value="ltc">Litecoin</option>
+            <!-- <option value="ltc">Litecoin</option>
             <option value="eth">Ether</option>
-            <option value="steem">STEEM</option>
+            <option value="steem">STEEM</option> -->
           </select>
           <div>Amount to withdraw:</div>
           <input
@@ -65,7 +69,7 @@ export default {
       loading: false,
       showSuccessMessage: false,
       showErrorMessage: false,
-      currency: "",
+      currency: "btc",
       amount: 0,
       address: ""
     };
