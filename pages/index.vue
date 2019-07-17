@@ -40,7 +40,7 @@
             much a person already contributed to other projects.
           </p>
           <a
-            href="https://help.github.com/en/articles/about-pull-requests"
+            href="https://github.com/mktcode/merge-rewards/blob/master/api/index.js#L50"
             target="_blank"
           >
             About Scores
