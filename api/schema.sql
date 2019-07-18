@@ -2,14 +2,14 @@ CREATE TABLE `bounties` (
   `id` int(11) NOT NULL,
   `issue` varchar(255) NOT NULL,
   `amount` float NOT NULL,
-  `pullrequestId` varchar(64) DEFAULT NULL,
+  `pullRequestId` varchar(64) DEFAULT NULL,
   `claimedAt` datetime DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `claims` (
   `id` int(11) NOT NULL,
-  `pullrequestID` varchar(64) NOT NULL,
+  `pullRequestId` varchar(64) NOT NULL,
   `score` float NOT NULL,
   `permlink` varchar(255) NOT NULL,
   `githubUser` varchar(50) NOT NULL,
