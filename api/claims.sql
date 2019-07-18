@@ -6,7 +6,7 @@ CREATE TABLE `claims` (
   `steemUser` varchar(50) NOT NULL,
   `pendingRewards` float DEFAULT NULL,
   `rewards` float DEFAULT NULL,
-  `createdAt` datetime NOT NULL
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `claims`

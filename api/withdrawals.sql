@@ -4,7 +4,8 @@ CREATE TABLE `withdrawals` (
   `amount` float NOT NULL,
   `currency` varchar(25) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `createdAt` datetime NOT NULL
+  `memo` varchar(255) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `withdrawals`
