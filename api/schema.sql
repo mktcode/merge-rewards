@@ -1,0 +1,49 @@
+CREATE TABLE `bounties` (
+  `id` int(11) NOT NULL,
+  `issue` varchar(255) NOT NULL,
+  `amount` float NOT NULL,
+  `pullrequestId` varchar(64) DEFAULT NULL,
+  `claimedAt` datetime DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `claims` (
+  `id` int(11) NOT NULL,
+  `pullrequestID` varchar(64) NOT NULL,
+  `score` float NOT NULL,
+  `permlink` varchar(255) NOT NULL,
+  `githubUser` varchar(50) NOT NULL,
+  `steemUser` varchar(50) NOT NULL,
+  `pendingRewards` float DEFAULT NULL,
+  `rewards` float DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `withdrawals` (
+  `id` int(11) NOT NULL,
+  `githubUser` varchar(50) NOT NULL,
+  `amount` float NOT NULL,
+  `currency` varchar(25) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `memo` varchar(255) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `bounties`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `claims`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pullrequestID` (`pullrequestID`);
+
+ALTER TABLE `withdrawals`
+  ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `bounties`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `claims`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `withdrawals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
