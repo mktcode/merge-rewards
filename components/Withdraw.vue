@@ -91,8 +91,8 @@ export default {
             currency: this.currency,
             address: this.address
           })
-          .then(response => {
-            console.log(response);
+          .then(() => {
+            this.$store.dispatch("loadBalance", this.githubUser);
             this.showSuccessMessage = true;
             setTimeout(() => {
               this.showSuccessMessage = false;

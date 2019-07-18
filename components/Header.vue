@@ -8,7 +8,7 @@
       !
     </h1>
     <div v-if="balance">
-      <h4 class="mb-0" v-if="githubUser">Wallet: ${{ balance.rewards }}</h4>
+      <h4 class="mb-0" v-if="githubUser">Wallet: ${{ balance.balance }}</h4>
       <h5 v-if="githubUser" class="mb-4 text-muted">
         Pending: ${{ balance.pending }}
       </h5>

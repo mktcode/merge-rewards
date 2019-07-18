@@ -4,7 +4,7 @@ export const state = () => ({
   claims: [],
   withdrawals: [],
   balance: {
-    rewards: 0,
+    balance: 0,
     pending: 0
   },
   pullRequests: []
@@ -39,7 +39,7 @@ export const mutations = {
     state.pullRequests = pullRequests;
   },
   claimed(state, id) {
-    const pullRequests = state.pullRequests.map(pr => {
+    state.pullRequests = state.pullRequests.map(pr => {
       if (pr.id === id) {
         pr.claimed = true;
       }
@@ -77,7 +77,7 @@ export const actions = {
   },
   loadBalance({ commit }, githubUser) {
     return this.$axios
-      .$get(process.env.API_URL + "/rewards/" + githubUser.login)
+      .$get(process.env.API_URL + "/balance/" + githubUser.login)
       .then(balance => commit("balance", balance));
   },
   loadPullRequests({ commit, getters }, { githubUser, githubAccessToken }) {
@@ -126,7 +126,7 @@ export const actions = {
         pullRequests.forEach(pr => {
           // check if already claimed
           pr.claimed = false;
-          if (claims.find(p => p.id === pr.id)) {
+          if (claims.find(c => c.pullrequestID === pr.id)) {
             pr.claimed = true;
           }
         });
