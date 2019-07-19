@@ -10,9 +10,16 @@
       </a>
     </span>
     <a
-      href="https://github.com/mktcode/merge-rewards"
+      href="https://steemit.com/@merge-rewards"
       target="_blank"
       class="text-light social-icon"
+    >
+      <img src="/steem-icon.png" alt="Steemit.com" />
+    </a>
+    <a
+      href="https://github.com/mktcode/merge-rewards"
+      target="_blank"
+      class="text-light social-icon ml-2"
     >
       <font-awesome-icon :icon="['fab', 'github']" />
     </a>
