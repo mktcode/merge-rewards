@@ -30,7 +30,7 @@ export default (req, res) => {
         );
         if (balance >= amount) {
           if (["btc", "ltc", "eth", "xmr"].includes(currency)) {
-            if (amount >= 3) {
+            if (amount >= 5) {
               axios
                 .post("https://blocktrades.us/api/v2/sessions")
                 .then(response => {
