@@ -126,7 +126,7 @@ export const actions = {
         pullRequests.forEach(pr => {
           // check if already claimed
           pr.claimed = false;
-          if (claims.find(c => c.pullrequestID === pr.id)) {
+          if (claims.find(c => c.pullRequestId === pr.id)) {
             pr.claimed = true;
           }
         });

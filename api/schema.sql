@@ -35,7 +35,7 @@ ALTER TABLE `bounties`
 
 ALTER TABLE `claims`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `pullrequestID` (`pullrequestID`);
+  ADD UNIQUE KEY `pullRequestId` (`pullRequestId`);
 
 ALTER TABLE `withdrawals`
   ADD PRIMARY KEY (`id`);
