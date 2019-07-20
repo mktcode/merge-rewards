@@ -7,6 +7,7 @@ export const state = () => ({
     balance: 0,
     pending: 0
   },
+  accountPrice: null,
   pullRequests: []
 });
 
@@ -19,6 +20,9 @@ export const getters = {
   },
   balance(state) {
     return state.balance;
+  },
+  accountPrice(state) {
+    return state.accountPrice;
   },
   pullRequests(state) {
     return state.pullRequests;
@@ -34,6 +38,9 @@ export const mutations = {
   },
   balance(state, balance) {
     state.balance = balance;
+  },
+  accountPrice(state, accountPrice) {
+    state.accountPrice = accountPrice;
   },
   pullRequests(state, pullRequests) {
     state.pullRequests = pullRequests;
@@ -59,6 +66,11 @@ export const actions = {
       const githubAccessToken = getters["github/accessToken"];
       if (githubUser && githubAccessToken) {
         dispatch("loadBalance", githubUser);
+        dispatch("loadAccountPrice");
+        setInterval(() => {
+          dispatch("loadBalance", githubUser);
+          dispatch("loadAccountPrice");
+        }, 60000);
         dispatch("loadPullRequests", {
           githubUser,
           githubAccessToken
@@ -79,6 +91,20 @@ export const actions = {
     return this.$axios
       .$get(process.env.API_URL + "/balance/" + githubUser.login)
       .then(balance => commit("balance", balance));
+  },
+  loadAccountPrice({ commit }, githubUser) {
+    return this.$axios
+      .$get("https://blocktrades.us/api/v2/estimate-input-amount", {
+        params: {
+          outputAmount: 1,
+          inputCoinType: "sbd",
+          outputCoinType: "steem_account_creation"
+        }
+      })
+      .then(response => {
+        // add 2 SBD to what blocktrades says
+        commit("accountPrice", (Number(response.inputAmount) + 2).toFixed(3));
+      });
   },
   loadPullRequests({ commit, getters }, { githubUser, githubAccessToken }) {
     return this.$axios

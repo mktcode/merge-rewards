@@ -27,6 +27,12 @@
       Withdraw
     </button>
     <Withdraw />
+    <p v-if="!steemUser && balance.balance > accountPrice" class="pt-3">
+      <a href="#" data-toggle="modal" data-target="#account-creation-modal"
+        >Create a Steem account</a
+      ><br />and double your rewards!
+    </p>
+    <CreateAccount />
   </header>
   <header class="p-5 bg-secondary text-light" v-else>
     <h1 class="d-flex align-items-center font-weight-bold">
@@ -56,7 +62,8 @@ import { mapGetters } from "vuex";
 
 export default {
   components: {
-    Withdraw: () => import("@/components/Withdraw")
+    Withdraw: () => import("@/components/Withdraw"),
+    CreateAccount: () => import("@/components/CreateAccount")
   },
   data() {
     return {
@@ -67,7 +74,10 @@ export default {
     ...mapGetters("github", {
       githubUser: "user"
     }),
-    ...mapGetters(["balance"])
+    ...mapGetters("steemconnect", {
+      steemUser: "user"
+    }),
+    ...mapGetters(["balance", "accountPrice"])
   }
 };
 </script>

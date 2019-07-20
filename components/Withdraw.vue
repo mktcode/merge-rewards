@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade" id="withdraw-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog text-dark" role="document">
+    <div class="modal-dialog text-dark text-left" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Withdraw</h5>
@@ -52,6 +52,7 @@
             @click.prevent="withdraw()"
             type="button"
             class="btn btn-success"
+            :disabled="!currency || !amount || !address"
           >
             <font-awesome-icon v-if="loading" icon="spinner" spin />
             <span v-else>Withdraw</span>
@@ -71,7 +72,7 @@ export default {
       loading: false,
       showSuccessMessage: false,
       showErrorMessage: false,
-      currency: "btc",
+      currency: "",
       amount: 0,
       address: ""
     };
