@@ -2,7 +2,7 @@ import database from "../database";
 import { decimalFloor } from "../helpers";
 
 const QUERY_BALANCE_FOR_USER =
-  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, ROUND(SUM(pendingRewards), 3) as pending FROM claims WHERE githubUser = ?";
+  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, SUM(pendingRewards) as pending FROM claims WHERE githubUser = ?";
 
 export default (req, res) => {
   const githubUser = req.params.githubUser;
