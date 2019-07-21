@@ -15,7 +15,7 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <div class="col-sm-6 mb-3">
+            <div class="col-sm-6 mb-4">
               <h5>
                 <font-awesome-icon icon="star" />
                 Strike
@@ -44,7 +44,7 @@
                 </button>
               </div>
             </div>
-            <div class="col-sm-6 mb-3">
+            <div class="col-sm-6 mb-4">
               <h5>
                 <font-awesome-icon icon="star-half-alt" />
                 Spare
@@ -73,7 +73,7 @@
                 </button>
               </div>
             </div>
-            <div class="col-sm-6 mb-3">
+            <div class="col-sm-6 mb-4">
               <h5>
                 <font-awesome-icon icon="angle-double-up" />
                 Double
