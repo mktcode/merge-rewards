@@ -175,7 +175,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("github", { githubUser: "user" }),
+    ...mapGetters("github", { githubAccessToken: "accessToken" }),
     fullPrice() {
       return (
         this.strikes * this.strikePrice +
@@ -218,7 +218,7 @@ export default {
             this.$axios
               .$post(process.env.API_URL + "/add-boosters", {
                 orderId: data.orderID,
-                githubUser: this.githubUser.login,
+                githubAccessToken: this.githubAccessToken,
                 boosters: {
                   strikes: this.strikes,
                   spares: this.spares,

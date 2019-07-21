@@ -78,7 +78,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("github", { githubUser: "user" }),
+    ...mapGetters("github", {
+      githubUser: "user",
+      githubAccessToken: "accessToken"
+    }),
     ...mapGetters(["balance"])
   },
   methods: {
@@ -87,7 +90,7 @@ export default {
         this.loading = true;
         this.$axios
           .$post(process.env.API_URL + "/withdraw", {
-            githubUser: this.githubUser.login,
+            githubAccessToken: this.githubAccessToken,
             amount: this.amount,
             currency: this.currency,
             address: this.address
