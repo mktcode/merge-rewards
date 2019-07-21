@@ -4,11 +4,28 @@ import {
   faCodeBranch,
   faSpinner,
   faCheck,
-  faHeart
+  faHeart,
+  faRocket,
+  faDice,
+  faAngleDoubleUp,
+  faStar,
+  faStarHalfAlt
 } from "@fortawesome/free-solid-svg-icons";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faCodeBranch, faGithub, faSpinner, faCheck, faHeart);
+library.add(
+  faCodeBranch,
+  faGithub,
+  faSpinner,
+  faCheck,
+  faHeart,
+  faRocket,
+  faPaypal,
+  faDice,
+  faAngleDoubleUp,
+  faStar,
+  faStarHalfAlt
+);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

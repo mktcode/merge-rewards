@@ -4,6 +4,17 @@
     <Header />
     <div v-if="githubUser" class="py-5">
       <h1 class="container mb-5">Claim Rewards</h1>
+      <div class="container mb-2 text-right">
+        <!-- <button
+          class="btn btn-sm btn-outline-success"
+          data-toggle="modal"
+          data-target="#boost-modal"
+        >
+          <font-awesome-icon icon="rocket" />
+          Boost
+        </button>
+        <Boost /> -->
+      </div>
       <PullRequest
         v-for="pr in pullRequests"
         :key="pr.id"
@@ -56,7 +67,8 @@ export default {
     Navbar: () => import("@/components/Navbar"),
     Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
-    PullRequest: () => import("@/components/PullRequest")
+    PullRequest: () => import("@/components/PullRequest"),
+    Boost: () => import("@/components/Boost")
   },
   computed: {
     ...mapGetters("github", { githubUser: "user" }),
