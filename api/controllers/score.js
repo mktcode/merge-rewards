@@ -1,6 +1,6 @@
 import { getPullRequest, calculateScore } from "../helpers";
 
-export default function(req, res) {
+export default (req, res) => {
   const pullRequest = req.body.pr;
   const githubAccessToken = req.body.githubAccessToken;
   getPullRequest(pullRequest, githubAccessToken).then(response => {
@@ -9,4 +9,4 @@ export default function(req, res) {
     const score = calculateScore(repo, user);
     res.json({ score });
   });
-}
+};

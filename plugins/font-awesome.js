@@ -9,7 +9,9 @@ import {
   faDice,
   faAngleDoubleUp,
   faStar,
-  faStarHalfAlt
+  faStarHalfAlt,
+  faMinus,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -25,7 +27,9 @@ library.add(
   faDice,
   faAngleDoubleUp,
   faStar,
-  faStarHalfAlt
+  faStarHalfAlt,
+  faMinus,
+  faPlus
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

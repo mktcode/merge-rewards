@@ -7,6 +7,7 @@ import balanceController from "./controllers/balance";
 import claimController from "./controllers/claim";
 import withdrawController from "./controllers/withdraw";
 import createAccountController from "./controllers/create-account";
+import addBoostersController from "./controllers/add-boosters";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.post("/score", scoreController);
 app.post("/claim", claimController);
 app.post("/withdraw", withdrawController);
 app.post("/create-account", createAccountController);
+app.post("/add-boosters", addBoostersController);
 
 module.exports = {
   path: "/api",

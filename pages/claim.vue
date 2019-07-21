@@ -5,7 +5,7 @@
     <div v-if="githubUser" class="py-5">
       <h1 class="container mb-5">Claim Rewards</h1>
       <div class="container mb-2 text-right">
-        <!-- <button
+        <button
           class="btn btn-sm btn-outline-success"
           data-toggle="modal"
           data-target="#boost-modal"
@@ -13,7 +13,7 @@
           <font-awesome-icon icon="rocket" />
           Boost
         </button>
-        <Boost /> -->
+        <Boost />
       </div>
       <PullRequest
         v-for="pr in pullRequests"

@@ -20,6 +20,10 @@ export default {
         hid: "description",
         name: "description",
         content: process.env.npm_package_description || ""
+      },
+      {
+        "http-equiv": "X-UA-Compatible",
+        content: "IE=edge"
       }
     ],
     link: [
@@ -45,6 +49,11 @@ export default {
       {
         src:
           "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      },
+      {
+        src:
+          "https://www.paypal.com/sdk/js?client-id=" +
+          process.env.PAYPAL_CLIENT_ID
       }
     ]
   },

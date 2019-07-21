@@ -106,25 +106,28 @@
                 disconnect
               </button>
             </div>
-            <div class="text-nowrap mb-4" v-else>
+            <div
+              class="text-nowrap mb-4 d-sm-flex d-lg-block flex-column"
+              v-else
+            >
               <a
                 :href="$steemconnect.getLoginURL()"
                 target="_blank"
-                class="btn btn-light"
+                class="btn btn-sm btn-light mb-2"
               >
                 Connect
               </a>
               <a
                 href="https://signup.steemit.com"
                 target="_blank"
-                class="btn btn-outline-light"
+                class="btn btn-sm btn-outline-light mb-2"
               >
                 Sign Up
               </a>
               <a
                 href="https://steem.com"
                 target="_blank"
-                class="btn btn-outline-light"
+                class="btn btn-sm btn-outline-light mb-2"
               >
                 About STEEM
               </a>
