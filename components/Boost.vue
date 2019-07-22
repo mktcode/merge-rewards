@@ -244,6 +244,9 @@ export default {
                   "<h4>Thank you!</h4>Your boosters have been added to your account.";
               });
           });
+        },
+        onCancel: (data, actions) => {
+          this.loading = false;
         }
       })
       .render("#paypal-button-container");
