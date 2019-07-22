@@ -7,7 +7,7 @@
       <div class="container mb-2 text-right">
         <div>
           <button
-            class="btn btn-sm btn-outline-success"
+            class="btn btn-sm btn-success"
             data-toggle="modal"
             data-target="#boost-modal"
           >
@@ -68,8 +68,25 @@
           >
             <font-awesome-icon icon="dice" fixed-width /> {{ boosters.dices }}
           </button>
+          <button
+            class="btn btn-sm btn-dark"
+            data-toggle="modal"
+            data-target="#transfer-boosters-modal"
+            :disabled="
+              claiming ||
+                !(
+                  boosters.strikes +
+                  boosters.spares +
+                  boosters.doubles +
+                  boosters.dices
+                )
+            "
+          >
+            <font-awesome-icon icon="paper-plane" fixed-width />
+          </button>
         </div>
         <Boost />
+        <TransferBoosters />
       </div>
       <PullRequest
         v-for="pr in pullRequests"
@@ -128,7 +145,8 @@ export default {
     Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
     PullRequest: () => import("@/components/PullRequest"),
-    Boost: () => import("@/components/Boost")
+    Boost: () => import("@/components/Boost"),
+    TransferBoosters: () => import("@/components/TransferBoosters")
   },
   computed: {
     ...mapGetters("github", { githubUser: "user" }),
