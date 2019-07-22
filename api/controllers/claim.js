@@ -222,5 +222,11 @@ export default (req, res) => {
           }
         }
       });
+    })
+    .catch(() => {
+      res.status(400);
+      res.send(
+        "Bad Request: Could not fetch GitHub user with provided the access token."
+      );
     });
 };
