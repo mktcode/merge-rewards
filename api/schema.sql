@@ -16,6 +16,7 @@ CREATE TABLE `claims` (
   `steemUser` varchar(50) NOT NULL,
   `pendingRewards` float DEFAULT NULL,
   `rewards` float DEFAULT NULL,
+  `booster` varchar(10) DEFAULT NULL,
   `vote` float DEFAULT NULL,
   `votedAt` datetime DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
