@@ -35,9 +35,8 @@
             community, to prevent abuse and to distribute rewards in a most fair
             way.<br />
             <br />
-            On top of that, every member of the community can affect your reward
-            by simply voting for it. The weight of these votes is based on how
-            much a person already contributed to other projects.
+            Boosters can increase your rewards. You can buy them and either use
+            them yourself or give them to any other GitHub user.
           </p>
           <a
             href="https://github.com/mktcode/merge-rewards/blob/master/api/helpers.js#L24"
@@ -47,7 +46,12 @@
           </a>
         </div>
         <div class="col-md-6 order-md-1">
-          <img src="/scores.png" alt="scores.png" class="w-100" />
+          <img
+            src="/scores.png"
+            alt="scores.png"
+            class="w-100"
+            style="max-width: 357px"
+          />
         </div>
       </div>
       <div class="row my-5">
