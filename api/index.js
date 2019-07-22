@@ -8,6 +8,7 @@ import claimController from "./controllers/claim";
 import withdrawController from "./controllers/withdraw";
 import createAccountController from "./controllers/create-account";
 import addBoostersController from "./controllers/add-boosters";
+import boostersController from "./controllers/boosters";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.post("/claim", claimController);
 app.post("/withdraw", withdrawController);
 app.post("/create-account", createAccountController);
 app.post("/add-boosters", addBoostersController);
+app.get("/boosters/:githubUser", boostersController);
 
 module.exports = {
   path: "/api",

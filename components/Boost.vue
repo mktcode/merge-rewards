@@ -3,7 +3,10 @@
     <div class="modal-dialog text-dark text-left" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Boost your Scores!</h5>
+          <h5 class="modal-title">
+            <font-awesome-icon icon="rocket" />
+            Boost your Scores!
+          </h5>
           <button
             type="button"
             class="close"
@@ -50,7 +53,7 @@
                 Spare
               </h5>
               <p class="mb-1">
-                Same as the Strike but set's a score to 75%.
+                Almost a Strike. Set the score to 75%.
               </p>
               <div class="btn-group">
                 <button disabled class="btn btn-sm btn-dark">
@@ -169,13 +172,16 @@ export default {
       spares: 0,
       sparePrice: 0.5,
       doubles: 0,
-      doublePrice: 0.25,
+      doublePrice: 0.5,
       dices: 0,
-      dicePrice: 0.25
+      dicePrice: 0.5
     };
   },
   computed: {
-    ...mapGetters("github", { githubAccessToken: "accessToken" }),
+    ...mapGetters("github", {
+      githubUser: "user",
+      githubAccessToken: "accessToken"
+    }),
     fullPrice() {
       return (
         this.strikes * this.strikePrice +
@@ -228,6 +234,7 @@ export default {
                 price: this.fullPrice.toFixed(2)
               })
               .then(() => {
+                this.$store.dispatch("loadBoosters", this.githubUser);
                 this.strikes = 0;
                 this.spares = 0;
                 this.doubles = 0;

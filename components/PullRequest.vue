@@ -34,8 +34,14 @@
             v-if="pr.merged && !pr.claimed"
             class="btn btn-sm btn-dark w-100"
             @click="claim(pr)"
+            :disabled="
+              claiming || $parent.claiming || $parent.blockClaiming > 0
+            "
           >
-            <font-awesome-icon v-if="loading" icon="spinner" spin />
+            <font-awesome-icon v-if="claiming" icon="spinner" spin />
+            <span v-else-if="$parent.blockClaiming > 0">
+              {{ $parent.blockClaiming }}s
+            </span>
             <span v-else>Claim</span>
           </button>
           <button
@@ -51,25 +57,50 @@
         </span>
         <span
           v-if="pr.merged && getAge(pr.mergedAt) <= prMaxAge"
-          class="btn btn-sm btn-outline-dark disabled ml-1"
+          class="btn btn-sm btn-outline-dark disabled ml-1 text-nowrap"
         >
-          <span v-if="score"> {{ score }} % </span>
+          <span v-if="score && pr.claimed">
+            <font-awesome-icon v-if="score.booster === 'strikes'" icon="star" />
+            <font-awesome-icon
+              v-if="score.booster === 'spares'"
+              icon="star-half-alt"
+            />
+            <font-awesome-icon
+              v-if="score.booster === 'doubles'"
+              icon="angle-double-up"
+            />
+            <font-awesome-icon v-if="score.booster === 'dices'" icon="dice" />
+            {{ score.score }}
+          </span>
+          <span v-else-if="score">
+            {{ boostedScore }}
+          </span>
           <font-awesome-icon v-else icon="spinner" spin />
+          %
         </span>
       </div>
     </div>
   </div>
 </template>
 
+<style lang="sass">
+.dropdown-toggle::after
+  display: none
+.dropdown-menu
+  .btn-link.text-success
+    &:hover, &:focus, &:active
+      text-decoration: none
+</style>
+
 <script>
 import { mapGetters } from "vuex";
 
 export default {
-  props: ["pr"],
+  props: ["pr", "booster"],
   data() {
     return {
       score: null,
-      loading: false,
+      claiming: false,
       prMaxAge: process.env.PR_MAX_AGE || 14
     };
   },
@@ -78,28 +109,67 @@ export default {
       steemconnectAccessToken: "accessToken"
     }),
     ...mapGetters("github", {
+      githubUser: "user",
       githubAccessToken: "accessToken"
-    })
+    }),
+    ...mapGetters(["boosters"]),
+    boostedScore() {
+      if (this.booster === "strikes") {
+        return 100;
+      }
+      if (this.booster === "spares") {
+        return 75;
+      }
+      if (this.booster === "doubles") {
+        return Math.min(this.score.score * 2, 100);
+      }
+      if (this.booster === "dices") {
+        return "?";
+      }
+      return this.score.score;
+    }
   },
   methods: {
     claim(pr) {
-      if (!this.blockClaiming) {
-        this.loading = true;
+      if (!this.$parent.blockClaiming) {
+        this.claiming = true;
+        this.$parent.claiming = true;
         this.$axios
           .$post(process.env.API_URL + "/claim", {
             pr,
             githubAccessToken: this.githubAccessToken,
-            steemconnectAccessToken: this.steemconnectAccessToken
+            steemconnectAccessToken: this.steemconnectAccessToken,
+            booster: this.booster
           })
           .then(() => {
-            this.blockClaiming = true;
-            setTimeout(() => {
-              this.blockClaiming = false;
-            }, 30000);
+            this.$parent.blockClaiming = 5;
             this.$store.commit("claimed", pr.id);
+            this.$store.dispatch("loadBoosters", this.githubUser).then(() => {
+              if (!this.boosters[this.booster]) {
+                this.$parent.selectedBooster = null;
+              }
+            });
+            this.getScore();
           })
           .catch(e => console.log(e.response))
-          .finally(() => (this.loading = false));
+          .finally(() => {
+            this.claiming = false;
+            this.$parent.claiming = false;
+          });
+      }
+    },
+    getScore() {
+      if (this.pr.merged) {
+        this.$axios
+          .$post(process.env.API_URL + "/score", {
+            pr: this.pr,
+            githubAccessToken: this.githubAccessToken,
+            booster: null
+          })
+          .then(response => {
+            this.score = response;
+          })
+          .catch(e => console.log(e.response.data));
       }
     },
     getAge(createdAt) {
@@ -110,17 +180,7 @@ export default {
     }
   },
   mounted() {
-    if (this.pr.merged) {
-      this.$axios
-        .$post(process.env.API_URL + "/score", {
-          pr: this.pr,
-          githubAccessToken: this.githubAccessToken
-        })
-        .then(response => {
-          this.score = response.score;
-        })
-        .catch(e => console.log(e.response.data));
-    }
+    this.getScore();
   }
 };
 </script>

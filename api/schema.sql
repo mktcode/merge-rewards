@@ -31,16 +31,23 @@ CREATE TABLE `withdrawals` (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `boosters` (
+  `githubUser` varchar(50) NOT NULL,
+  `strikes` int(11) NOT NULL DEFAULT '0',
+  `spares` int(11) NOT NULL DEFAULT '0',
+  `doubles` int(11) NOT NULL DEFAULT '0',
+  `dices` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `bounties`
   ADD PRIMARY KEY (`id`);
-
 ALTER TABLE `claims`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `pullRequestId` (`pullRequestId`);
-
 ALTER TABLE `withdrawals`
   ADD PRIMARY KEY (`id`);
+ALTER TABLE `boosters`
+  ADD PRIMARY KEY (`githubUser`);
 
 
 ALTER TABLE `bounties`

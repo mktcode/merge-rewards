@@ -21,7 +21,7 @@ const getMergedPRsLastMonth = pullRequests => {
   return mergedLastMonth;
 };
 
-const calculateScore = (repo, user) => {
+const calculateScore = (repo, user, booster) => {
   const userAge = getAge(user.createdAt);
   const userFollowers = user.followers.totalCount;
   const mergedPRsLastMonth = getMergedPRsLastMonth(user.pullRequests.nodes);
@@ -43,7 +43,22 @@ const calculateScore = (repo, user) => {
   if (repoForks > 10) points += 2;
   if (repoForks > 50) points += 4;
 
-  return Math.round((points / 30) * 100);
+  let score = Math.round((points / 30) * 100);
+
+  if (booster === "strikes") {
+    score = 100;
+  }
+  if (booster === "spares") {
+    score = 75;
+  }
+  if (booster === "doubles") {
+    score = score * 2;
+  }
+  if (booster === "dices") {
+    score = Math.random() * 100;
+  }
+
+  return Math.min(Math.round(score), 100);
 };
 
 const getPullRequest = (pullRequest, githubAccessToken) => {

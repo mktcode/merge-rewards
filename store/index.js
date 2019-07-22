@@ -7,6 +7,12 @@ export const state = () => ({
     balance: 0,
     pending: 0
   },
+  boosters: {
+    strikes: 0,
+    spares: 0,
+    doubles: 0,
+    dices: 0
+  },
   accountPrice: null,
   pullRequests: []
 });
@@ -20,6 +26,9 @@ export const getters = {
   },
   balance(state) {
     return state.balance;
+  },
+  boosters(state) {
+    return state.boosters;
   },
   accountPrice(state) {
     return state.accountPrice;
@@ -38,6 +47,9 @@ export const mutations = {
   },
   balance(state, balance) {
     state.balance = balance;
+  },
+  boosters(state, boosters) {
+    state.boosters = boosters;
   },
   accountPrice(state, accountPrice) {
     state.accountPrice = accountPrice;
@@ -66,9 +78,11 @@ export const actions = {
       const githubAccessToken = getters["github/accessToken"];
       if (githubUser && githubAccessToken) {
         dispatch("loadBalance", githubUser);
+        dispatch("loadBoosters", githubUser);
         dispatch("loadAccountPrice");
         setInterval(() => {
           dispatch("loadBalance", githubUser);
+          dispatch("loadBoosters", githubUser);
           dispatch("loadAccountPrice");
         }, 60000);
         dispatch("loadPullRequests", {
@@ -91,6 +105,11 @@ export const actions = {
     return this.$axios
       .$get(process.env.API_URL + "/balance/" + githubUser.login)
       .then(balance => commit("balance", balance));
+  },
+  loadBoosters({ commit }, githubUser) {
+    return this.$axios
+      .$get(process.env.API_URL + "/boosters/" + githubUser.login)
+      .then(boosters => commit("boosters", boosters));
   },
   loadAccountPrice({ commit }, githubUser) {
     return this.$axios
