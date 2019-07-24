@@ -61,14 +61,10 @@
             You can withdraw your rewards in Bitcoin, Ethereum and other
             Cryptocurrencies at any time. We also offer an exchange service to
             <b>Euro or Dollar</b> for withdrawals greater than 100 $/€ (for
-            free).
+            free).<br />
+            <br />
+            If you connect to your Steem account, your rewards will be doubled.
           </p>
-          <a
-            href="https://help.github.com/en/articles/about-pull-requests"
-            target="_blank"
-          >
-            About Rewards
-          </a>
         </div>
         <div class="col-md-6 text-center">
           <img src="/crypto-logos.png" alt="crypto-logos.png" class="mw-100" />
@@ -148,9 +144,19 @@
               <br />
               Merge Rewards considers your merged pull requests as "good
               content" and uses its influence to distribute STEEM tokens to you,
-              which you can then use to buy goods and services from other STEEM
-              users, exchange it for "real money", like USD or Euro or to gain
-              more influence in the voting process yourself.
+              which you can then use to
+              <a
+                href="https://steemeconomy.com/"
+                target="_blank"
+                class="text-light font-weight-bold"
+                >buy goods and services from other STEEM users</a
+              >, exchange it for "real money", like USD or Euro or to gain more
+              influence in the voting process yourself.<br />
+              <br />
+              If you claim rewards while being connected to your STEEM account,
+              you will also get the influence part of the reward, which
+              practically doubles the value of your rewards. So called STEEM
+              POWER can be converted back to liquid STEEM.
             </p>
           </div>
         </div>
