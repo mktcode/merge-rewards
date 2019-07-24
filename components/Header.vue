@@ -21,13 +21,29 @@
         ${{ steemUser.account.sbd_balance }}
       </h5>
     </div>
-    <button
-      data-toggle="modal"
-      data-target="#withdraw-modal"
-      class="btn btn-sm btn-outline-success"
-    >
-      Withdraw
-    </button>
+    <div>
+      <nuxt-link
+        class="btn btn-sm btn-light position-relative"
+        v-if="$route.path !== '/claim'"
+        to="/claim"
+      >
+        Claim
+        <small
+          class="badge badge-success position-absolute"
+          style="top: -3px; right: -3px;"
+          v-if="claimablePRs"
+        >
+          {{ claimablePRs }}
+        </small>
+      </nuxt-link>
+      <button
+        data-toggle="modal"
+        data-target="#withdraw-modal"
+        class="btn btn-sm btn-success"
+      >
+        Withdraw
+      </button>
+    </div>
     <Withdraw />
     <p v-if="!steemUser && balance.balance > accountPrice" class="pt-3">
       <a href="#" data-toggle="modal" data-target="#account-creation-modal"
@@ -80,7 +96,8 @@ export default {
   },
   data() {
     return {
-      githubClientId: process.env.GITHUB_CLIENT_ID
+      githubClientId: process.env.GITHUB_CLIENT_ID,
+      prMaxAge: process.env.PR_MAX_AGE || 14
     };
   },
   computed: {
@@ -90,7 +107,22 @@ export default {
     ...mapGetters("steemconnect", {
       steemUser: "user"
     }),
-    ...mapGetters(["balance", "accountPrice"])
+    ...mapGetters(["pullRequests", "balance", "accountPrice"]),
+    claimablePRs() {
+      return this.pullRequests.filter(pr => {
+        return (
+          !pr.claimed && pr.merged && this.getAge(pr.mergedAt) <= this.prMaxAge
+        );
+      }).length;
+    }
+  },
+  methods: {
+    getAge(createdAt) {
+      return (
+        (new Date().getTime() - new Date(createdAt).getTime()) /
+        (60 * 60 * 24 * 1000)
+      );
+    }
   }
 };
 </script>
