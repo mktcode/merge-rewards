@@ -29,7 +29,10 @@
       <div
         class="col-md-3 mt-2 mt-md-0 d-flex align-items-center justify-content-end"
       >
-        <div v-if="getAge(pr.mergedAt) <= prMaxAge" class="flex-fill">
+        <div
+          v-if="getAge(pr.mergedAt) <= prMaxAge || pr.claimed"
+          class="flex-fill"
+        >
           <button
             v-if="pr.merged && !pr.claimed"
             class="btn btn-sm btn-dark w-100"
@@ -56,7 +59,7 @@
           too old
         </span>
         <span
-          v-if="pr.merged && getAge(pr.mergedAt) <= prMaxAge"
+          v-if="(pr.merged && getAge(pr.mergedAt) <= prMaxAge) || pr.claimed"
           class="btn btn-sm btn-outline-dark disabled ml-1 text-nowrap"
         >
           <span v-if="score && pr.claimed">
