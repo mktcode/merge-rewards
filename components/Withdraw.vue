@@ -19,6 +19,19 @@
             currencies except STEEM (since it has zero transaction fees). It
             will be lower once implemented on a per-currency basis.
           </div>
+          <div>Merge Rewards to withdraw:</div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input
+              type="number"
+              min="0"
+              :max="balance.balance"
+              class="form-control"
+              v-model="amount"
+            />
+          </div>
           <select
             class="custom-select custom-select-lg mb-3"
             v-model="currency"
@@ -30,14 +43,6 @@
             <option value="xmr">Monero</option>
             <option value="steem">STEEM</option>
           </select>
-          <div>Amount to withdraw:</div>
-          <input
-            type="number"
-            min="0"
-            :max="balance.rewards"
-            class="form-control mb-3"
-            v-model="amount"
-          />
           <div>Your receive address:</div>
           <input type="text" class="form-control" v-model="address" />
           <div v-if="showSuccessMessage" class="alert alert-success mt-3">

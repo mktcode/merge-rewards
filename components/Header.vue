@@ -8,9 +8,17 @@
       !
     </h1>
     <div v-if="balance">
-      <h4 class="mb-0" v-if="githubUser">Wallet: ${{ balance.balance }}</h4>
+      <h4 class="mb-0" v-if="githubUser">
+        ${{ balance.balance }} Merge Rewards
+      </h4>
       <h5 v-if="githubUser" class="mb-4 text-muted">
         Pending: ${{ balance.pending }}
+      </h5>
+      <h5 class="mb-0 text-muted" v-if="steemUser">
+        {{ steemUser.account.balance }}
+      </h5>
+      <h5 v-if="steemUser" class="mb-4 text-muted">
+        ${{ steemUser.account.sbd_balance }}
       </h5>
     </div>
     <button
