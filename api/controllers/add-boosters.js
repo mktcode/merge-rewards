@@ -13,12 +13,19 @@ export default (req, res) => {
   const orderId = req.body.orderId;
   const boosters = req.body.boosters;
   const price = req.body.price;
-  const paypalClient = new paypal.core.PayPalHttpClient(
-    new paypal.core.SandboxEnvironment(
+
+  if (process.env.PAYPAL_SANDBOX === "no") {
+    const environment = new paypal.core.LiveEnvironment(
       process.env.PAYPAL_CLIENT_ID,
       process.env.PAYPAL_CLIENT_SECRET
-    )
-  );
+    );
+  } else {
+    const environment = new paypal.core.SandboxEnvironment(
+      process.env.PAYPAL_SANDBOX_CLIENT_ID,
+      process.env.PAYPAL_SANDBOX_CLIENT_SECRET
+    );
+  }
+  const paypalClient = new paypal.core.PayPalHttpClient(environment);
   const request = new paypal.orders.OrdersGetRequest(orderId);
 
   // check github access token
