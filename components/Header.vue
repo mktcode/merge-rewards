@@ -14,12 +14,6 @@
       </h5>
     </div>
     <button
-      @click.prevent="$store.dispatch('github/logout')"
-      class="btn btn-sm btn-outline-light"
-    >
-      logout
-    </button>
-    <button
       data-toggle="modal"
       data-target="#withdraw-modal"
       class="btn btn-sm btn-outline-success"
@@ -56,6 +50,17 @@
     </a>
   </header>
 </template>
+
+<style lang="sass">
+.btn-logout
+  .text-danger
+    display: none
+  &:hover
+    .text-danger
+      display: inline
+    .text-success
+      display: none
+</style>
 
 <script>
 import { mapGetters } from "vuex";

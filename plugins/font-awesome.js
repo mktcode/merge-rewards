@@ -12,7 +12,8 @@ import {
   faStarHalfAlt,
   faMinus,
   faPlus,
-  faPaperPlane
+  faPaperPlane,
+  faPowerOff
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -31,7 +32,8 @@ library.add(
   faStarHalfAlt,
   faMinus,
   faPlus,
-  faPaperPlane
+  faPaperPlane,
+  faPowerOff
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
