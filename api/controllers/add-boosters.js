@@ -14,13 +14,14 @@ export default (req, res) => {
   const boosters = req.body.boosters;
   const price = req.body.price;
 
+  let environment;
   if (process.env.PAYPAL_SANDBOX === "no") {
-    const environment = new paypal.core.LiveEnvironment(
+    environment = new paypal.core.LiveEnvironment(
       process.env.PAYPAL_CLIENT_ID,
       process.env.PAYPAL_CLIENT_SECRET
     );
   } else {
-    const environment = new paypal.core.SandboxEnvironment(
+    environment = new paypal.core.SandboxEnvironment(
       process.env.PAYPAL_SANDBOX_CLIENT_ID,
       process.env.PAYPAL_SANDBOX_CLIENT_SECRET
     );
