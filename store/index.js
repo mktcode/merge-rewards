@@ -200,7 +200,6 @@ export const actions = {
           pr.commits.nodes.forEach(commit => {
             searchText += "\n" + commit.commit.message;
           });
-          searchText = "fixes #70 and fixes #69 but only partially";
           const matches = [
             ...searchText.matchAll(
               /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/g
