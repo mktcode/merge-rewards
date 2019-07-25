@@ -88,6 +88,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { getAge } from "@/lib/helpers";
 
 export default {
   components: {
@@ -110,18 +111,8 @@ export default {
     ...mapGetters(["pullRequests", "balance", "accountPrice"]),
     claimablePRs() {
       return this.pullRequests.filter(pr => {
-        return (
-          !pr.claimed && pr.merged && this.getAge(pr.mergedAt) <= this.prMaxAge
-        );
+        return !pr.claimed && pr.merged && getAge(pr.mergedAt) <= this.prMaxAge;
       }).length;
-    }
-  },
-  methods: {
-    getAge(createdAt) {
-      return (
-        (new Date().getTime() - new Date(createdAt).getTime()) /
-        (60 * 60 * 24 * 1000)
-      );
     }
   }
 };

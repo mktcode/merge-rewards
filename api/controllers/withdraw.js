@@ -1,7 +1,7 @@
 import axios from "axios";
 import steem from "steem";
 import database from "../database";
-import { decimalFloor } from "../helpers";
+import { decimalFloor } from "../../lib/helpers";
 
 require("dotenv").config();
 

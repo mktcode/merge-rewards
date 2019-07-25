@@ -3,7 +3,7 @@ import crypto from "crypto";
 import steemconnect from "steemconnect";
 import steem from "steem";
 import database from "../database";
-import { getPullRequest, calculateScore, getAge } from "../helpers";
+import { getPullRequest, calculateScore, getAge } from "../../lib/helpers";
 
 require("dotenv").config();
 

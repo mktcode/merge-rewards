@@ -1,5 +1,5 @@
 import database from "../database";
-import { decimalFloor } from "../helpers";
+import { decimalFloor } from "../../lib/helpers";
 
 const QUERY_BALANCE_FOR_USER =
   "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, SUM(pendingRewards) as pending FROM claims WHERE githubUser = ?";

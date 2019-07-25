@@ -1,5 +1,5 @@
 import database from "../database";
-import { decimalFloor } from "../helpers";
+import { decimalFloor } from "../../lib/helpers";
 
 const QUERY_BOOSTERS_FOR_USER =
   "SELECT strikes, spares, doubles, dices FROM boosters WHERE githubUser = ?";

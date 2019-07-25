@@ -111,6 +111,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { getAge } from "@/lib/helpers";
 
 export default {
   props: ["pr", "booster"],
@@ -189,11 +190,8 @@ export default {
           .catch(e => console.log(e.response.data));
       }
     },
-    getAge(createdAt) {
-      return (
-        (new Date().getTime() - new Date(createdAt).getTime()) /
-        (60 * 60 * 24 * 1000)
-      );
+    getAge(date) {
+      return getAge(date);
     }
   },
   mounted() {

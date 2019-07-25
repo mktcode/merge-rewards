@@ -1,5 +1,5 @@
 import database from "../database";
-import { getPullRequest, calculateScore } from "../helpers";
+import { getPullRequest, calculateScore } from "../../lib/helpers";
 
 const QUERY_CLAIM = "SELECT score, booster FROM claims WHERE pullRequestId = ?";
 
