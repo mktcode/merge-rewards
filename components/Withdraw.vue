@@ -41,7 +41,7 @@
             <option value="ltc">Litecoin</option>
             <option value="eth">Ether</option>
             <option value="xmr">Monero</option>
-            <option value="steem">STEEM</option>
+            <option value="steem">STEEM (SBD)</option>
           </select>
           <div>Your receive address:</div>
           <input type="text" class="form-control" v-model="address" />
