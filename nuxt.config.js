@@ -53,7 +53,9 @@ export default {
       {
         src:
           "https://www.paypal.com/sdk/js?client-id=" +
-          process.env.PAYPAL_CLIENT_ID
+          (process.env.PAYPAL_SANDBOX === "no"
+            ? process.env.PAYPAL_CLIENT_ID
+            : process.env.PAYPAL_SANDBOX_CLIENT_ID)
       }
     ]
   },
