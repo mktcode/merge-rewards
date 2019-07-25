@@ -27,7 +27,7 @@ export default (req, res) => {
     })
     .then(response => {
       // add 2 SBD to what blocktrades says
-      const accountPrice = Number(response.data.inputAmount) + 2;
+      const accountPrice = Number(response.inputAmount) + 2;
 
       // check account name
       const accountNameError = steem.utils.validateAccountName(accountName);
