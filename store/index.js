@@ -57,6 +57,14 @@ export const mutations = {
   pullRequests(state, pullRequests) {
     state.pullRequests = pullRequests;
   },
+  addIssueToPR(state, { issue, pullRequest }) {
+    state.pullRequests = state.pullRequests.map(pr => {
+      if (pr.id === pullRequest.id) {
+        pr.issues.push(issue);
+      }
+      return pr;
+    });
+  },
   claimed(state, id) {
     state.pullRequests = state.pullRequests.map(pr => {
       if (pr.id === id) {
@@ -137,11 +145,23 @@ export const actions = {
     nodes {
       id
       createdAt
+      changedFiles
+      additions
+      deletions
+      body
       repository {
         name
         nameWithOwner
         owner {
           login
+        }
+      }
+      commits(first:100) {
+        totalCount
+        nodes {
+          commit {
+            message
+          }
         }
       }
       number
@@ -174,8 +194,54 @@ export const actions = {
           if (claims.find(c => c.pullRequestId === pr.id)) {
             pr.claimed = true;
           }
+          // check if pr closes issues
+          pr.issues = [];
+          let searchText = pr.body;
+          pr.commits.nodes.forEach(commit => {
+            searchText += "\n" + commit.commit.message;
+          });
+          searchText = "fixes #70 and fixes #69 but only partially";
+          const matches = [
+            ...searchText.matchAll(
+              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/g
+            )
+          ];
+          const issueNumbers = matches.reduce((numbers, match) => {
+            numbers.push(match[2]);
+            return numbers;
+          }, []);
+          issueNumbers.forEach(num => {
+            this.$axios
+              .$post(
+                "https://api.github.com/graphql",
+                {
+                  query: `query {
+                    repository(owner: "${pr.repository.owner.login}", name: "${
+                    pr.repository.name
+                  }") {
+                      issue(number: ${num}) {
+                        closed
+                        url
+                      }
+                    }
+                  }`
+                },
+                {
+                  headers: {
+                    Authorization: "bearer " + githubAccessToken
+                  }
+                }
+              )
+              .then(response => {
+                const issue = response.data.repository.issue;
+                if (issue) {
+                  commit("addIssueToPR", { issue, pullRequest: pr });
+                }
+              });
+          });
         });
         commit("pullRequests", pullRequests);
-      });
+      })
+      .catch(e => console.log(e));
   }
 };

@@ -29,6 +29,20 @@
       <div
         class="col-md-3 mt-2 mt-md-0 d-flex align-items-center justify-content-end"
       >
+        <div class="btn-group mr-1">
+          <a
+            v-if="(pr.merged && getAge(pr.mergedAt) <= prMaxAge) || pr.claimed"
+            v-for="issue in pr.issues"
+            :href="issue.url"
+            class="btn btn-sm btn-link"
+            target="_blank"
+          >
+            <font-awesome-icon
+              icon="exclamation-circle"
+              :class="issue.closed ? 'text-danger' : 'text-success'"
+            />
+          </a>
+        </div>
         <div
           v-if="getAge(pr.mergedAt) <= prMaxAge || pr.claimed"
           class="flex-fill"

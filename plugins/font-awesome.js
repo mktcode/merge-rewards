@@ -13,7 +13,8 @@ import {
   faMinus,
   faPlus,
   faPaperPlane,
-  faPowerOff
+  faPowerOff,
+  faExclamationCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -33,7 +34,8 @@ library.add(
   faMinus,
   faPlus,
   faPaperPlane,
-  faPowerOff
+  faPowerOff,
+  faExclamationCircle
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
