@@ -11,6 +11,8 @@ import addBoostersController from "./controllers/add-boosters";
 import boostersController from "./controllers/boosters";
 import transferBoostersController from "./controllers/transfer-boosters";
 
+import auth from "./auth";
+
 const app = express();
 
 app.use(express.json());
@@ -19,12 +21,12 @@ app.post("/github-access-token", githubAccessTokenController);
 app.get("/database/:table", databaseController);
 app.get("/balance/:githubUser", balanceController);
 app.post("/score", scoreController);
-app.post("/claim", claimController);
-app.post("/withdraw", withdrawController);
-app.post("/create-account", createAccountController);
-app.post("/add-boosters", addBoostersController);
+app.post("/claim", auth, claimController);
+app.post("/withdraw", auth, withdrawController);
+app.post("/create-account", auth, createAccountController);
+app.post("/add-boosters", auth, addBoostersController);
 app.get("/boosters/:githubUser", boostersController);
-app.post("/transfer-boosters", transferBoostersController);
+app.post("/transfer-boosters", auth, transferBoostersController);
 
 module.exports = {
   path: "/api",
