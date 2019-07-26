@@ -10,6 +10,8 @@ import createAccountController from "./controllers/create-account";
 import addBoostersController from "./controllers/add-boosters";
 import boostersController from "./controllers/boosters";
 import transferBoostersController from "./controllers/transfer-boosters";
+import addBountyController from "./controllers/add-bounty";
+import bountiesController from "./controllers/bounties";
 
 import auth from "./auth";
 
@@ -27,6 +29,8 @@ app.post("/create-account", auth, createAccountController);
 app.post("/add-boosters", auth, addBoostersController);
 app.get("/boosters/:githubUser", boostersController);
 app.post("/transfer-boosters", auth, transferBoostersController);
+app.post("/add-bounty", auth, addBountyController);
+app.get("/bounties", bountiesController);
 
 module.exports = {
   path: "/api",

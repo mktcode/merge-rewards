@@ -35,8 +35,9 @@
             community, to prevent abuse and to distribute rewards in a most fair
             way.<br />
             <br />
-            Boosters can increase your rewards. You can buy them and either use
-            them yourself or give them to any other GitHub user.
+            Boosters are consumable items that can increase your rewards. You
+            can earn them during events and send or buy them for others as a
+            gift.
           </p>
           <a
             href="https://github.com/mktcode/merge-rewards/blob/master/api/helpers.js#L24"

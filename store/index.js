@@ -3,6 +3,7 @@ import Vue from "vue";
 export const state = () => ({
   claims: [],
   withdrawals: [],
+  bounties: [],
   balance: {
     balance: 0,
     pending: 0
@@ -24,6 +25,12 @@ export const getters = {
   withdrawals(state) {
     return state.withdrawals;
   },
+  bounties(state) {
+    return state.bounties;
+  },
+  userBounties(state) {
+    return state.bounties.filter(b => b.githubUser === state.githubUser.login);
+  },
   balance(state) {
     return state.balance;
   },
@@ -44,6 +51,9 @@ export const mutations = {
   },
   withdrawals(state, withdrawals) {
     state.withdrawals = withdrawals;
+  },
+  bounties(state, bounties) {
+    state.bounties = bounties;
   },
   balance(state, balance) {
     state.balance = balance;
@@ -85,6 +95,7 @@ export const actions = {
       const githubUser = getters["github/user"];
       const githubAccessToken = getters["github/accessToken"];
       if (githubUser && githubAccessToken) {
+        dispatch("loadBounties");
         dispatch("loadBalance", githubUser);
         dispatch("loadBoosters", githubUser);
         dispatch("loadAccountPrice");
@@ -131,6 +142,13 @@ export const actions = {
       .then(response => {
         // add 2 SBD to what blocktrades says
         commit("accountPrice", (Number(response.inputAmount) + 2).toFixed(3));
+      });
+  },
+  loadBounties({ commit }) {
+    return this.$axios
+      .$get(process.env.API_URL + "/bounties")
+      .then(response => {
+        commit("bounties", response);
       });
   },
   loadPullRequests({ commit, getters }, { githubUser, githubAccessToken }) {

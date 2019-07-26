@@ -14,14 +14,21 @@ import {
   faPlus,
   faPaperPlane,
   faPowerOff,
-  faExclamationCircle
+  faExclamationCircle,
+  faExternalLinkAlt,
+  faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
-import { faGithub, faPaypal } from "@fortawesome/free-brands-svg-icons";
+import {
+  faGithub,
+  faPaypal,
+  faBitcoin
+} from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faCodeBranch,
   faGithub,
+  faBitcoin,
   faSpinner,
   faCheck,
   faHeart,
@@ -35,7 +42,9 @@ library.add(
   faPlus,
   faPaperPlane,
   faPowerOff,
-  faExclamationCircle
+  faExclamationCircle,
+  faExternalLinkAlt,
+  faSignOutAlt
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

@@ -22,6 +22,7 @@
     "nuxt": "^2.0.0",
     "steem": "^0.7.5",
     "steemconnect": "^3.0.1",
+    "uuid": "^3.3.2",
     "vue-steemconnect": "^0.4.1"
   },
   "devDependencies": {

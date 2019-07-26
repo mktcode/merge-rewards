@@ -20,6 +20,9 @@
         <li class="nav-item">
           <nuxt-link class="nav-link" to="/claim">Claim</nuxt-link>
         </li>
+        <li class="nav-item">
+          <nuxt-link class="nav-link" to="/bounties">Bounties</nuxt-link>
+        </li>
         <!-- <li class="nav-item">
           <nuxt-link class="nav-link" to="/pull-requests"
             >Pull Requests</nuxt-link
