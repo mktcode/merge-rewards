@@ -3,7 +3,7 @@ import uuid from "uuid";
 import database from "../database";
 
 const INSERT_BOUNTY =
-  "INSERT INTO bounties (githubUser, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO bounties (githubUser, sessionToken, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const QUERY_BOUNTY =
   "SELECT id FROM bounties WHERE githubUser = ? AND issueOwner = ? AND issueRepo = ? AND issueNum = ?";
 
@@ -93,6 +93,7 @@ export default (req, res) => {
                           INSERT_BOUNTY,
                           [
                             githubUser,
+                            session.token,
                             values[0].address,
                             values[1].address,
                             values[2].address,
