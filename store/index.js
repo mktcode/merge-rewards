@@ -29,7 +29,9 @@ export const getters = {
     return state.bounties;
   },
   userBounties(state) {
-    return state.bounties.filter(b => b.githubUser === state.githubUser.login);
+    return state.githubUser
+      ? state.bounties.filter(b => b.githubUser === state.githubUser.login)
+      : [];
   },
   balance(state) {
     return state.balance;
@@ -89,13 +91,13 @@ export const actions = {
   load({ dispatch, getters }) {
     return Promise.all([
       dispatch("loadDatabase"),
+      dispatch("loadBounties"),
       dispatch("steemconnect/login"),
       dispatch("github/login")
     ]).then(() => {
       const githubUser = getters["github/user"];
       const githubAccessToken = getters["github/accessToken"];
       if (githubUser && githubAccessToken) {
-        dispatch("loadBounties");
         dispatch("loadBalance", githubUser);
         dispatch("loadBoosters", githubUser);
         dispatch("loadAccountPrice");

@@ -50,7 +50,7 @@
             :disabled="!issue"
           >
             <font-awesome-icon v-if="loading" icon="spinner" spin />
-            <span v-else>Create Issue Wallets</span>
+            <span v-else>Create Issue Wallet</span>
           </button>
         </div>
       </div>

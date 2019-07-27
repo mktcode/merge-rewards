@@ -16,7 +16,8 @@ import {
   faPowerOff,
   faExclamationCircle,
   faExternalLinkAlt,
-  faSignOutAlt
+  faSignOutAlt,
+  faUserCheck
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGithub,
@@ -44,7 +45,8 @@ library.add(
   faPowerOff,
   faExclamationCircle,
   faExternalLinkAlt,
-  faSignOutAlt
+  faSignOutAlt,
+  faUserCheck
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
