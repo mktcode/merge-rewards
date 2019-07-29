@@ -1,9 +1,41 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+CREATE TABLE `boosters` (
+  `githubUser` varchar(50) NOT NULL,
+  `strikes` int(11) NOT NULL DEFAULT '0',
+  `spares` int(11) NOT NULL DEFAULT '0',
+  `doubles` int(11) NOT NULL DEFAULT '0',
+  `dices` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `bounties` (
   `id` int(11) NOT NULL,
-  `issue` varchar(255) NOT NULL,
-  `amount` float NOT NULL,
+  `githubUser` varchar(50) DEFAULT NULL,
+  `sessionToken` varchar(255) NOT NULL,
+  `btcAddress` varchar(50) NOT NULL,
+  `ltcAddress` varchar(50) NOT NULL,
+  `ethAddress` varchar(50) NOT NULL,
+  `xmrAddress` varchar(255) NOT NULL,
+  `steemAddress` varchar(50) NOT NULL,
+  `sbdAddress` varchar(50) NOT NULL,
+  `issueTitle` varchar(255) NOT NULL,
+  `issueOwner` varchar(50) NOT NULL,
+  `issueRepo` varchar(100) NOT NULL,
+  `issueNum` int(11) NOT NULL,
   `pullRequestId` varchar(64) DEFAULT NULL,
-  `claimedAt` datetime DEFAULT NULL,
+  `releasedAt` datetime DEFAULT NULL,
+  `releasedTo` varchar(50) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `bountyDeposits` (
+  `id` int(11) NOT NULL,
+  `receivingAddress` varchar(255) NOT NULL,
+  `sbdAmount` float NOT NULL,
+  `currency` varchar(50) NOT NULL,
+  `bountyId` int(11) NOT NULL,
+  `txId` varchar(255) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -32,28 +64,31 @@ CREATE TABLE `withdrawals` (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `boosters` (
-  `githubUser` varchar(50) NOT NULL,
-  `strikes` int(11) NOT NULL DEFAULT '0',
-  `spares` int(11) NOT NULL DEFAULT '0',
-  `doubles` int(11) NOT NULL DEFAULT '0',
-  `dices` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-ALTER TABLE `bounties`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `claims`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `pullRequestId` (`pullRequestId`);
-ALTER TABLE `withdrawals`
-  ADD PRIMARY KEY (`id`);
 ALTER TABLE `boosters`
   ADD PRIMARY KEY (`githubUser`);
 
+ALTER TABLE `bounties`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `bountyDeposits`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `txId` (`txId`);
+
+ALTER TABLE `claims`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pullrequestID` (`pullRequestId`);
+
+ALTER TABLE `withdrawals`
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `bounties`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `bountyDeposits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `claims`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `withdrawals`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
