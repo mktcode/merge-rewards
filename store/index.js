@@ -29,8 +29,8 @@ export const getters = {
     return state.bounties;
   },
   userBounties(state) {
-    return state.githubUser
-      ? state.bounties.filter(b => b.githubUser === state.githubUser.login)
+    return state.github.user
+      ? state.bounties.filter(b => b.githubUser === state.github.user.login)
       : [];
   },
   balance(state) {
