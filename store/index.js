@@ -170,6 +170,7 @@ export const actions = {
       deletions
       body
       repository {
+        viewerCanAdminister
         name
         nameWithOwner
         owner {
@@ -206,7 +207,9 @@ export const actions = {
         }
       )
       .then(response => {
-        const pullRequests = response.data.user.pullRequests.nodes;
+        const pullRequests = response.data.user.pullRequests.nodes.filter(
+          pr => !pr.repository.viewerCanAdminister
+        );
         const claims = getters.claims;
         pullRequests.forEach(pr => {
           // check if already claimed
