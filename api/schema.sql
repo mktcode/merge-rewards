@@ -23,9 +23,10 @@ CREATE TABLE `bounties` (
   `issueOwner` varchar(50) NOT NULL,
   `issueRepo` varchar(100) NOT NULL,
   `issueNum` int(11) NOT NULL,
-  `pullRequestId` varchar(64) DEFAULT NULL,
+  `claimId` int(11) DEFAULT NULL,
+  `autoRelease` tinyint(1) NOT NULL,
   `releasedAt` datetime DEFAULT NULL,
-  `releasedTo` varchar(50) NOT NULL,
+  `releasedTo` varchar(50) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
