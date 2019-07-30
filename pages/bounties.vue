@@ -38,7 +38,12 @@
           class="py-2 border-top"
         />
       </div>
-      <p v-else class="lead">No bounties available.</p>
+      <p v-else class="lead">
+        No bounties available.
+        <span class="d-block" v-if="!githubUser"
+          >Connect to your GitHub account to create one.</span
+        >
+      </p>
     </div>
     <Footer />
   </div>
