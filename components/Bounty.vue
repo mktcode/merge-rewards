@@ -3,7 +3,7 @@
     <div class="col-md-7 pl-0 d-flex align-items-center">
       <font-awesome-icon
         icon="exclamation-circle"
-        class="text-success"
+        :class="bounty.releasedAt ? 'text-danger' : 'text-success'"
         fixed-width
       />
       <div class="text-truncate d-flex flex-column px-3">
@@ -17,7 +17,13 @@
     </div>
     <div class="col-md-5 pr-0 text-right">
       <h3>${{ bounty.balance.toFixed(2) }}</h3>
-      <div class="btn-group addresses">
+      <small v-if="bounty.releasedAt && bounty.releasedTo">
+        closed by:
+        <a :href="'https://github.com/' + bounty.releasedTo" target="_blank">
+          {{ bounty.releasedTo }}
+        </a>
+      </small>
+      <div class="btn-group addresses" v-else>
         <button
           class="btn btn-sm btn-dark"
           data-toggle="popover"
@@ -136,11 +142,14 @@
             />
           </svg>
         </button>
-        <button class="btn btn-sm btn-success">
+        <button
+          v-if="githubUser && bounty.githubUser === githubUser.login"
+          class="btn btn-sm btn-success"
+          data-toggle="modal"
+          data-target="#release-bounty-modal"
+          @click="$parent.focusedBounty = bounty"
+        >
           <font-awesome-icon icon="user-check" />
-        </button>
-        <button class="btn btn-sm btn-primary">
-          <font-awesome-icon icon="sign-out-alt" />
         </button>
       </div>
     </div>
@@ -168,6 +177,7 @@ import { mapGetters } from "vuex";
 export default {
   props: ["bounty"],
   computed: {
+    ...mapGetters("github", { githubUser: "user" }),
     issueUrl() {
       return (
         "https://github.com/" +

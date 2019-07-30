@@ -15,6 +15,7 @@
         </button>
       </h1>
       <AddBounty />
+      <ReleaseBounty :bounty="focusedBounty" />
       <div v-if="userBounties.length" class="container">
         <Bounty
           v-for="b in userBounties"
@@ -29,7 +30,6 @@
       <h1 class="mb-3">
         Bounties
       </h1>
-      <AddBounty />
       <div v-if="bounties.length" class="container">
         <Bounty
           v-for="b in bounties"
@@ -52,8 +52,14 @@ export default {
     Navbar: () => import("@/components/Navbar"),
     Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
+    ReleaseBounty: () => import("@/components/ReleaseBounty"),
     AddBounty: () => import("@/components/AddBounty"),
     Bounty: () => import("@/components/Bounty")
+  },
+  data() {
+    return {
+      focusedBounty: null
+    };
   },
   computed: {
     ...mapGetters("steemconnect", { steemUser: "user" }),

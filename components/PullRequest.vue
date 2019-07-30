@@ -162,6 +162,7 @@ export default {
           .then(() => {
             this.$parent.blockClaiming = 5;
             this.$store.commit("claimed", pr.id);
+            this.$store.dispatch("loadBalance", this.githubUser);
             this.$store.dispatch("loadBoosters", this.githubUser).then(() => {
               if (!this.boosters[this.booster]) {
                 this.$parent.selectedBooster = null;

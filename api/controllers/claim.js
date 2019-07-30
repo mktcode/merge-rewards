@@ -3,7 +3,12 @@ import crypto from "crypto";
 import steemconnect from "steemconnect";
 import steem from "steem";
 import database from "../database";
-import { getPullRequest, calculateScore, getAge } from "../../lib/helpers";
+import {
+  getPullRequest,
+  getIssuesByPR,
+  calculateScore,
+  getAge
+} from "../../lib/helpers";
 
 require("dotenv").config();
 
@@ -21,6 +26,8 @@ const INSERT_CLAIM =
 const DELETE_CLAIM = "DELETE FROM claims WHERE pullRequestId = ?";
 const UPDATE_BOOSTER = "UPDATE boosters SET ?? = ?? - 1 WHERE githubUser = ?";
 const QUERY_BOOSTER = "SELECT ?? FROM boosters WHERE githubUser = ?";
+const RELEASE_BOUNTY =
+  "UPDATE bounties SET releasedTo = ?, releasedAt = ?, claimId = ? WHERE autoRelease = 1 AND issueRepo = ? AND issueOwner = ? AND issueNum = ?";
 
 export default (req, res) => {
   const githubUser = res.locals.authenticatedGithubUser.login;
@@ -59,50 +66,115 @@ export default (req, res) => {
                 ) {
                   if (repo.pullRequest.merged) {
                     if (!repo.viewerCanAdminister) {
-                      const score = calculateScore(repo, viewer, booster);
-                      const permlink =
-                        crypto
-                          .createHash("md5")
-                          .update(repo.pullRequest.permalink)
-                          .digest("hex") + new Date().getTime();
-                      const title = "PR: " + repo.pullRequest.permalink;
-                      const body =
-                        "PR: " +
-                        `${repo.pullRequest.permalink} (Score: ${score})`;
-                      const jsonMetadata = { app: "merge-rewards.com" };
-                      const claimData = [
-                        repo.pullRequest.id,
-                        score,
-                        permlink,
-                        githubUser,
-                        "merge-rewards",
-                        null,
-                        null,
-                        booster
-                      ];
-                      if (steemconnectAccessToken) {
-                        steemconnectClient.setAccessToken(
-                          steemconnectAccessToken
-                        );
-                        steemconnectClient.me((error, steemUser) => {
-                          if (error) {
-                            res.status(500);
-                            res.send(
-                              `Error: Unable to connect to steem: ${
-                                error.error_description
-                              }`
-                            );
-                          } else {
-                            claimData[4] = steemUser.account.name;
-                            database.query(INSERT_CLAIM, claimData, error => {
+                      getIssuesByPR(repo, githubAccessToken).then(issues => {
+                        issues = issues.filter(i => i); // remove null
+                        const score = calculateScore(repo, viewer, booster);
+                        const permlink =
+                          crypto
+                            .createHash("md5")
+                            .update(repo.pullRequest.permalink)
+                            .digest("hex") + new Date().getTime();
+                        const title = "PR: " + repo.pullRequest.permalink;
+                        const body =
+                          "PR: " +
+                          `${repo.pullRequest.permalink} (Score: ${score})`;
+                        const jsonMetadata = { app: "merge-rewards.com" };
+                        const claimData = [
+                          repo.pullRequest.id,
+                          score,
+                          permlink,
+                          githubUser,
+                          "merge-rewards",
+                          null,
+                          null,
+                          booster
+                        ];
+                        if (steemconnectAccessToken) {
+                          steemconnectClient.setAccessToken(
+                            steemconnectAccessToken
+                          );
+                          steemconnectClient.me((error, steemUser) => {
+                            if (error) {
+                              res.status(500);
+                              res.send(
+                                `Error: Unable to connect to steem: ${
+                                  error.error_description
+                                }`
+                              );
+                            } else {
+                              claimData[4] = steemUser.account.name;
+                              database.query(
+                                INSERT_CLAIM,
+                                claimData,
+                                (error, result) => {
+                                  if (error) {
+                                    res.status(500);
+                                    res.send(
+                                      "Error: Writing to database failed."
+                                    );
+                                  } else {
+                                    steemconnectClient.comment(
+                                      "merge-rewards",
+                                      "merge-rewards-beta-root-post",
+                                      steemUser.user,
+                                      permlink,
+                                      title,
+                                      body,
+                                      jsonMetadata,
+                                      error => {
+                                        if (error) {
+                                          database.query(DELETE_CLAIM, [
+                                            repo.pullRequest.id
+                                          ]);
+                                          res.status(500);
+                                          res.send(
+                                            "Error: Posting to STEEM blockchain failed."
+                                          );
+                                        } else {
+                                          if (booster) {
+                                            // remove booster from user balance
+                                            database.query(UPDATE_BOOSTER, [
+                                              booster,
+                                              booster,
+                                              githubUser
+                                            ]);
+                                          }
+                                          if (issues) {
+                                            issues.forEach(issue => {
+                                              database.query(RELEASE_BOUNTY, [
+                                                githubUser,
+                                                new Date(),
+                                                result.insertId,
+                                                repo.name,
+                                                repo.owner.login,
+                                                issue.number
+                                              ]);
+                                            });
+                                          }
+                                          res.status(201);
+                                          res.send();
+                                        }
+                                      }
+                                    );
+                                  }
+                                }
+                              );
+                            }
+                          });
+                        } else {
+                          database.query(
+                            INSERT_CLAIM,
+                            claimData,
+                            (error, result) => {
                               if (error) {
                                 res.status(500);
                                 res.send("Error: Writing to database failed.");
                               } else {
-                                steemconnectClient.comment(
+                                steem.broadcast.comment(
+                                  process.env.ACCOUNT_KEY,
                                   "merge-rewards",
                                   "merge-rewards-beta-root-post",
-                                  steemUser.user,
+                                  "merge-rewards",
                                   permlink,
                                   title,
                                   body,
@@ -124,55 +196,28 @@ export default (req, res) => {
                                           githubUser
                                         ]);
                                       }
+                                      if (issues) {
+                                        issues.forEach(issue => {
+                                          database.query(RELEASE_BOUNTY, [
+                                            githubUser,
+                                            new Date(),
+                                            result.insertId,
+                                            repo.name,
+                                            repo.owner.login,
+                                            issue.number
+                                          ]);
+                                        });
+                                      }
                                       res.status(201);
                                       res.send();
                                     }
                                   }
                                 );
                               }
-                            });
-                          }
-                        });
-                      } else {
-                        database.query(INSERT_CLAIM, claimData, error => {
-                          if (error) {
-                            res.status(500);
-                            res.send("Error: Writing to database failed.");
-                          } else {
-                            steem.broadcast.comment(
-                              process.env.ACCOUNT_KEY,
-                              "merge-rewards",
-                              "merge-rewards-beta-root-post",
-                              "merge-rewards",
-                              permlink,
-                              title,
-                              body,
-                              jsonMetadata,
-                              error => {
-                                if (error) {
-                                  database.query(DELETE_CLAIM, [
-                                    repo.pullRequest.id
-                                  ]);
-                                  res.status(500);
-                                  res.send(
-                                    "Error: Posting to STEEM blockchain failed."
-                                  );
-                                } else {
-                                  if (booster) {
-                                    database.query(UPDATE_BOOSTER, [
-                                      booster,
-                                      booster,
-                                      githubUser
-                                    ]);
-                                  }
-                                  res.status(201);
-                                  res.send();
-                                }
-                              }
-                            );
-                          }
-                        });
-                      }
+                            }
+                          );
+                        }
+                      });
                     } else {
                       res.status(400);
                       res.send(

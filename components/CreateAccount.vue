@@ -106,14 +106,6 @@
   </div>
 </template>
 
-<style lang="sass" scoped>
-.input-icon
-  position: absolute
-  right: 10px
-  top: 10px
-  color: #ccc
-</style>
-
 <script>
 import { mapGetters } from "vuex";
 import steem from "steem";

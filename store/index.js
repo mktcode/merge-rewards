@@ -225,10 +225,11 @@ export const actions = {
               /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/g
             )
           ];
-          const issueNumbers = matches.reduce((numbers, match) => {
+          let issueNumbers = matches.reduce((numbers, match) => {
             numbers.push(match[2]);
             return numbers;
           }, []);
+          issueNumbers = [...new Set(issueNumbers)];
           issueNumbers.forEach(num => {
             this.$axios
               .$post(
