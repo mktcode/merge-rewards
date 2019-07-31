@@ -24,7 +24,7 @@ CREATE TABLE `bounties` (
   `issueRepo` varchar(100) NOT NULL,
   `issueNum` int(11) NOT NULL,
   `claimId` int(11) DEFAULT NULL,
-  `autoRelease` tinyint(1) NOT NULL,
+  `autoRelease` tinyint(1) NOT NULL DEFAULT '0',
   `releasedAt` datetime DEFAULT NULL,
   `releasedTo` varchar(50) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
