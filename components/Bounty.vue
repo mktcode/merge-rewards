@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="col-md-5 pr-0 text-right">
-      <h3>${{ bounty.balance.toFixed(2) }}</h3>
+      <h3>${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}</h3>
       <small v-if="bounty.releasedAt && bounty.releasedTo">
         closed by:
         <a :href="'https://github.com/' + bounty.releasedTo" target="_blank">
