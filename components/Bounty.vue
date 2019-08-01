@@ -151,6 +151,15 @@
         >
           <font-awesome-icon icon="user-check" />
         </button>
+        <button
+          v-if="githubUser && bounty.githubUser === githubUser.login"
+          class="btn btn-sm btn-danger"
+          data-toggle="modal"
+          data-target="#delete-bounty-modal"
+          @click="$parent.focusedBounty = bounty"
+        >
+          <font-awesome-icon icon="times" />
+        </button>
       </div>
     </div>
   </div>

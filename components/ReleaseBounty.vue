@@ -20,7 +20,9 @@
           </button>
         </div>
         <div class="modal-body" v-if="bounty">
-          <h1 class="text-center">${{ bounty.balance.toFixed(2) }}</h1>
+          <h1 class="text-center">
+            ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
+          </h1>
           <div class="custom-control custom-checkbox">
             <input
               type="checkbox"

@@ -13,6 +13,7 @@ import transferBoostersController from "./controllers/transfer-boosters";
 import addBountyController from "./controllers/add-bounty";
 import toggleAutoReleaseController from "./controllers/toggle-autorelease";
 import releaseBountyController from "./controllers/release-bounty";
+import deleteBountyController from "./controllers/delete-bounty";
 import bountiesController from "./controllers/bounties";
 
 import auth from "./auth";
@@ -34,6 +35,7 @@ app.post("/transfer-boosters", auth, transferBoostersController);
 app.post("/add-bounty", auth, addBountyController);
 app.post("/toggle-autorelease", auth, toggleAutoReleaseController);
 app.post("/release-bounty", auth, releaseBountyController);
+app.post("/delete-bounty", auth, deleteBountyController);
 app.get("/bounties", bountiesController);
 
 module.exports = {

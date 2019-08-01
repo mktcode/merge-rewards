@@ -27,7 +27,8 @@ CREATE TABLE `bounties` (
   `autoRelease` tinyint(1) NOT NULL DEFAULT '0',
   `releasedAt` datetime DEFAULT NULL,
   `releasedTo` varchar(50) DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deletedAt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `bountyDeposits` (
