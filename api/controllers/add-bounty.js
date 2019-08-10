@@ -3,7 +3,7 @@ import uuid from "uuid";
 import database from "../database";
 
 const INSERT_BOUNTY =
-  "INSERT INTO bounties (githubUser, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO bounties (githubUser, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueId, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const QUERY_BOUNTY =
   "SELECT id FROM bounties WHERE githubUser = ? AND issueOwner = ? AND issueRepo = ? AND issueNum = ?";
 
@@ -41,6 +41,7 @@ export default (req, res) => {
           repository(owner: "${issue.owner}", name: "${issue.repo}") {
             name
             issue(number: ${issue.number}) {
+              id
               closed
               title
             }
@@ -59,6 +60,7 @@ export default (req, res) => {
         res.send("Bad Request: Issue is closed.");
       } else {
         const issueTitle = response.data.data.repository.issue.title;
+        const issueId = response.data.data.repository.issue.id;
         database.query(
           QUERY_BOUNTY,
           [githubUser, issue.owner, issue.repo, issue.number],
@@ -100,6 +102,7 @@ export default (req, res) => {
                             values[4].address,
                             values[5].address,
                             issueTitle,
+                            issueId,
                             issue.owner,
                             issue.repo,
                             issue.number

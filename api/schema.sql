@@ -18,6 +18,7 @@ CREATE TABLE `bounties` (
   `xmrAddress` varchar(255) NOT NULL,
   `steemAddress` varchar(50) NOT NULL,
   `sbdAddress` varchar(50) NOT NULL,
+  `issueId` varchar(64) NOT NULL,
   `issueTitle` varchar(255) NOT NULL,
   `issueOwner` varchar(50) NOT NULL,
   `issueRepo` varchar(100) NOT NULL,
