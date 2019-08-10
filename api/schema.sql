@@ -12,7 +12,6 @@ CREATE TABLE `boosters` (
 CREATE TABLE `bounties` (
   `id` int(11) NOT NULL,
   `githubUser` varchar(50) DEFAULT NULL,
-  `sessionToken` varchar(255) NOT NULL,
   `btcAddress` varchar(50) NOT NULL,
   `ltcAddress` varchar(50) NOT NULL,
   `ethAddress` varchar(50) NOT NULL,
