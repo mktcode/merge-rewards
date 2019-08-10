@@ -84,7 +84,7 @@ export default (req, res) => {
                           score,
                           permlink,
                           githubUser,
-                          "merge-rewards",
+                          process.env.ACCOUNT_NAME,
                           null,
                           null,
                           booster
@@ -114,8 +114,8 @@ export default (req, res) => {
                                     );
                                   } else {
                                     steemconnectClient.comment(
-                                      "merge-rewards",
-                                      "merge-rewards-beta-root-post",
+                                      process.env.ACCOUNT_NAME,
+                                      process.env.ROOT_POST_PERMLINK,
                                       steemUser.user,
                                       permlink,
                                       title,
@@ -172,9 +172,9 @@ export default (req, res) => {
                               } else {
                                 steem.broadcast.comment(
                                   process.env.ACCOUNT_KEY,
-                                  "merge-rewards",
-                                  "merge-rewards-beta-root-post",
-                                  "merge-rewards",
+                                  process.env.ACCOUNT_NAME,
+                                  process.env.ROOT_POST_PERMLINK,
+                                  process.env.ACCOUNT_NAME,
                                   permlink,
                                   title,
                                   body,

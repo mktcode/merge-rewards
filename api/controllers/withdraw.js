@@ -44,7 +44,7 @@ export default (req, res) => {
                         outputCoinType: currency,
                         outputAddress: address,
                         affiliateId: "b8ac630a-5e6e-4b00-a8a8-46c33cb7488a",
-                        refundAddress: "merge-rewards",
+                        refundAddress: process.env.ACCOUNT_NAME,
                         sessionToken: session.token
                       }
                     )
@@ -68,7 +68,7 @@ export default (req, res) => {
                             const insertId = result.insertId;
                             steem.broadcast.transfer(
                               process.env.ACCOUNT_KEY,
-                              "merge-rewards",
+                              process.env.ACCOUNT_NAME,
                               transfer.inputAddress,
                               formattedAmount,
                               transfer.inputMemo,
@@ -120,7 +120,7 @@ export default (req, res) => {
                         const insertId = result.insertId;
                         steem.broadcast.transfer(
                           process.env.ACCOUNT_KEY,
-                          "merge-rewards",
+                          process.env.ACCOUNT_NAME,
                           address,
                           formattedAmount,
                           memo,

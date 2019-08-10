@@ -12,7 +12,7 @@ const initTrade = (currency, sessionToken) => {
     .post("https://blocktrades.us/api/v2/simple-api/initiate-trade", {
       inputCoinType: currency,
       outputCoinType: "sbd",
-      outputAddress: "merge-rewards",
+      outputAddress: process.env.ACCOUNT_NAME,
       affiliateId: "b8ac630a-5e6e-4b00-a8a8-46c33cb7488a",
       sessionToken: sessionToken
     })

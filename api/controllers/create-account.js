@@ -78,7 +78,7 @@ export default (req, res) => {
                                   outputAddress: "blocktrades",
                                   affiliateId:
                                     "b8ac630a-5e6e-4b00-a8a8-46c33cb7488a",
-                                  refundAddress: "merge-rewards",
+                                  refundAddress: process.env.ACCOUNT_NAME,
                                   outputMemo: `{"account_name":${accountName},"owner_key":"${
                                     pubKeys.owner
                                   }","active_key":"${
@@ -111,7 +111,7 @@ export default (req, res) => {
                                       const insertId = result.insertId;
                                       steem.broadcast.transfer(
                                         process.env.ACCOUNT_KEY,
-                                        "merge-rewards",
+                                        process.env.ACCOUNT_NAME,
                                         transfer.inputAddress,
                                         accountPrice.toFixed(3) + " SBD",
                                         transfer.inputMemo,

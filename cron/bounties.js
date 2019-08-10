@@ -49,19 +49,27 @@ const getBlocktradesTransactions = dateLimit => {
 
 const getSbdTransactions = dateLimit => {
   return new Promise((resolve, reject) => {
-    steem.api.getAccountHistory("merge-rewards", -1, 10000, (error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        transactions = [];
-        result.forEach(r => {
-          if (r[1].op[0] === "transfer" && r[1].op[1].to === "merge-rewards") {
-            transactions.push(r);
-          }
-        });
-        resolve(transactions);
+    steem.api.getAccountHistory(
+      process.env.ACCOUNT_NAME,
+      -1,
+      10000,
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          transactions = [];
+          result.forEach(r => {
+            if (
+              r[1].op[0] === "transfer" &&
+              r[1].op[1].to === process.env.ACCOUNT_NAME
+            ) {
+              transactions.push(r);
+            }
+          });
+          resolve(transactions);
+        }
       }
-    });
+    );
   });
 };
 
