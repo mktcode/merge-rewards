@@ -5,22 +5,19 @@
     <div class="container py-5">
       <div class="row my-5">
         <div class="col-md-6 mb-3">
-          <h1 class="mb-4">Contribute!</h1>
+          <h1 class="mb-4">Contribute and earn!</h1>
           <p>
             Contribute to other people's Open Source projects on GitHub. Your
             contributions can be anything, from developing new features to
             fixing typos in a project's documentation.<br />
             <br />
             As long as there's a pull request that the project owner decided to
-            merge into his/her project, you'll be able to claim your rewards by
-            just clicking a button.
+            merge into the project, you'll be able to claim your rewards by just
+            clicking a button.
           </p>
-          <a
-            href="https://help.github.com/en/articles/about-pull-requests"
-            target="_blank"
-          >
-            About Pull Requests
-          </a>
+          <nuxt-link to="/claim">
+            Claim Rewards
+          </nuxt-link>
         </div>
         <div class="col-md-6">
           <img src="/pull-requests.png" alt="pull-requests.png" class="w-100" />
@@ -28,23 +25,22 @@
       </div>
       <div class="row my-5">
         <div class="col-md-6 order-md-2 mb-3">
-          <h1 class="mb-4">Raise your score!</h1>
+          <h1 class="mb-4">Reach deveopers!</h1>
           <p>
-            Your pull requests are scored by a
-            <b>transparent algorithm</b> which is constantly improved by the
-            community, to prevent abuse and to distribute rewards in a most fair
-            way.<br />
+            Bounties give you the opportunity to directly pay developers for
+            helping you with your project in a very convenient way. You can send
+            any amount of crypto or fiat money to any issue on GitHub.<br />
             <br />
-            Boosters are consumable items that can increase your rewards. You
-            can earn them during events and send or buy them for others as a
-            gift.
+            Whoever resolves the issue receives the money, either autmoatically
+            with a related pull request or whenever you decide to release it
+            manually.<br />
+            <br />
+            The contributor can withdraw the bounty in any of the supported
+            currencies, including Euro and Dollar.
           </p>
-          <a
-            href="https://github.com/mktcode/merge-rewards/blob/master/api/helpers.js#L24"
-            target="_blank"
-          >
-            About Scores
-          </a>
+          <nuxt-link to="/bounties">
+            Create Bounty
+          </nuxt-link>
         </div>
         <div class="col-md-6 order-md-1">
           <img
@@ -53,22 +49,6 @@
             class="w-100"
             style="max-width: 357px"
           />
-        </div>
-      </div>
-      <div class="row my-5">
-        <div class="col-md-6">
-          <h1 class="mb-4">Claim your rewards!</h1>
-          <p>
-            You can withdraw your rewards in Bitcoin, Ethereum and other
-            Cryptocurrencies at any time. We also offer an exchange service to
-            <b>Euro or Dollar</b> for withdrawals greater than 100 $/€ (for
-            free).<br />
-            <br />
-            If you connect to your Steem account, your rewards will be doubled.
-          </p>
-        </div>
-        <div class="col-md-6 text-center">
-          <img src="/crypto-logos.png" alt="crypto-logos.png" class="mw-100" />
         </div>
       </div>
     </div>
@@ -136,28 +116,17 @@
           </div>
           <div class="col-md-8">
             <p>
-              Your rewards will be generated in STEEM and then converted to your
-              favorite currency. STEEM is a decentralized content network as
-              well as a digital currency to reward creators of good content. The
-              intrinsic value of STEEM lies in its possibility to be used as
-              influence on how rewards are distributed and how content is
-              ranked.<br />
+              All transactions on merge-rewards.com are stored on the Steem
+              blockchain to make them immutable and public. Everything from
+              transferring boosters to depositing money for a bounty is recorded
+              in a trustworthy and verifiable way.<br />
               <br />
-              Merge Rewards considers your merged pull requests as "good
-              content" and uses its influence to distribute STEEM tokens to you,
-              which you can then use to
-              <a
-                href="https://steemeconomy.com/"
-                target="_blank"
-                class="text-light font-weight-bold"
-                >buy goods and services from other STEEM users</a
-              >, exchange it for "real money", like USD or Euro or to gain more
-              influence in the voting process yourself.<br />
-              <br />
-              If you claim rewards while being connected to your STEEM account,
-              you will also get the influence part of the reward, which
-              practically doubles the value of your rewards. So called STEEM
-              POWER can be converted back to liquid STEEM.
+              Steem is a decentralized content network with its own
+              cryptocurrency to reward creators of good content. Merge Rewards
+              considers your contributions to Open Source projects to be good
+              content and stores them on the Steem blockchain in the moment you
+              click on claim. This means even if there's no bounty, you will be
+              rewarded.
             </p>
           </div>
         </div>
