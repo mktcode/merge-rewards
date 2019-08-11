@@ -44,8 +44,8 @@
         </div>
         <div class="col-md-6 order-md-1">
           <img
-            src="/scores.png"
-            alt="scores.png"
+            src="/bounties.png"
+            alt="bounties.png"
             class="w-100"
             style="max-width: 357px"
           />
