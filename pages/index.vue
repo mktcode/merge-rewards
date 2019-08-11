@@ -25,7 +25,7 @@
       </div>
       <div class="row my-5">
         <div class="col-md-6 order-md-2 mb-3">
-          <h1 class="mb-4">Reach deveopers!</h1>
+          <h1 class="mb-4">Reach developers!</h1>
           <p>
             Bounties give you the opportunity to directly pay developers for
             helping you with your project in a very convenient way. You can send
