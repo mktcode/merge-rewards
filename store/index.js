@@ -243,6 +243,7 @@ export const actions = {
                     pr.repository.name
                   }") {
                       issue(number: ${num}) {
+                        id
                         closed
                         url
                       }
