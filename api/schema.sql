@@ -11,7 +11,8 @@ CREATE TABLE `boosters` (
 
 CREATE TABLE `bounties` (
   `id` int(11) NOT NULL,
-  `githubUser` varchar(50) DEFAULT NULL,
+  `steemTxId` varchar(64) NOT NULL,
+  `githubUser` varchar(50) NOT NULL,
   `btcAddress` varchar(50) NOT NULL,
   `ltcAddress` varchar(50) NOT NULL,
   `ethAddress` varchar(50) NOT NULL,
@@ -70,7 +71,8 @@ ALTER TABLE `boosters`
   ADD PRIMARY KEY (`githubUser`);
 
 ALTER TABLE `bounties`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `steemTxId` (`steemTxId`);
 
 ALTER TABLE `bountyDeposits`
   ADD PRIMARY KEY (`id`),
