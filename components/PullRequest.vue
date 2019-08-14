@@ -31,17 +31,24 @@
       >
         <div class="btn-group mr-1">
           <a
-            v-if="(pr.merged && getAge(pr.mergedAt) <= prMaxAge) || pr.claimed"
             v-for="issue in pr.issues"
             :href="issue.url"
-            class="btn btn-sm btn-link"
+            class="btn btn-sm btn-outline-dark"
             target="_blank"
           >
+            <font-awesome-icon icon="exclamation-circle" />
             <font-awesome-icon
-              icon="exclamation-circle"
-              :class="issue.closed ? 'text-danger' : 'text-success'"
+              v-if="issue.closed"
+              icon="check"
+              class="text-success position-absolute"
+              style="right: 3px; bottom: 3px;"
             />
           </a>
+          <span
+            class="btn btn-sm btn-outline-dark disabled"
+            v-if="bountyBalance"
+            >${{ bountyBalance.toFixed(2) }}</span
+          >
         </div>
         <div
           v-if="getAge(pr.mergedAt) <= prMaxAge || pr.claimed"
@@ -130,7 +137,7 @@ export default {
       githubUser: "user",
       githubAccessToken: "accessToken"
     }),
-    ...mapGetters(["boosters"]),
+    ...mapGetters(["bounties", "boosters"]),
     boostedScore() {
       if (this.booster === "strikes") {
         return 100;
@@ -145,6 +152,15 @@ export default {
         return "?";
       }
       return this.score.score;
+    },
+    bountyBalance() {
+      return this.bounties
+        .filter(
+          bounty =>
+            this.pr.issues.map(issue => issue.id).includes(bounty.issueId) &&
+            bounty.autoRelease
+        )
+        .reduce((a, b) => a + b.balance, 0);
     }
   },
   methods: {
@@ -154,7 +170,7 @@ export default {
         this.$parent.claiming = true;
         this.$axios
           .$post(process.env.API_URL + "/claim", {
-            pr,
+            pullRequestId: this.pr.id,
             githubAccessToken: this.githubAccessToken,
             steemconnectAccessToken: this.steemconnectAccessToken,
             booster: this.booster
@@ -181,7 +197,7 @@ export default {
       if (this.pr.merged) {
         this.$axios
           .$post(process.env.API_URL + "/score", {
-            pr: this.pr,
+            pullRequestId: this.pr.id,
             githubAccessToken: this.githubAccessToken,
             booster: null
           })
