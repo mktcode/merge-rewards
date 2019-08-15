@@ -32,7 +32,7 @@
           <nuxt-link class="nav-link" to="/projects">Projects</nuxt-link>
         </li> -->
       </ul>
-      <div class="navbar-text" v-if="!githubUser">
+      <div class="navbar-text" v-if="githubUser">
         <button
           @click.prevent="$store.dispatch('github/logout')"
           class="btn btn-sm btn-outline-light btn-logout"
