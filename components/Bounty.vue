@@ -117,7 +117,7 @@
             <b>${bounty.steemAddress}</b><br>
             <br>
             Send SBD to this user:<br>
-            <b>merge-rewards</b><br>
+            <b>${accountName}</b><br>
             with this memo:<br>
             <b>${bounty.sbdAddress}</b>
           `
@@ -187,6 +187,9 @@ export default {
   props: ["bounty"],
   computed: {
     ...mapGetters("github", { githubUser: "user" }),
+    accountName() {
+      return process.env.ACCOUNT_NAME;
+    },
     issueUrl() {
       return (
         "https://github.com/" +
