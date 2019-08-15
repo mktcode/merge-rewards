@@ -27,7 +27,10 @@
             v-model="issueUrl"
             placeholder="https://github.com/..."
           />
-          <small> Or enter: <i>owner/repo/number</i> </small>
+          <small>Or enter: <i>owner/repo/number</i> </small>
+          <div class="mt-3 text-danger" v-if="showIssueClosed">
+            This issue is closed.
+          </div>
           <div class="input-group my-3" v-if="issue">
             <input
               type="text"
@@ -69,6 +72,7 @@ export default {
       loading: false,
       showSuccessMessage: false,
       showErrorMessage: false,
+      showIssueClosed: false,
       issueUrl: null,
       issue: null,
       currency: "",
@@ -88,6 +92,7 @@ export default {
   },
   watch: {
     issueUrl(url) {
+      this.showIssueClosed = false;
       const parts = url
         .replace("https://github.com/", "")
         .split("/")
@@ -125,7 +130,9 @@ export default {
             }
           )
           .then(response => {
-            if (!response.data.repository.issue.closed) {
+            if (response.data.repository.issue.closed) {
+              this.showIssueClosed = true;
+            } else {
               this.issue = response.data.repository.issue;
               this.issue.number = response.data.repository.issue.number;
               this.issue.owner = response.data.repository.owner.login;
