@@ -32,7 +32,7 @@
           <nuxt-link class="nav-link" to="/projects">Projects</nuxt-link>
         </li> -->
       </ul>
-      <div class="navbar-text" v-if="githubUser">
+      <div class="navbar-text" v-if="!githubUser">
         <button
           @click.prevent="$store.dispatch('github/logout')"
           class="btn btn-sm btn-outline-light btn-logout"
@@ -63,6 +63,30 @@
             src="/steem-icon.png"
             style="width: 14px; margin-top: -3px;"
             alt="Steem"
+          />
+        </a>
+        <button
+          @click.prevent="$store.dispatch('steemconnect/logout')"
+          class="btn btn-sm btn-outline-primary btn-logout"
+          v-if="eosUser"
+        >
+          <img
+            src="/eos-icon.png"
+            style="width: 14px; margin-top: -3px;"
+            alt="EOS"
+          />
+          <font-awesome-icon icon="check" class="text-success" />
+          <font-awesome-icon icon="power-off" class="text-danger" />
+        </button>
+        <a
+          :href="$steemconnect.getLoginURL()"
+          class="btn btn-sm btn-outline-primary"
+          v-else
+        >
+          <img
+            src="/eos-icon.png"
+            style="width: 14px; margin-top: -3px;"
+            alt="EOS"
           />
         </a>
       </div>

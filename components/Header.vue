@@ -108,6 +108,9 @@ export default {
     ...mapGetters("steemconnect", {
       steemUser: "user"
     }),
+    ...mapGetters("eos-ual", {
+      eosUser: "user"
+    }),
     ...mapGetters(["pullRequests", "balance", "accountPrice"]),
     claimablePRs() {
       return this.pullRequests.filter(pr => {

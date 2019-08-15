@@ -92,6 +92,7 @@ export const actions = {
     return Promise.all([
       dispatch("loadDatabase"),
       dispatch("loadBounties"),
+      dispatch("eos-ual/login"),
       dispatch("steemconnect/login"),
       dispatch("github/login")
     ]).then(() => {

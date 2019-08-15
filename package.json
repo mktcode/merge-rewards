@@ -23,6 +23,9 @@
     "nuxt": "^2.0.0",
     "steem": "^0.7.5",
     "steemconnect": "^3.0.1",
+    "ual-ledger": "^0.1.2",
+    "ual-plainjs-renderer": "^0.1.4",
+    "ual-scatter": "^0.1.5",
     "uuid": "^3.3.2",
     "vue-steemconnect": "^0.4.1"
   },
