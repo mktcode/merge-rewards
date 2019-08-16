@@ -6,28 +6,60 @@ import { decimalFloor } from "../../lib/helpers";
 require("dotenv").config();
 
 const QUERY_BALANCE_FOR_USER =
-  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, ROUND(SUM(pendingRewards), 3) as pending FROM claims WHERE githubUser = ?";
+  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(bd.sbdAmount) as balance FROM bounties b JOIN bountyDeposits bd ON bd.bountyId = b.id WHERE b.releasedTo = ?) as bounties, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, SUM(pendingRewards) as pending FROM claims WHERE githubUser = ?";
 const INSERT_WITHDRAWAL =
   "INSERT INTO withdrawals (githubUser, amount, currency, address, memo) VALUES (?, ?, ?, ?, ?)";
 const DELETE_WITHDRAWAL = "DELETE FROM withdrawals WHERE id = ?";
 
+const writeWithdrawCustomJson = (
+  githubUser,
+  amount,
+  currency,
+  address,
+  memo
+) => {
+  return new Promise((resolve, reject) => {
+    steem.broadcast.customJson(
+      process.env.ACCOUNT_KEY,
+      [],
+      [process.env.ACCOUNT_NAME],
+      "balance:withdraw",
+      JSON.stringify({
+        githubUser,
+        amount,
+        currency,
+        address,
+        memo
+      }),
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
 export default (req, res) => {
   const githubUser = res.locals.authenticatedGithubUser.login;
-  const amount = req.body.amount;
-  const formattedAmount = decimalFloor(amount).toFixed(3) + " SBD";
+  const amount = decimalFloor(req.body.amount);
   const currency = req.body.currency;
   const address = req.body.address;
 
   database.query(
     QUERY_BALANCE_FOR_USER,
-    [githubUser, githubUser, githubUser],
+    [githubUser, githubUser, githubUser, githubUser],
     (error, result) => {
       if (error || result.length !== 1) {
         res.status(500);
         res.send("Error: Reading from database failed.");
       } else {
         const balance = decimalFloor(
-          Number(result[0].rewards) - Number(result[0].withdrawals)
+          Number(result[0].rewards) +
+            Number(result[0].bounties) -
+            Number(result[0].withdrawals)
         );
         if (balance >= amount) {
           if (["btc", "ltc", "eth", "xmr"].includes(currency)) {
@@ -55,7 +87,7 @@ export default (req, res) => {
                         INSERT_WITHDRAWAL,
                         [
                           githubUser,
-                          amount,
+                          amount.toFixed(3),
                           currency,
                           address,
                           transfer.inputMemo
@@ -66,23 +98,41 @@ export default (req, res) => {
                             res.send("Error: Writing to database failed.");
                           } else {
                             const insertId = result.insertId;
-                            steem.broadcast.transfer(
-                              process.env.ACCOUNT_KEY,
-                              process.env.ACCOUNT_NAME,
-                              transfer.inputAddress,
-                              formattedAmount,
-                              transfer.inputMemo,
-                              (err, result) => {
-                                if (err) {
-                                  database.query(DELETE_WITHDRAWAL, [insertId]);
-                                  res.status(500);
-                                  res.json(err);
-                                } else {
-                                  res.status(201);
-                                  res.send();
-                                }
-                              }
-                            );
+                            writeWithdrawCustomJson(
+                              githubUser,
+                              amount.toFixed(3),
+                              currency,
+                              address,
+                              transfer.inputMemo
+                            )
+                              .then(() => {
+                                steem.broadcast.transfer(
+                                  process.env.ACCOUNT_KEY,
+                                  process.env.ACCOUNT_NAME,
+                                  transfer.inputAddress,
+                                  amount.toFixed(3) + " SBD",
+                                  transfer.inputMemo,
+                                  (err, result) => {
+                                    if (err) {
+                                      database.query(DELETE_WITHDRAWAL, [
+                                        insertId
+                                      ]);
+                                      res.status(500);
+                                      res.json(err);
+                                    } else {
+                                      res.status(201);
+                                      res.send();
+                                    }
+                                  }
+                                );
+                              })
+                              .catch(() => {
+                                database.query(DELETE_WITHDRAWAL, [insertId]);
+                                res.status(500);
+                                res.send(
+                                  "Error: Writing to steem blockchain failed."
+                                );
+                              });
                           }
                         }
                       );
@@ -111,30 +161,46 @@ export default (req, res) => {
                   const memo = "Withdrawal";
                   database.query(
                     INSERT_WITHDRAWAL,
-                    [githubUser, amount, currency, address, memo],
+                    [githubUser, amount.toFixed(3), currency, address, memo],
                     (error, result) => {
                       if (error) {
                         res.status(500);
                         res.send("Error: Writing to database failed.");
                       } else {
                         const insertId = result.insertId;
-                        steem.broadcast.transfer(
-                          process.env.ACCOUNT_KEY,
-                          process.env.ACCOUNT_NAME,
+                        writeWithdrawCustomJson(
+                          githubUser,
+                          amount.toFixed(3),
+                          currency,
                           address,
-                          formattedAmount,
-                          memo,
-                          (err, result) => {
-                            if (err) {
-                              database.query(DELETE_WITHDRAWAL, [insertId]);
-                              res.status(500);
-                              res.json(err);
-                            } else {
-                              res.status(201);
-                              res.send();
-                            }
-                          }
-                        );
+                          memo
+                        )
+                          .then(() => {
+                            steem.broadcast.transfer(
+                              process.env.ACCOUNT_KEY,
+                              process.env.ACCOUNT_NAME,
+                              address,
+                              amount.toFixed(3) + " SBD",
+                              memo,
+                              (err, result) => {
+                                if (err) {
+                                  database.query(DELETE_WITHDRAWAL, [insertId]);
+                                  res.status(500);
+                                  res.json(err);
+                                } else {
+                                  res.status(201);
+                                  res.send();
+                                }
+                              }
+                            );
+                          })
+                          .catch(() => {
+                            database.query(DELETE_WITHDRAWAL, [insertId]);
+                            res.status(500);
+                            res.send(
+                              "Error: Writing to steem blockchain failed."
+                            );
+                          });
                       }
                     }
                   );

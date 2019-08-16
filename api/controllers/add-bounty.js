@@ -1,9 +1,10 @@
 import axios from "axios";
 import uuid from "uuid";
+import steem from "steem";
 import database from "../database";
 
 const INSERT_BOUNTY =
-  "INSERT INTO bounties (githubUser, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueId, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO bounties (steemTxId, githubUser, btcAddress, ltcAddress, ethAddress, xmrAddress, steemAddress, sbdAddress, issueTitle, issueId, issueOwner, issueRepo, issueNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const QUERY_BOUNTY =
   "SELECT id FROM bounties WHERE githubUser = ? AND issueOwner = ? AND issueRepo = ? AND issueNum = ?";
 
@@ -91,29 +92,59 @@ export default (req, res) => {
                       { currency: "sbd", address: uuid.v4() }
                     ])
                       .then(values => {
-                        database.query(
-                          INSERT_BOUNTY,
-                          [
-                            githubUser,
-                            values[0].address,
-                            values[1].address,
-                            values[2].address,
-                            values[3].address,
-                            values[4].address,
-                            values[5].address,
-                            issueTitle,
-                            issueId,
-                            issue.owner,
-                            issue.repo,
-                            issue.number
-                          ],
+                        steem.broadcast.customJson(
+                          process.env.ACCOUNT_KEY,
+                          [],
+                          [process.env.ACCOUNT_NAME],
+                          "bounty:create",
+                          JSON.stringify({
+                            githubUser: githubUser,
+                            issueId: issueId,
+                            addresses: {
+                              btc: values[0].address,
+                              ltc: values[1].address,
+                              eth: values[2].address,
+                              xmr: values[3].address,
+                              steem: values[4].address,
+                              sbd: values[5].address
+                            }
+                          }),
                           (error, result) => {
                             if (error) {
                               res.status(500);
-                              res.send("Error: Writing to database failed.");
+                              res.send(
+                                "Error: Writing to steem blockchain failed."
+                              );
                             } else {
-                              res.status(201);
-                              res.send();
+                              database.query(
+                                INSERT_BOUNTY,
+                                [
+                                  result.id,
+                                  githubUser,
+                                  values[0].address,
+                                  values[1].address,
+                                  values[2].address,
+                                  values[3].address,
+                                  values[4].address,
+                                  values[5].address,
+                                  issueTitle,
+                                  issueId,
+                                  issue.owner,
+                                  issue.repo,
+                                  issue.number
+                                ],
+                                (error, result) => {
+                                  if (error) {
+                                    res.status(500);
+                                    res.send(
+                                      "Error: Writing to database failed."
+                                    );
+                                  } else {
+                                    res.status(201);
+                                    res.send();
+                                  }
+                                }
+                              );
                             }
                           }
                         );

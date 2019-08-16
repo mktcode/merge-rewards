@@ -19,233 +19,313 @@ const steemconnectClient = new steemconnect.Client({
   scope: ["vote", "comment"]
 });
 
-const QUERY_EXISTING_PULL_REQUEST =
-  "SELECT id FROM claims WHERE pullRequestId = ?";
+const QUERY_EXISTING_CLAIM = "SELECT id FROM claims WHERE pullRequestId = ?";
 const INSERT_CLAIM =
-  "INSERT INTO claims (pullRequestId, score, permlink, githubUser, steemUser, pendingRewards, rewards, booster) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO claims (pullRequestId, score, permlink, githubUser, steemUser, booster) VALUES (?, ?, ?, ?, ?, ?)";
 const DELETE_CLAIM = "DELETE FROM claims WHERE pullRequestId = ?";
 const UPDATE_BOOSTER = "UPDATE boosters SET ?? = ?? - 1 WHERE githubUser = ?";
 const QUERY_BOOSTER = "SELECT ?? FROM boosters WHERE githubUser = ?";
+const QUERY_BOUNTIES =
+  "SELECT id, steemTxId FROM bounties WHERE issueId = ? AND autoRelease = 1";
 const RELEASE_BOUNTY =
-  "UPDATE bounties SET releasedTo = ?, releasedAt = ?, claimId = ? WHERE autoRelease = 1 AND issueRepo = ? AND issueOwner = ? AND issueNum = ?";
+  "UPDATE bounties SET releasedTo = ?, releasedAt = ?, claimId = ? WHERE autoRelease = 1 AND id = ?";
+
+let customJsonDelay = 0;
+const writeBountyReleaseCustomJson = (to, date, claim, bountySteemTxId) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      steem.broadcast.customJson(
+        process.env.ACCOUNT_KEY,
+        [],
+        [process.env.ACCOUNT_NAME],
+        "bounty:release",
+        JSON.stringify({
+          to,
+          date: date.toISOString(),
+          claim,
+          bountySteemTxId
+        }),
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+    }, customJsonDelay);
+    customJsonDelay += 1000;
+  });
+};
+
+const writeBoosterTransferCustomJson = (booster, from, to) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      steem.broadcast.customJson(
+        process.env.ACCOUNT_KEY,
+        [],
+        [process.env.ACCOUNT_NAME],
+        "booster:transfer",
+        JSON.stringify({
+          boosters: { [booster]: 1 },
+          from,
+          to
+        }),
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+    }, customJsonDelay);
+    customJsonDelay += 1000;
+  });
+};
+
+const getBoosterCountForGithubUser = (booster, githubUser) => {
+  return new Promise((resolve, reject) => {
+    if (booster) {
+      database.query(QUERY_BOOSTER, [booster, githubUser], (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.length === 1 ? result[0][booster] : 0);
+        }
+      });
+    } else {
+      resolve(0);
+    }
+  });
+};
+
+const getClaimExists = pullRequestId => {
+  return new Promise((resolve, reject) => {
+    database.query(QUERY_EXISTING_CLAIM, [pullRequestId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(!!result.length);
+      }
+    });
+  });
+};
+
+const getSteemUser = steemconnectAccessToken => {
+  if (steemconnectAccessToken) {
+    return new Promise((resolve, reject) => {
+      steemconnectClient.setAccessToken(steemconnectAccessToken);
+      steemconnectClient.me((error, steemUser) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(steemUser);
+        }
+      });
+    });
+  } else {
+    return null;
+  }
+};
+
+const postSteemComment = (steemUser, permlink, title, body, jsonMetadata) => {
+  return new Promise((resolve, reject) => {
+    if (steemUser) {
+      steemconnectClient.comment(
+        process.env.ACCOUNT_NAME,
+        process.env.ROOT_POST_PERMLINK,
+        steemUser.user,
+        permlink,
+        title,
+        body,
+        jsonMetadata,
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+    } else {
+      steem.broadcast.comment(
+        process.env.ACCOUNT_KEY,
+        process.env.ACCOUNT_NAME,
+        process.env.ROOT_POST_PERMLINK,
+        process.env.ACCOUNT_NAME,
+        permlink,
+        title,
+        body,
+        jsonMetadata,
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+    }
+  });
+};
 
 export default (req, res) => {
   const githubUser = res.locals.authenticatedGithubUser.login;
   const githubAccessToken = req.body.githubAccessToken;
   const steemconnectAccessToken = req.body.steemconnectAccessToken;
-  const pullRequest = req.body.pr;
+  const pullRequestId = req.body.pullRequestId;
   const booster = req.body.booster;
 
-  // check if user has booster
-  database.query(QUERY_BOOSTER, [booster, githubUser], (error, result) => {
-    if (booster && error) {
-      // error only relevant if booster is used
-      res.status(500);
-      res.send("Bad Request: Could not read available boosters from database.");
-    } else {
-      if (!booster || (result.length && result[0][booster])) {
-        database.query(
-          QUERY_EXISTING_PULL_REQUEST,
-          [pullRequest.id],
-          (error, result) => {
-            if (error) {
-              res.status(500);
-              res.send("Error: Reading from database failed.");
-            } else if (result.length === 1) {
-              res.status(400);
-              res.send(
-                "Bad Request: Already claimed rewards for this pull request."
-              );
-            } else {
-              getPullRequest(pullRequest, githubAccessToken).then(response => {
-                const repo = response.data.data.repository;
-                const viewer = response.data.data.viewer;
+  // Step 1: Check if requirements are met
+  Promise.all([
+    getBoosterCountForGithubUser(booster, githubUser),
+    getClaimExists(pullRequestId),
+    getPullRequest(pullRequestId, githubAccessToken)
+  ])
+    .then(results => {
+      const availableBoosters = results[0];
+      const claimExists = results[1];
+      const viewer = results[2].data.data.viewer;
+      const pullRequest = results[2].data.data.node;
+      const repo = pullRequest.repository;
+      const tooOld = getAge(pullRequest.mergedAt) > process.env.PR_MAX_AGE;
+      const merged = pullRequest.merged;
+      const isAdmin = repo.viewerCanAdminister;
 
-                if (
-                  getAge(repo.pullRequest.mergedAt) <= process.env.PR_MAX_AGE
-                ) {
-                  if (repo.pullRequest.merged) {
-                    if (!repo.viewerCanAdminister) {
-                      getIssuesByPR(repo, githubAccessToken).then(issues => {
-                        issues = issues.filter(i => i); // remove null
-                        const score = calculateScore(repo, viewer, booster);
-                        const permlink =
-                          crypto
-                            .createHash("md5")
-                            .update(repo.pullRequest.permalink)
-                            .digest("hex") + new Date().getTime();
-                        const title = "PR: " + repo.pullRequest.permalink;
-                        const body =
-                          "PR: " +
-                          `${repo.pullRequest.permalink} (Score: ${score})`;
-                        const jsonMetadata = { app: "merge-rewards.com" };
-                        const claimData = [
-                          repo.pullRequest.id,
-                          score,
-                          permlink,
-                          githubUser,
-                          process.env.ACCOUNT_NAME,
-                          null,
-                          null,
-                          booster
-                        ];
-                        if (steemconnectAccessToken) {
-                          steemconnectClient.setAccessToken(
-                            steemconnectAccessToken
-                          );
-                          steemconnectClient.me((error, steemUser) => {
+      if (booster && !availableBoosters) {
+        res.status(400);
+        res.send("Bad Request: Booster not available");
+      } else if (tooOld) {
+        res.status(400);
+        res.send(
+          "Bad request: Unmet requirements: Pull request was merged more than " +
+            process.env.PR_MAX_AGE +
+            " days ago."
+        );
+      } else if (!merged) {
+        res.status(400);
+        res.send(
+          "Bad request: Unmet requirements: Pull request is not merged."
+        );
+      } else if (isAdmin) {
+        res.status(400);
+        res.send(
+          "Bad request: Unmet requirements: Pull request is for your own repository."
+        );
+      } else {
+        // Step 2: Prepare claim data
+        Promise.all([
+          getIssuesByPR(pullRequest, githubAccessToken),
+          getSteemUser(steemconnectAccessToken)
+        ])
+          .then(results => {
+            const issues = results[0].filter(i => i);
+            const steemUser = results[1];
+            const score = calculateScore(repo, viewer, booster);
+            const permlink =
+              crypto
+                .createHash("md5")
+                .update(pullRequest.permalink)
+                .digest("hex") + new Date().getTime();
+            const title = "PR: " + pullRequest.permalink;
+            const body = "PR: " + `${pullRequest.permalink} (Score: ${score})`;
+            const jsonMetadata = { app: "merge-rewards.com" };
+            const claimData = [
+              pullRequest.id,
+              score,
+              permlink,
+              githubUser,
+              steemUser ? steemUser.account.name : process.env.ACCOUNT_NAME,
+              booster
+            ];
+            // Step 3: Write claim to database
+            database.query(INSERT_CLAIM, claimData, (error, result) => {
+              if (error) {
+                console.log(error);
+                res.status(500);
+                res.send("Error: Writing claim to database failed.");
+              } else {
+                const claimId = result.insertId;
+                // Step 4: Post to Steem blockchain
+                postSteemComment(steemUser, permlink, title, body, jsonMetadata)
+                  .then(() => {
+                    // Step 5: Transfer booster (to null)
+                    if (booster) {
+                      writeBoosterTransferCustomJson(
+                        booster,
+                        githubUser,
+                        null
+                      ).then(() => {
+                        database.query(UPDATE_BOOSTER, [
+                          booster,
+                          booster,
+                          githubUser
+                        ]);
+                      });
+                    }
+                    // Step 6: Release issue bounties
+                    if (issues) {
+                      const releaseDate = new Date();
+                      issues.forEach(issue => {
+                        database.query(
+                          QUERY_BOUNTIES,
+                          [issue.id],
+                          (error, result) => {
                             if (error) {
                               res.status(500);
                               res.send(
-                                `Error: Unable to connect to steem: ${
-                                  error.error_description
-                                }`
+                                "Error: Reading bounty from database failed."
                               );
                             } else {
-                              claimData[4] = steemUser.account.name;
-                              database.query(
-                                INSERT_CLAIM,
-                                claimData,
-                                (error, result) => {
-                                  if (error) {
-                                    res.status(500);
-                                    res.send(
-                                      "Error: Writing to database failed."
-                                    );
-                                  } else {
-                                    steemconnectClient.comment(
-                                      process.env.ACCOUNT_NAME,
-                                      process.env.ROOT_POST_PERMLINK,
-                                      steemUser.user,
-                                      permlink,
-                                      title,
-                                      body,
-                                      jsonMetadata,
-                                      error => {
-                                        if (error) {
-                                          database.query(DELETE_CLAIM, [
-                                            repo.pullRequest.id
-                                          ]);
-                                          res.status(500);
-                                          res.send(
-                                            "Error: Posting to STEEM blockchain failed."
-                                          );
-                                        } else {
-                                          if (booster) {
-                                            // remove booster from user balance
-                                            database.query(UPDATE_BOOSTER, [
-                                              booster,
-                                              booster,
-                                              githubUser
-                                            ]);
-                                          }
-                                          if (issues) {
-                                            issues.forEach(issue => {
-                                              database.query(RELEASE_BOUNTY, [
-                                                githubUser,
-                                                new Date(),
-                                                result.insertId,
-                                                repo.name,
-                                                repo.owner.login,
-                                                issue.number
-                                              ]);
-                                            });
-                                          }
-                                          res.status(201);
-                                          res.send();
-                                        }
-                                      }
-                                    );
-                                  }
-                                }
-                              );
+                              result.forEach(bounty => {
+                                writeBountyReleaseCustomJson(
+                                  githubUser,
+                                  releaseDate,
+                                  {
+                                    steemUser: steemUser
+                                      ? steemUser.account.name
+                                      : process.env.ACCOUNT_NAME,
+                                    permlink
+                                  },
+                                  bounty.steemTxId
+                                ).then(result => {
+                                  database.query(RELEASE_BOUNTY, [
+                                    githubUser,
+                                    releaseDate,
+                                    claimId,
+                                    bounty.id
+                                  ]);
+                                });
+                              });
                             }
-                          });
-                        } else {
-                          database.query(
-                            INSERT_CLAIM,
-                            claimData,
-                            (error, result) => {
-                              if (error) {
-                                res.status(500);
-                                res.send("Error: Writing to database failed.");
-                              } else {
-                                steem.broadcast.comment(
-                                  process.env.ACCOUNT_KEY,
-                                  process.env.ACCOUNT_NAME,
-                                  process.env.ROOT_POST_PERMLINK,
-                                  process.env.ACCOUNT_NAME,
-                                  permlink,
-                                  title,
-                                  body,
-                                  jsonMetadata,
-                                  error => {
-                                    if (error) {
-                                      database.query(DELETE_CLAIM, [
-                                        repo.pullRequest.id
-                                      ]);
-                                      res.status(500);
-                                      res.send(
-                                        "Error: Posting to STEEM blockchain failed."
-                                      );
-                                    } else {
-                                      if (booster) {
-                                        database.query(UPDATE_BOOSTER, [
-                                          booster,
-                                          booster,
-                                          githubUser
-                                        ]);
-                                      }
-                                      if (issues) {
-                                        issues.forEach(issue => {
-                                          database.query(RELEASE_BOUNTY, [
-                                            githubUser,
-                                            new Date(),
-                                            result.insertId,
-                                            repo.name,
-                                            repo.owner.login,
-                                            issue.number
-                                          ]);
-                                        });
-                                      }
-                                      res.status(201);
-                                      res.send();
-                                    }
-                                  }
-                                );
-                              }
-                            }
-                          );
-                        }
+                          }
+                        );
                       });
-                    } else {
-                      res.status(400);
-                      res.send(
-                        "Bad request: Unmet requirements: Pull request is for your own repository."
-                      );
                     }
-                  } else {
-                    res.status(400);
-                    res.send(
-                      "Bad request: Unmet requirements: Pull request is not merged."
-                    );
-                  }
-                } else {
-                  res.status(400);
-                  res.send(
-                    "Bad request: Unmet requirements: Pull request was merged more than " +
-                      process.env.PR_MAX_AGE +
-                      " days ago."
-                  );
-                }
-              });
-            }
-          }
-        );
-      } else {
-        res.status(400);
-        res.send("Bad Request: Booster not available");
+                    res.status(201);
+                    res.send();
+                  })
+                  .catch(error => {
+                    console.log(error);
+                    // Step 4.1: Delete claim if commenting failed
+                    database.query(DELETE_CLAIM, [pullRequest.id]);
+                    res.status(500);
+                    res.send("Error: Posting to steem blockchain failed.");
+                  });
+              }
+            });
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(500);
+            res.send("Error: An unknown error occured.");
+          });
       }
-    }
-  });
+    })
+    .catch(errors => {
+      console.log(errors);
+      res.status(500);
+      res.send("Error: An unknown error occured.");
+    });
 };

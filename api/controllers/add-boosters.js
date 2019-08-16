@@ -1,5 +1,6 @@
 import paypal from "@paypal/checkout-server-sdk";
 import axios from "axios";
+import steem from "steem";
 import database from "../database";
 
 const INSERT_BOOSTERS =
@@ -7,6 +8,29 @@ const INSERT_BOOSTERS =
 const UPDATE_BOOSTERS =
   "UPDATE boosters SET strikes = ?, spares = ?, doubles = ?, dices = ? WHERE githubUser = ?";
 const QUERY_BOOSTERS = "SELECT * FROM boosters WHERE githubUser = ?";
+
+const writeBoosterTransferCustomJson = (boosters, to) => {
+  return new Promise((resolve, reject) => {
+    steem.broadcast.customJson(
+      process.env.ACCOUNT_KEY,
+      [],
+      [process.env.ACCOUNT_NAME],
+      "booster:transfer",
+      JSON.stringify({
+        boosters,
+        from: null,
+        to
+      }),
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
 
 export default (req, res) => {
   const githubUser = res.locals.authenticatedGithubUser.login;
@@ -41,55 +65,63 @@ export default (req, res) => {
             res.status(500);
             res.send("Error: Reading from database failed.");
           } else {
-            if (result.length) {
-              const current = result[0];
-              database.query(
-                UPDATE_BOOSTERS,
-                [
-                  boosters.strikes + current.strikes,
-                  boosters.spares + current.spares,
-                  boosters.doubles + current.doubles,
-                  boosters.dices + current.dices,
-                  githubUser
-                ],
-                error => {
-                  if (error) {
-                    console.log(error);
-                    res.status(500);
-                    res.send("Error: Failed to write to database.");
-                  } else {
-                    res.status(201);
-                    res.send();
-                  }
+            writeBoosterTransferCustomJson(boosters, githubUser)
+              .then(() => {
+                if (result.length) {
+                  const current = result[0];
+                  database.query(
+                    UPDATE_BOOSTERS,
+                    [
+                      boosters.strikes + current.strikes,
+                      boosters.spares + current.spares,
+                      boosters.doubles + current.doubles,
+                      boosters.dices + current.dices,
+                      githubUser
+                    ],
+                    error => {
+                      if (error) {
+                        console.log(error);
+                        res.status(500);
+                        res.send("Error: Failed to write to database.");
+                      } else {
+                        res.status(201);
+                        res.send();
+                      }
+                    }
+                  );
+                } else {
+                  database.query(
+                    INSERT_BOOSTERS,
+                    [
+                      githubUser,
+                      boosters.strikes,
+                      boosters.spares,
+                      boosters.doubles,
+                      boosters.dices
+                    ],
+                    error => {
+                      if (error) {
+                        res.status(500);
+                        res.send("Error: Failed to write to database.");
+                      } else {
+                        res.status(201);
+                        res.send();
+                      }
+                    }
+                  );
                 }
-              );
-            } else {
-              database.query(
-                INSERT_BOOSTERS,
-                [
-                  githubUser,
-                  boosters.strikes,
-                  boosters.spares,
-                  boosters.doubles,
-                  boosters.dices
-                ],
-                error => {
-                  if (error) {
-                    res.status(500);
-                    res.send("Error: Failed to write to database.");
-                  } else {
-                    res.status(201);
-                    res.send();
-                  }
-                }
-              );
-            }
+              })
+              .catch(e => {
+                console.log(e);
+                res.status(500);
+                res.send("Error: Writing to Steem blockchain failed.");
+              });
           }
         });
       }
     })
     .catch(e => {
       res.status(500);
-      res.send("Could not confirm payment.");
+      res.send("Error: Could not confirm payment.");
     });
 };

@@ -1,7 +1,8 @@
 import axios from "axios";
 import database from "../database";
 
-const QUERY_BOUNTY = "SELECT id FROM bounties WHERE githubUser = ? AND id = ?";
+const QUERY_BOUNTY =
+  "SELECT id, steemTxId FROM bounties WHERE githubUser = ? AND id = ?";
 const UPDATE_BOUNTY =
   "UPDATE bounties SET releasedTo = ?, releasedAt = ? WHERE githubUser = ? AND id = ?";
 
@@ -18,20 +19,40 @@ export default (req, res) => {
       res.status(400);
       res.send("Bad Request: Bounty does not exist.");
     } else {
+      const bountySteemTxId = result[0].steemTxId;
       // check if receiver exists
       axios
         .get("https://api.github.com/users/" + receiver)
         .then(() => {
-          database.query(
-            UPDATE_BOUNTY,
-            [receiver, new Date(), githubUser, bountyId],
-            error => {
+          steem.broadcast.customJson(
+            process.env.ACCOUNT_KEY,
+            [],
+            [process.env.ACCOUNT_NAME],
+            "bounty:release",
+            JSON.stringify({
+              to: receiver,
+              date: new Date().toISOString(),
+              claim: null,
+              bountySteemTxId
+            }),
+            (error, result) => {
               if (error) {
                 res.status(500);
-                res.send("Error: Writing to database failed.");
+                res.send("Error: Writing to steem blockchain failed.");
               } else {
-                res.status(204);
-                res.send();
+                database.query(
+                  UPDATE_BOUNTY,
+                  [receiver, new Date(), githubUser, bountyId],
+                  error => {
+                    if (error) {
+                      res.status(500);
+                      res.send("Error: Writing to database failed.");
+                    } else {
+                      res.status(204);
+                      res.send();
+                    }
+                  }
+                );
               }
             }
           );

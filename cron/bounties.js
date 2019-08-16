@@ -73,6 +73,37 @@ const getSbdTransactions = dateLimit => {
   });
 };
 
+const writeCustomJson = (
+  receivingAddress,
+  sbdAmount,
+  currency,
+  bountySteemTxId,
+  txId
+) => {
+  return new Promise((resolve, reject) => {
+    steem.broadcast.customJson(
+      process.env.ACCOUNT_KEY,
+      [],
+      [process.env.ACCOUNT_NAME],
+      "bounty:deposit",
+      JSON.stringify({
+        receivingAddress,
+        sbdAmount,
+        currency,
+        bountySteemTxId,
+        txId
+      }),
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
 database.query(QUERY_OLDEST_OPEN_BOUNTY_DATE, (error, result) => {
   if (error) {
     console.log(error);
@@ -118,23 +149,33 @@ database.query(QUERY_OLDEST_OPEN_BOUNTY_DATE, (error, result) => {
                         if (error) {
                           reject(error);
                         } else if (!result.length) {
-                          database.query(
-                            INSERT_BOUNTY_DEPOSIT,
-                            [
-                              bt.inputAddress,
-                              bt.outputAmount,
-                              bt.inputCoinType,
-                              receivingBounty.id,
-                              bt.transactionId
-                            ],
-                            error => {
-                              if (error) {
-                                reject(error);
-                              } else {
-                                resolve();
-                              }
-                            }
-                          );
+                          writeCustomJson(
+                            bt.inputAddress,
+                            bt.outputAmount,
+                            bt.inputCoinType,
+                            receivingBounty.steemTxId,
+                            bt.transactionId
+                          )
+                            .then(() => {
+                              database.query(
+                                INSERT_BOUNTY_DEPOSIT,
+                                [
+                                  bt.inputAddress,
+                                  bt.outputAmount,
+                                  bt.inputCoinType,
+                                  receivingBounty.id,
+                                  bt.transactionId
+                                ],
+                                error => {
+                                  if (error) {
+                                    reject(error);
+                                  } else {
+                                    resolve();
+                                  }
+                                }
+                              );
+                            })
+                            .catch(e => console.log(e));
                         } else {
                           resolve();
                         }
@@ -159,23 +200,35 @@ database.query(QUERY_OLDEST_OPEN_BOUNTY_DATE, (error, result) => {
                         if (error) {
                           reject(error);
                         } else if (!result.length) {
-                          database.query(
-                            INSERT_BOUNTY_DEPOSIT,
-                            [
-                              t[1].op[1].memo,
-                              parseFloat(t[1].op[1].amount.replace(" SBD", "")),
-                              "sbd",
-                              receivingBounty.id,
-                              t[1].trx_id
-                            ],
-                            error => {
-                              if (error) {
-                                reject(error);
-                              } else {
-                                resolve();
-                              }
-                            }
-                          );
+                          writeCustomJson(
+                            t[1].op[1].memo,
+                            parseFloat(t[1].op[1].amount.replace(" SBD", "")),
+                            "sbd",
+                            receivingBounty.steemTxId,
+                            t[1].trx_id
+                          )
+                            .then(() => {
+                              database.query(
+                                INSERT_BOUNTY_DEPOSIT,
+                                [
+                                  t[1].op[1].memo,
+                                  parseFloat(
+                                    t[1].op[1].amount.replace(" SBD", "")
+                                  ),
+                                  "sbd",
+                                  receivingBounty.id,
+                                  t[1].trx_id
+                                ],
+                                error => {
+                                  if (error) {
+                                    reject(error);
+                                  } else {
+                                    resolve();
+                                  }
+                                }
+                              );
+                            })
+                            .catch(e => console.log(e));
                         } else {
                           resolve();
                         }
