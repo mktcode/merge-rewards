@@ -3,6 +3,11 @@
     <Navbar />
     <Header />
     <div class="container py-5">
+      <div class="alert alert-danger">
+        <b>ATTENTION:</b> This website is still in prototype stage. Currently
+        bugs are still very possible, which might lead to loss of funds. Please
+        use this service only for testing until a stable version is announced.
+      </div>
       <div class="row my-5">
         <div class="col-md-6 mb-3">
           <h1 class="mb-4">Contribute and earn!</h1>
