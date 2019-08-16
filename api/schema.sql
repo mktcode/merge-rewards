@@ -35,7 +35,7 @@ CREATE TABLE `bounties` (
 CREATE TABLE `bountyDeposits` (
   `id` int(11) NOT NULL,
   `receivingAddress` varchar(255) NOT NULL,
-  `sbdAmount` float NOT NULL,
+  `sbdAmount` decimal(10,3) NOT NULL,
   `currency` varchar(50) NOT NULL,
   `bountyId` int(11) NOT NULL,
   `txId` varchar(255) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `claims` (
 CREATE TABLE `withdrawals` (
   `id` int(11) NOT NULL,
   `githubUser` varchar(50) NOT NULL,
-  `amount` float NOT NULL,
+  `amount` decimal(10,3) NOT NULL,
   `currency` varchar(25) NOT NULL,
   `address` varchar(255) NOT NULL,
   `memo` varchar(255) NOT NULL,
