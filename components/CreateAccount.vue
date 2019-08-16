@@ -150,7 +150,6 @@ export default {
   methods: {
     createAccount() {
       this.loading = true;
-      return;
       this.$axios
         .$post(process.env.API_URL + "/create-account", {
           githubAccessToken: this.githubAccessToken,
