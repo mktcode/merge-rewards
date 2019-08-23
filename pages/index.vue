@@ -5,8 +5,10 @@
     <div class="container py-5">
       <div class="alert alert-danger">
         <b>ATTENTION:</b> This website is still in prototype stage. Currently
-        bugs are still very possible, which might lead to loss of funds. Please
-        use this service only for testing until a stable version is announced.
+        bugs are still very possible, which might lead to loss of funds.
+        Information on this website represents the vision for this project and
+        not the status quo. Please use this service only for testing until a
+        stable version is announced.
       </div>
       <div class="row my-5">
         <div class="col-md-6 mb-3">
