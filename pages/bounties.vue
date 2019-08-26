@@ -15,6 +15,7 @@
         </button>
       </h1>
       <AddBounty />
+      <DepositOnBounty :bounty="focusedBounty" />
       <ReleaseBounty :bounty="focusedBounty" />
       <DeleteBounty :bounty="focusedBounty" />
       <div v-if="userBounties.length" class="container">
@@ -59,6 +60,7 @@ export default {
     Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
     ReleaseBounty: () => import("@/components/ReleaseBounty"),
+    DepositOnBounty: () => import("@/components/DepositOnBounty"),
     AddBounty: () => import("@/components/AddBounty"),
     DeleteBounty: () => import("@/components/DeleteBounty"),
     Bounty: () => import("@/components/Bounty")

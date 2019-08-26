@@ -21,6 +21,7 @@
     "match-all": "^1.2.5",
     "mysql": "github:mysqljs/mysql",
     "nuxt": "^2.0.0",
+    "paypal-rest-sdk": "^1.8.1",
     "steem": "^0.7.5",
     "steemconnect": "^3.0.1",
     "uuid": "^3.3.2",

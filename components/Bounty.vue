@@ -16,9 +16,13 @@
       </div>
     </div>
     <div class="col-md-5 pr-0 text-right">
-      <h3>${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}</h3>
+      <h5>
+        {{ bounty.usdBalance ? bounty.usdBalance.toFixed(2) : "0.00" }}
+        USD<br />
+        {{ bounty.sbdBalance ? bounty.sbdBalance.toFixed(2) : "0.00" }} SBD
+      </h5>
       <small v-if="bounty.releasedAt && bounty.releasedTo">
-        closed by:
+        released to:
         <a :href="'https://github.com/' + bounty.releasedTo" target="_blank">
           {{ bounty.releasedTo }}
         </a>
@@ -141,6 +145,14 @@
               d="M547.4 8c-63.2 52.4-131.8 115.6-169.8 189.6-27.1 52.4-30.7 106.6-16.3 160.7 18.1 65 43.3 130 70.4 193.2 52.4 121 121 234.8 171.6 357.6 18.1 43.3 37.9 92.1 41.5 140.9 3.6 59.6-16.3 122.8-32.5 178.8-3.6 16.3-14.4 37.9-12.6 54.2 1.8 12.6 9 7.2 16.3 1.8 30.7-23.5 61.4-50.6 88.5-77.7 74-70.4 158.9-164.4 151.7-274.5-3.6-45.2-25.3-88.5-43.3-130C793 753.9 771.4 707 749.7 660c-39.7-88.5-81.3-175.2-124.6-261.9-14.4-30.7-32.5-59.6-43.3-90.3-16.3-41.5-23.5-84.9-25.3-128.2-1.8-32.5 0-66.8 3.6-99.3 1.8-21.7 9-41.5 9-63.2 5.4-19.9-5.4-21.7-21.7-9.1z"
             />
           </svg>
+        </button>
+        <button
+          class="btn btn-sm btn-dark"
+          data-toggle="modal"
+          data-target="#deposit-bounty-modal"
+          @click="$parent.focusedBounty = bounty"
+        >
+          <font-awesome-icon :icon="['fab', 'paypal']" />
         </button>
         <button
           v-if="githubUser && bounty.githubUser === githubUser.login"

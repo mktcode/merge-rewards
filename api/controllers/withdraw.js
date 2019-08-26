@@ -6,14 +6,14 @@ import { decimalFloor } from "../../lib/helpers";
 require("dotenv").config();
 
 const QUERY_BALANCE_FOR_USER =
-  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(bd.sbdAmount) as balance FROM bounties b JOIN bountyDeposits bd ON bd.bountyId = b.id WHERE b.releasedTo = ?) as bounties, (SELECT SUM(amount) FROM withdrawals WHERE githubUser = ?) as withdrawals, SUM(pendingRewards) as pending FROM claims WHERE githubUser = ?";
+  "SELECT (SELECT SUM(rewards) FROM claims WHERE githubUser = ?) as rewards, (SELECT SUM(bd.sbdAmount) as balance FROM bounties b JOIN bountyDeposits bd ON bd.bountyId = b.id WHERE b.releasedTo = ?) as sbdBounties, (SELECT SUM(bd.usdAmount) as balance FROM bounties b JOIN bountyDeposits bd ON bd.bountyId = b.id WHERE b.releasedTo = ?) as usdBounties, (SELECT SUM(sbdAmount) FROM withdrawals WHERE githubUser = ?) as sbdWithdrawals, (SELECT SUM(usdAmount) FROM withdrawals WHERE githubUser = ?) as usdWithdrawals, SUM(pendingRewards) as pending FROM claims WHERE githubUser = ?";
 const INSERT_WITHDRAWAL =
-  "INSERT INTO withdrawals (githubUser, amount, currency, address, memo) VALUES (?, ?, ?, ?, ?)";
+  "INSERT INTO withdrawals (githubUser, sbdAmount, currency, address, memo) VALUES (?, ?, ?, ?, ?)";
 const DELETE_WITHDRAWAL = "DELETE FROM withdrawals WHERE id = ?";
 
 const writeWithdrawCustomJson = (
   githubUser,
-  amount,
+  sbdAmount,
   currency,
   address,
   memo
@@ -26,7 +26,7 @@ const writeWithdrawCustomJson = (
       "balance:withdraw",
       JSON.stringify({
         githubUser,
-        amount,
+        sbdAmount,
         currency,
         address,
         memo
@@ -50,7 +50,7 @@ export default (req, res) => {
 
   database.query(
     QUERY_BALANCE_FOR_USER,
-    [githubUser, githubUser, githubUser, githubUser],
+    [githubUser, githubUser, githubUser, githubUser, githubUser, githubUser],
     (error, result) => {
       if (error || result.length !== 1) {
         res.status(500);
@@ -58,8 +58,8 @@ export default (req, res) => {
       } else {
         const balance = decimalFloor(
           Number(result[0].rewards) +
-            Number(result[0].bounties) -
-            Number(result[0].withdrawals)
+            Number(result[0].sbdBounties) -
+            Number(result[0].sbdWithdrawals)
         );
         if (balance >= amount) {
           if (["btc", "ltc", "eth", "xmr"].includes(currency)) {
@@ -148,7 +148,7 @@ export default (req, res) => {
                 });
             } else {
               res.status(400);
-              res.send("Bad request: Minimum withdrawal amount is 5$.");
+              res.send("Bad request: Minimum withdrawal amount is 5 SBD.");
             }
           } else if (currency === "steem") {
             // check if account exists

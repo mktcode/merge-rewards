@@ -1,5 +1,5 @@
 <template>
-  <header class="p-5 bg-secondary text-center text-light" v-if="githubUser">
+  <header class="p-5 bg-secondary text-light" v-if="githubUser">
     <h1 class="font-weight-bold">
       Hi
       <a :href="'https://github.com/' + githubUser.login" class="text-light">
@@ -7,20 +7,6 @@
       </a>
       !
     </h1>
-    <div v-if="balance">
-      <h4 class="mb-0" v-if="githubUser">
-        ${{ balance.balance }} Merge Rewards
-      </h4>
-      <h5 v-if="githubUser" class="mb-4 text-muted">
-        Pending: ${{ balance.pending }}
-      </h5>
-      <h5 class="mb-0 text-muted" v-if="steemUser">
-        {{ steemUser.account.balance }}
-      </h5>
-      <h5 v-if="steemUser" class="mb-4 text-muted">
-        ${{ steemUser.account.sbd_balance }}
-      </h5>
-    </div>
     <div>
       <nuxt-link
         class="btn btn-sm btn-light position-relative"
@@ -36,15 +22,47 @@
           {{ claimablePRs }}
         </small>
       </nuxt-link>
-      <button
-        data-toggle="modal"
-        data-target="#withdraw-modal"
-        class="btn btn-sm btn-success"
-      >
-        Withdraw
-      </button>
+    </div>
+    <div v-if="balance">
+      <h4 class="mb-1 text-right" v-if="githubUser">
+        {{ balance.usdBalance }} USD
+        <button
+          data-toggle="modal"
+          data-target="#withdraw-paypal-modal"
+          class="btn btn-sm btn-success"
+        >
+          <font-awesome-icon icon="share-square" />
+        </button>
+      </h4>
+      <h4 class="mb-1 text-right" v-if="githubUser">
+        {{ balance.sbdBalance }} SBD
+        <button
+          data-toggle="modal"
+          data-target="#withdraw-modal"
+          class="btn btn-sm btn-success"
+        >
+          <font-awesome-icon icon="share-square" />
+        </button>
+      </h4>
+      <h5 v-if="githubUser && balance.pending" class="text-muted text-right">
+        Pending: {{ balance.pending }} SBD
+      </h5>
+      <div class="mt-3 text-muted text-right" v-if="steemUser">
+        <a
+          :href="'https://steemitwallet.com/@' + steemUser.account.name"
+          target="_blank"
+          class="text-muted"
+        >
+          @{{ steemUser.account.name }}:
+        </a>
+        <h5 class="mb-0">
+          {{ steemUser.account.balance }}
+        </h5>
+        <h5 class="mb-4">{{ steemUser.account.sbd_balance }}</h5>
+      </div>
     </div>
     <Withdraw />
+    <WithdrawPaypal />
     <p v-if="!steemUser && balance.balance > accountPrice" class="pt-3">
       <a href="#" data-toggle="modal" data-target="#account-creation-modal"
         >Create a Steem account</a
@@ -93,6 +111,7 @@ import { getAge } from "@/lib/helpers";
 export default {
   components: {
     Withdraw: () => import("@/components/Withdraw"),
+    WithdrawPaypal: () => import("@/components/WithdrawPaypal"),
     CreateAccount: () => import("@/components/CreateAccount")
   },
   data() {

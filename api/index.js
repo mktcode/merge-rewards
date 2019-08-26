@@ -6,6 +6,7 @@ import databaseController from "./controllers/database";
 import balanceController from "./controllers/balance";
 import claimController from "./controllers/claim";
 import withdrawController from "./controllers/withdraw";
+import withdrawPaypalController from "./controllers/withdraw-paypal";
 import createAccountController from "./controllers/create-account";
 import addBoostersController from "./controllers/add-boosters";
 import boostersController from "./controllers/boosters";
@@ -15,6 +16,7 @@ import toggleAutoReleaseController from "./controllers/toggle-autorelease";
 import releaseBountyController from "./controllers/release-bounty";
 import deleteBountyController from "./controllers/delete-bounty";
 import bountiesController from "./controllers/bounties";
+import depositPaypalController from "./controllers/deposit-paypal";
 
 import auth from "./auth";
 
@@ -28,6 +30,7 @@ app.get("/balance/:githubUser", balanceController);
 app.post("/score", scoreController);
 app.post("/claim", auth, claimController);
 app.post("/withdraw", auth, withdrawController);
+app.post("/withdraw-paypal", auth, withdrawPaypalController);
 app.post("/create-account", auth, createAccountController);
 app.post("/add-boosters", auth, addBoostersController);
 app.get("/boosters/:githubUser", boostersController);
@@ -37,6 +40,7 @@ app.post("/toggle-autorelease", auth, toggleAutoReleaseController);
 app.post("/release-bounty", auth, releaseBountyController);
 app.post("/delete-bounty", auth, deleteBountyController);
 app.get("/bounties", bountiesController);
+app.post("/deposit-paypal", depositPaypalController);
 
 module.exports = {
   path: "/api",

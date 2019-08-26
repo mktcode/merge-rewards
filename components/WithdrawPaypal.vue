@@ -1,5 +1,10 @@
 <template>
-  <div class="modal fade" id="withdraw-modal" tabindex="-1" role="dialog">
+  <div
+    class="modal fade"
+    id="withdraw-paypal-modal"
+    tabindex="-1"
+    role="dialog"
+  >
     <div class="modal-dialog text-dark text-left" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -15,36 +20,23 @@
         </div>
         <div class="modal-body">
           <div class="alert alert-info">
-            Currently the minimum amount for withdrawals is 5 SBD for all
-            currencies except STEEM (since it has zero transaction fees). It
-            will be lower once implemented on a per-currency basis.
+            Currently the minimum amount for withdrawals is 2 USD.
           </div>
-          <div>Merge Rewards to withdraw:</div>
+          <div>USD to withdraw:</div>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text">$</span>
             </div>
             <input
               type="number"
-              min="0"
+              min="2"
               :max="balance.balance"
               class="form-control"
               v-model="amount"
             />
           </div>
-          <select
-            class="custom-select custom-select-lg mb-3"
-            v-model="currency"
-          >
-            <option value="">Choose Currency</option>
-            <option value="btc">Bitcoin</option>
-            <option value="ltc">Litecoin</option>
-            <option value="eth">Ether</option>
-            <option value="xmr">Monero</option>
-            <option value="steem">STEEM (SBD)</option>
-          </select>
-          <div>Your receive address:</div>
-          <input type="text" class="form-control" v-model="address" />
+          <div>Your PayPal account's email address:</div>
+          <input type="email" class="form-control" v-model="address" />
           <div v-if="showSuccessMessage" class="alert alert-success mt-3">
             Withdrawal successful!
           </div>
@@ -57,7 +49,7 @@
             @click.prevent="withdraw()"
             type="button"
             class="btn btn-success"
-            :disabled="!currency || !amount || !address"
+            :disabled="loading || !amount || !address"
           >
             <font-awesome-icon v-if="loading" icon="spinner" spin />
             <span v-else>Withdraw</span>
@@ -77,8 +69,7 @@ export default {
       loading: false,
       showSuccessMessage: false,
       showErrorMessage: false,
-      currency: "",
-      amount: 0,
+      amount: 2,
       address: ""
     };
   },
@@ -94,10 +85,9 @@ export default {
       if (this.githubUser) {
         this.loading = true;
         this.$axios
-          .$post(process.env.API_URL + "/withdraw", {
+          .$post(process.env.API_URL + "/withdraw-paypal", {
             githubAccessToken: this.githubAccessToken,
             amount: this.amount,
-            currency: this.currency,
             address: this.address
           })
           .then(() => {
