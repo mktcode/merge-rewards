@@ -1,30 +1,77 @@
+@import 'mixins'
+
 body
   font-family: 'Montserrat', sans-serif
+  overflow-x: hidden
 .navbar-brand
   img
     width: 27px
-nav
-  &.bg-dark
-    background-color: #222 !important
-header
-  background-image: url("/header.png")
-  background-size: cover
-  background-position: center center
-  h1
-    font-size: 4rem
-    img
-      width: 60px
-      height: 60px
 .bg-dark
   background-color: #333 !important
 .bg-secondary
   background-color: #444 !important
+.btn
+  border-radius: 25px
+.btn-green
+  @include green-gradient
+  color: white
+  transition: background-position 0.3s
+  background-position: 100% 0
+  background-size: 200%
+  &:hover
+    color: white
+    background-position: 0 0
+  &:focus
+    box-shadow: 0 0 0 0.2rem rgba(86,173,112,.25)
+.alert
+  border-radius: 25px
+  border: none
+  opacity: 1
+  &.alert-danger
+    background-color: rgba(#f8d7da, 0.3)
+  &.alert-success
+    background-color: rgba(#d4edda, 0.3)
+  &.alert-warning
+    background-color: rgba(#fff3cd, 0.3)
+  &.alert-info
+    background-color: rgba(#d1ecf1, 0.3)
+.custom-select,
+.form-control
+  border-radius: 25px
+.input-group-prepend
+  .input-group-text
+    border-top-left-radius: 25px
+    border-bottom-left-radius: 25px
+.input-group-append
+  .input-group-text
+    border-top-right-radius: 25px
+    border-bottom-right-radius: 25px
 .steem
-  background: #1c06b4
-  background: -moz-linear-gradient(left,  #1c06b4 0%, #0293ff 100%)
-  background: -webkit-linear-gradient(left,  #1c06b4 0%,#0293ff 100%)
-  background: linear-gradient(to right,  #1c06b4 0%,#0293ff 100%)
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1c06b4', endColorstr='#0293ff',GradientType=1 )
+  @include green-gradient
+.modal-fs
+  padding: 0 !important
+  .modal-dialog
+    width: 100%
+    height: 100%
+    max-width: 100%
+    max-height: 100%
+    margin: 0
+    .modal-content
+      width: 100%
+      height: 100%
+      border: none
+      border-radius: 0
+    .modal-header
+      .close
+        opacity: 0.2
+        padding-top: 0
+        padding-bottom: 0
+        font-size: 3rem
+        transition: opacity 0.2s
+        &:hover
+          opacity: 0.4
+    .modal-body
+      overflow-y: auto
 footer
   &.bg-dark
     background-color: #111 !important

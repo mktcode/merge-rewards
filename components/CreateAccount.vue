@@ -1,13 +1,8 @@
 <template>
-  <div
-    class="modal fade"
-    id="account-creation-modal"
-    tabindex="-1"
-    role="dialog"
-  >
-    <div class="modal-dialog text-dark text-left" role="document">
+  <div class="modal modal-fs fade" id="account-creation-modal" tabindex="-1">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header align-items-center">
           <h5 class="modal-title">Create Steem Account</h5>
           <button
             type="button"
@@ -19,70 +14,76 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>
-            Spend <b>${{ accountPriceFixed }}</b> of your Merge Rewards balance
-            to create a Steem account. A Steem account gives you increased
-            rewards and the option to sponsor projects as well as access to a
-            whole lot of
-            <a href="https://steemprojects.com/" target="_blank"
-              >other Steem based apps</a
-            >.
-          </p>
-          <label class="form-label">Choose an account name:</label>
-          <div class="position-relative">
-            <input
-              type="text"
-              class="form-control"
-              v-model="accountName"
-              @input="validateAccountName"
-              :readonly="loading"
-            />
-            <font-awesome-icon
-              v-if="accountValidationLoading"
-              icon="spinner"
-              spin
-              class="input-icon"
-            />
-            <font-awesome-icon
-              v-else-if="accountName && !accountNameError"
-              icon="check"
-              class="input-icon"
-            />
-          </div>
-          <p class="text-danger small" v-if="accountNameError">
-            {{ accountNameError }}
-          </p>
-          <div v-if="password && keys">
-            <h5 class="mt-3">Your Password:</h5>
-            <div class="alert alert-info text-center">
-              {{ password }}
+          <div class="container col-md-6">
+            <p>
+              Spend <b>${{ accountPriceFixed }}</b> of your Merge Rewards
+              balance to create a Steem account. A Steem account gives you
+              increased rewards and the option to sponsor projects as well as
+              access to a whole lot of
+              <a href="https://steemprojects.com/" target="_blank"
+                >other Steem based apps</a
+              >.
+            </p>
+            <label class="form-label">Choose an account name:</label>
+            <div class="position-relative">
+              <input
+                type="text"
+                class="form-control"
+                v-model="accountName"
+                @input="validateAccountName"
+                :readonly="loading"
+              />
+              <font-awesome-icon
+                v-if="accountValidationLoading"
+                icon="spinner"
+                spin
+                class="input-icon"
+              />
+              <font-awesome-icon
+                v-else-if="accountName && !accountNameError"
+                icon="check"
+                class="input-icon"
+              />
             </div>
-            <div class="alert alert-danger mt-3">
-              <b>Important:</b> Backup your password!<br />
-              <br />
-              It can not be recovered! If you loose it, you will loose access to
-              your Steem account permanently.
-              <a
-                :href="'data:text/plain;base64,' + accountBackup"
-                class="btn btn-danger mt-2 w-100"
-                :download="accountName + '-backup.txt'"
-                @click="backupDownloaded = true"
+            <p class="text-danger small" v-if="accountNameError">
+              {{ accountNameError }}
+            </p>
+            <div v-if="password && keys">
+              <h5 class="mt-3">Your Password:</h5>
+              <div class="alert alert-info text-center">
+                {{ password }}
+              </div>
+              <div class="alert alert-danger mt-3">
+                <b>Important:</b> Backup your password!<br />
+                <br />
+                It can not be recovered! If you loose it, you will loose access
+                to your Steem account permanently.
+                <a
+                  :href="'data:text/plain;base64,' + accountBackup"
+                  class="btn btn-danger mt-2 w-100"
+                  :download="accountName + '-backup.txt'"
+                  @click="backupDownloaded = true"
+                >
+                  Download Password Backup
+                </a>
+              </div>
+            </div>
+            <div v-if="successMessage" class="alert alert-success mt-3">
+              <button
+                type="button"
+                class="close"
+                @click="successMessage = null"
               >
-                Download Password Backup
-              </a>
+                <span>&times;</span>
+              </button>
+              {{ successMessage }}
             </div>
-          </div>
-          <div v-if="successMessage" class="alert alert-success mt-3">
-            <button type="button" class="close" @click="successMessage = null">
-              <span>&times;</span>
-            </button>
-            {{ successMessage }}
-          </div>
-          <div v-if="errorMessage" class="alert alert-danger mt-3">
-            <button type="button" class="close" @click="errorMessage = null">
-              <span>&times;</span>
-            </button>
-            {{ errorMessage }}
+            <div v-if="errorMessage" class="alert alert-danger mt-3">
+              <button type="button" class="close" @click="errorMessage = null">
+                <span>&times;</span>
+              </button>
+              {{ errorMessage }}
+            </div>
           </div>
         </div>
         <div class="modal-footer">

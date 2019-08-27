@@ -1,138 +1,68 @@
 <template>
-  <header class="p-5 bg-secondary text-light" v-if="githubUser">
-    <h1 class="font-weight-bold">
-      Hi
-      <a :href="'https://github.com/' + githubUser.login" class="text-light">
-        {{ githubUser.login }}
-      </a>
-      !
-    </h1>
-    <div>
-      <nuxt-link
-        class="btn btn-sm btn-light position-relative"
-        v-if="$route.path !== '/claim'"
-        to="/claim"
-      >
-        Claim
-        <small
-          class="badge badge-success position-absolute"
-          style="top: -3px; right: -3px;"
-          v-if="claimablePRs"
-        >
-          {{ claimablePRs }}
-        </small>
-      </nuxt-link>
-    </div>
-    <div v-if="balance">
-      <h4 class="mb-1 text-right" v-if="githubUser">
-        {{ balance.usdBalance }} USD
-        <button
-          data-toggle="modal"
-          data-target="#withdraw-paypal-modal"
-          class="btn btn-sm btn-success"
-        >
-          <font-awesome-icon icon="share-square" />
-        </button>
-      </h4>
-      <h4 class="mb-1 text-right" v-if="githubUser">
-        {{ balance.sbdBalance }} SBD
-        <button
-          data-toggle="modal"
-          data-target="#withdraw-modal"
-          class="btn btn-sm btn-success"
-        >
-          <font-awesome-icon icon="share-square" />
-        </button>
-      </h4>
-      <h5 v-if="githubUser && balance.pending" class="text-muted text-right">
-        Pending: {{ balance.pending }} SBD
-      </h5>
-      <div class="mt-3 text-muted text-right" v-if="steemUser">
-        <a
-          :href="'https://steemitwallet.com/@' + steemUser.account.name"
-          target="_blank"
-          class="text-muted"
-        >
-          @{{ steemUser.account.name }}:
-        </a>
-        <h5 class="mb-0">
-          {{ steemUser.account.balance }}
-        </h5>
-        <h5 class="mb-4">{{ steemUser.account.sbd_balance }}</h5>
+  <header class="p-5 text-light">
+    <div class="row mt-5 pt-5">
+      <div class="col-sm-6">
+        <h1 class="mt-3 d-flex align-items-center font-weight-bold text-nowrap">
+          Merge Rewards
+        </h1>
+        <h2 class="pl-5 mb-5 text-nowrap">Funding Social Development</h2>
+      </div>
+      <div class="col-sm-5">
+        <div class="video">
+          <iframe
+            src="https://www.youtube.com/embed/X1bkESeSntI?modestbranding=1&color=white"
+            frameborder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
     </div>
-    <Withdraw />
-    <WithdrawPaypal />
-    <p v-if="!steemUser && balance.balance > accountPrice" class="pt-3">
-      <a href="#" data-toggle="modal" data-target="#account-creation-modal"
-        >Create a Steem account</a
-      ><br />and double your rewards!
-    </p>
-    <CreateAccount />
-  </header>
-  <header class="p-5 bg-secondary text-light" v-else>
-    <h1 class="d-flex align-items-center font-weight-bold">
-      <img src="/logo.png" alt="logo.png" class="mr-3" />
-      Merge Rewards
-    </h1>
-    <h2 class="mb-5">Rewarding Social Development</h2>
-    <p class="lead">
-      Contribute to Open Source projects<br />
-      and earn money with your pull requests on GitHub!
-    </p>
-    <a
-      :href="
-        'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
-          githubClientId
-      "
-      class="btn btn-success btn-lg"
-    >
-      <font-awesome-icon :icon="['fab', 'github']" />
-      Connect
-    </a>
   </header>
 </template>
 
-<style lang="sass">
-.btn-logout
-  .text-danger
-    display: none
-  &:hover
-    .text-danger
-      display: inline
-    .text-success
-      display: none
+<style lang="sass" scoped>
+header
+  min-height: 400px
+  h1
+    font-size: 4rem
+    img
+      width: 60px
+      height: 60px
+  &:before
+    content: " "
+    position: absolute
+    z-index: -1
+    top: -1720px
+    left: -270px
+    width: 2000px
+    height: 2000px
+    transform: rotate(-14deg)
+    border-radius: 300px
+    background-color: #eee
+  &:after
+    content: " "
+    position: absolute
+    z-index: -1
+    top: -1730px
+    left: -250px
+    width: 2000px
+    height: 2000px
+    transform: rotate(-15deg)
+    border-radius: 300px
+    background-color: #F4D03F
+    background-image: linear-gradient(132deg, #16A085 50%, #F4D03F 100%)
+  .video
+    position: relative
+    padding-bottom: 56.25%
+    padding-top: 30px
+    height: 0
+    overflow: hidden
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3)
+    iframe
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
 </style>
-
-<script>
-import { mapGetters } from "vuex";
-import { getAge } from "@/lib/helpers";
-
-export default {
-  components: {
-    Withdraw: () => import("@/components/Withdraw"),
-    WithdrawPaypal: () => import("@/components/WithdrawPaypal"),
-    CreateAccount: () => import("@/components/CreateAccount")
-  },
-  data() {
-    return {
-      githubClientId: process.env.GITHUB_CLIENT_ID,
-      prMaxAge: process.env.PR_MAX_AGE || 14
-    };
-  },
-  computed: {
-    ...mapGetters("github", {
-      githubUser: "user"
-    }),
-    ...mapGetters("steemconnect", {
-      steemUser: "user"
-    }),
-    ...mapGetters(["pullRequests", "balance", "accountPrice"]),
-    claimablePRs() {
-      return this.pullRequests.filter(pr => {
-        return !pr.claimed && pr.merged && getAge(pr.mergedAt) <= this.prMaxAge;
-      }).length;
-    }
-  }
-};
-</script>

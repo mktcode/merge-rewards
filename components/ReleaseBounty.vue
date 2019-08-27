@@ -1,14 +1,13 @@
 <template>
   <div
-    class="modal fade"
+    class="modal modal-fs fade"
     id="release-bounty-modal"
     ref="release-bounty-modal"
     tabindex="-1"
-    role="dialog"
   >
-    <div class="modal-dialog text-dark text-left" role="document">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header align-items-center">
           <h5 class="modal-title">Release Bounty</h5>
           <button
             type="button"
@@ -20,76 +19,83 @@
           </button>
         </div>
         <div class="modal-body" v-if="bounty">
-          <h1 class="text-center">
-            ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
-          </h1>
-          <div class="custom-control custom-checkbox">
-            <input
-              type="checkbox"
-              class="custom-control-input"
-              id="auto-release"
-              v-model="autoRelease"
-            />
-            <label class="custom-control-label" for="auto-release">
-              Release automatically
-            </label>
-          </div>
-          <a href="#" @click.prevent="showHowItWorks = !showHowItWorks">
-            <small>How does this work?</small>
-          </a>
-          <div class="alert alert-info small" v-if="showHowItWorks">
-            <button type="button" class="close" @click="showHowItWorks = false">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            Releasing the bounty automatically is possible, if the issue on
-            GitHub was closed automatically, by a pull request. The bounty will
-            then be given to the respective GitHub user as soon as he/she claims
-            the rewards for this pull request.<br />
-            <br />
-            Read
-            <a
-              href="https://help.github.com/en/articles/closing-issues-using-keywords"
-              target="_blank"
-              >here</a
-            >
-            to learn more about how closing issues using keywords works.
-          </div>
-          <div class="mt-3" v-if="!autoRelease">
-            Enter the GitHub username to which you want to release this bounty:
-            <div class="position-relative">
+          <div class="container col-md-6">
+            <h1 class="text-center">
+              ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
+            </h1>
+            <div class="custom-control custom-checkbox">
               <input
-                type="text"
-                class="form-control"
-                v-model="accountName"
-                @input="validateAccountName"
-                :readonly="loading"
+                type="checkbox"
+                class="custom-control-input"
+                id="auto-release"
+                v-model="autoRelease"
               />
-              <font-awesome-icon
-                v-if="accountValidationLoading"
-                icon="spinner"
-                spin
-                class="input-icon"
-              />
-              <font-awesome-icon
-                v-else-if="accountName && !accountNameError"
-                icon="check"
-                class="input-icon"
-              />
+              <label class="custom-control-label" for="auto-release">
+                Release automatically
+              </label>
             </div>
-            <small class="text-danger d-block" v-if="accountNameError">
-              {{ accountNameError }}
-            </small>
-            <small class="d-block"
-              >You can enter your own username if you want to withdraw the
-              deposit.</small
-            >
+            <a href="#" @click.prevent="showHowItWorks = !showHowItWorks">
+              <small>How does this work?</small>
+            </a>
+            <div class="alert alert-info small" v-if="showHowItWorks">
+              <button
+                type="button"
+                class="close"
+                @click="showHowItWorks = false"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              Releasing the bounty automatically is possible, if the issue on
+              GitHub was closed automatically, by a pull request. The bounty
+              will then be given to the respective GitHub user as soon as he/she
+              claims the rewards for this pull request.<br />
+              <br />
+              Read
+              <a
+                href="https://help.github.com/en/articles/closing-issues-using-keywords"
+                target="_blank"
+                >here</a
+              >
+              to learn more about how closing issues using keywords works.
+            </div>
+            <div class="mt-3" v-if="!autoRelease">
+              Enter the GitHub username to which you want to release this
+              bounty:
+              <div class="position-relative">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="accountName"
+                  @input="validateAccountName"
+                  :readonly="loading"
+                />
+                <font-awesome-icon
+                  v-if="accountValidationLoading"
+                  icon="spinner"
+                  spin
+                  class="input-icon"
+                />
+                <font-awesome-icon
+                  v-else-if="accountName && !accountNameError"
+                  icon="check"
+                  class="input-icon"
+                />
+              </div>
+              <small class="text-danger d-block" v-if="accountNameError">
+                {{ accountNameError }}
+              </small>
+              <small class="d-block"
+                >You can enter your own username if you want to withdraw the
+                deposit.</small
+              >
+            </div>
           </div>
         </div>
         <div class="modal-footer">
           <button
             @click.prevent="releaseBounty()"
             type="button"
-            class="btn btn-success"
+            class="btn btn-green"
             :disabled="!receiver || autoRelease"
           >
             <font-awesome-icon v-if="loading" icon="spinner" spin />

@@ -1,14 +1,13 @@
 <template>
   <div
-    class="modal fade"
+    class="modal modal-fs fade"
     id="delete-bounty-modal"
     ref="delete-bounty-modal"
     tabindex="-1"
-    role="dialog"
   >
-    <div class="modal-dialog text-dark text-left" role="document">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header align-items-center">
           <h5 class="modal-title">Delete Bounty</h5>
           <button
             type="button"
@@ -20,17 +19,19 @@
           </button>
         </div>
         <div class="modal-body" v-if="bounty">
-          <h1 class="text-center">
-            ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
-          </h1>
+          <div class="container col-md-6">
+            <h1 class="text-center">
+              ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
+            </h1>
 
-          <p class="lead text-center">
-            Do you really want to delete this bounty?
-          </p>
+            <p class="lead text-center">
+              Do you really want to delete this bounty?
+            </p>
 
-          <div class="alert alert-info" v-if="bounty.balance > 0">
-            Existing deposits as well as deposits made after deleting the bounty
-            will be transfered to your GitHub account.
+            <div class="alert alert-info" v-if="bounty.balance > 0">
+              Existing deposits as well as deposits made after deleting the
+              bounty will be transfered to your GitHub account.
+            </div>
           </div>
         </div>
         <div class="modal-footer">

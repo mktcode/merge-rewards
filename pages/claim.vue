@@ -1,13 +1,12 @@
 <template>
   <div>
     <Navbar />
-    <Header />
     <div v-if="githubUser" class="py-5">
-      <h1 class="container mb-3">Claim Rewards</h1>
+      <h1 class="container mt-5 mb-3">Your Contributions</h1>
       <div class="container mb-2 text-right">
         <div>
           <button
-            class="btn btn-sm btn-success"
+            class="btn btn-sm btn-green"
             data-toggle="modal"
             data-target="#boost-modal"
           >
@@ -21,7 +20,7 @@
             :class="
               'btn btn-sm ' +
                 (selectedBooster === 'strikes'
-                  ? 'btn-success'
+                  ? 'btn-green'
                   : 'btn-outline-success')
             "
             :disabled="!boosters.strikes"
@@ -34,7 +33,7 @@
             :class="
               'btn btn-sm ' +
                 (selectedBooster === 'spares'
-                  ? 'btn-success'
+                  ? 'btn-green'
                   : 'btn-outline-success')
             "
             :disabled="!boosters.spares"
@@ -47,7 +46,7 @@
             :class="
               'btn btn-sm ' +
                 (selectedBooster === 'doubles'
-                  ? 'btn-success'
+                  ? 'btn-green'
                   : 'btn-outline-success')
             "
             :disabled="!boosters.doubles"
@@ -60,7 +59,7 @@
             :class="
               'btn btn-sm ' +
                 (selectedBooster === 'dices'
-                  ? 'btn-success'
+                  ? 'btn-green'
                   : 'btn-outline-success')
             "
             :disabled="!boosters.dices"
@@ -97,7 +96,7 @@
       />
     </div>
     <div v-else class="container py-5 text-center">
-      <p class="lead mb-5">
+      <p class="lead mb-5 mt-5">
         To claim rewards for your pull requests you must connect with your
         GitHub account.
       </p>
@@ -106,14 +105,14 @@
           'https://github.com/login/oauth/authorize?scope=user:email&client_id=' +
             githubClientId
         "
-        class="btn btn-success btn-lg"
+        class="btn btn-green btn-lg"
       >
         <font-awesome-icon :icon="['fab', 'github']" />
         Connect to GitHub
       </a>
       <a
         href="https://github.com/join?source=merge-rewards.com"
-        class="btn btn-success btn-lg"
+        class="btn btn-green btn-lg"
       >
         <font-awesome-icon :icon="['fab', 'github']" />
         Create GitHub Account
@@ -142,7 +141,6 @@ export default {
   },
   components: {
     Navbar: () => import("@/components/Navbar"),
-    Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
     PullRequest: () => import("@/components/PullRequest"),
     Boost: () => import("@/components/Boost"),

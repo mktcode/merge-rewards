@@ -156,7 +156,7 @@
         </button>
         <button
           v-if="githubUser && bounty.githubUser === githubUser.login"
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-green"
           data-toggle="modal"
           data-target="#release-bounty-modal"
           @click="$parent.focusedBounty = bounty"

@@ -1,14 +1,13 @@
 <template>
   <div
-    class="modal fade"
+    class="modal modal-fs fade"
     id="add-bounty-modal"
     ref="add-bounty-modal"
     tabindex="-1"
-    role="dialog"
   >
-    <div class="modal-dialog text-dark text-left" role="document">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header align-items-center">
           <h5 class="modal-title">Add Bounty</h5>
           <button
             type="button"
@@ -20,28 +19,34 @@
           </button>
         </div>
         <div class="modal-body">
-          <div>Paste the full issue URL here:</div>
-          <input
-            type="text"
-            class="form-control"
-            v-model="issueUrl"
-            placeholder="https://github.com/..."
-          />
-          <small>Or enter: <i>owner/repo/number</i> </small>
-          <div class="mt-3 text-danger" v-if="showIssueClosed">
-            This issue is closed.
-          </div>
-          <div class="input-group my-3" v-if="issue">
+          <div class="container col-md-6">
+            <div>Paste the full issue URL here:</div>
             <input
               type="text"
               class="form-control"
-              readonly
-              :value="issue.title"
+              v-model="issueUrl"
+              placeholder="https://github.com/..."
             />
-            <div class="input-group-append">
-              <a :href="issue.url" target="_blank" class="btn btn-outline-dark">
-                <font-awesome-icon icon="external-link-alt" />
-              </a>
+            <small>Or enter: <i>owner/repo/number</i> </small>
+            <div class="mt-3 text-danger" v-if="showIssueClosed">
+              This issue is closed.
+            </div>
+            <div class="input-group my-3" v-if="issue">
+              <input
+                type="text"
+                class="form-control"
+                readonly
+                :value="issue.title"
+              />
+              <div class="input-group-append">
+                <a
+                  :href="issue.url"
+                  target="_blank"
+                  class="btn btn-outline-dark"
+                >
+                  <font-awesome-icon icon="external-link-alt" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

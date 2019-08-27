@@ -1,12 +1,11 @@
 <template>
   <div>
     <Navbar />
-    <Header />
     <div class="container pt-5" v-if="githubUser">
-      <h1 class="mb-3 d-flex align-items-end">
+      <h1 class="mt-5 mb-3 d-flex align-items-end">
         Your Bounties
         <button
-          class="btn btn-sm btn-success ml-auto"
+          class="btn btn-sm btn-green ml-auto"
           data-toggle="modal"
           data-target="#add-bounty-modal"
         >
@@ -29,7 +28,7 @@
       <p v-else class="lead">Add an issue to deposit a bounty.</p>
     </div>
     <div class="container py-5">
-      <h1 class="mb-3">
+      <h1 class="mt-5 mb-3 d-flex align-items-end">
         Bounties
       </h1>
       <div v-if="bounties.length" class="container">
@@ -57,7 +56,6 @@ import { mapGetters } from "vuex";
 export default {
   components: {
     Navbar: () => import("@/components/Navbar"),
-    Header: () => import("@/components/Header"),
     Footer: () => import("@/components/Footer"),
     ReleaseBounty: () => import("@/components/ReleaseBounty"),
     DepositOnBounty: () => import("@/components/DepositOnBounty"),

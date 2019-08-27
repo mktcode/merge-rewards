@@ -1,5 +1,5 @@
 <template>
-  <div class="modal modal-fs fade" id="deposit-bounty-modal" tabindex="-1">
+  <div class="modal modal-fs fade" id="deposit-modal" tabindex="-1">
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
         <div class="modal-header align-items-center">

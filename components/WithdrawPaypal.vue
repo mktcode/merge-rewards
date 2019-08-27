@@ -1,14 +1,9 @@
 <template>
-  <div
-    class="modal fade"
-    id="withdraw-paypal-modal"
-    tabindex="-1"
-    role="dialog"
-  >
-    <div class="modal-dialog text-dark text-left" role="document">
+  <div class="modal modal-fs fade" id="withdraw-paypal-modal" tabindex="-1">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Withdraw</h5>
+        <div class="modal-header align-items-center">
+          <h5 class="modal-title">Withdraw USD</h5>
           <button
             type="button"
             class="close"
@@ -19,36 +14,38 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="alert alert-info">
-            Currently the minimum amount for withdrawals is 2 USD.
-          </div>
-          <div>USD to withdraw:</div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">$</span>
+          <div class="container col-md-6">
+            <div class="alert alert-info">
+              Currently the minimum amount for withdrawals is 2 USD.
             </div>
-            <input
-              type="number"
-              min="2"
-              :max="balance.balance"
-              class="form-control"
-              v-model="amount"
-            />
-          </div>
-          <div>Your PayPal account's email address:</div>
-          <input type="email" class="form-control" v-model="address" />
-          <div v-if="showSuccessMessage" class="alert alert-success mt-3">
-            Withdrawal successful!
-          </div>
-          <div v-if="showErrorMessage" class="alert alert-danger mt-3">
-            Withdrawal failed!
+            <div>USD to withdraw:</div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">$</span>
+              </div>
+              <input
+                type="number"
+                min="2"
+                :max="balance.balance"
+                class="form-control"
+                v-model="amount"
+              />
+            </div>
+            <div>Your PayPal account's email address:</div>
+            <input type="email" class="form-control" v-model="address" />
+            <div v-if="showSuccessMessage" class="alert alert-success mt-3">
+              Withdrawal successful!
+            </div>
+            <div v-if="showErrorMessage" class="alert alert-danger mt-3">
+              Withdrawal failed!
+            </div>
           </div>
         </div>
         <div class="modal-footer">
           <button
             @click.prevent="withdraw()"
             type="button"
-            class="btn btn-success"
+            class="btn btn-green"
             :disabled="loading || !amount || !address"
           >
             <font-awesome-icon v-if="loading" icon="spinner" spin />

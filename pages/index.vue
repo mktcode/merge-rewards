@@ -89,7 +89,7 @@
               </p>
               <button
                 @click.prevent="$store.dispatch('steemconnect/logout')"
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-outline-light"
               >
                 disconnect
               </button>
@@ -124,9 +124,9 @@
           <div class="col-md-8">
             <p>
               All transactions on merge-rewards.com are stored on the Steem
-              blockchain to make them immutable and public. Everything from
-              transferring boosters to depositing money for a bounty is recorded
-              in a trustworthy and verifiable way.<br />
+              blockchain to make them dezentralized, immutable and public.
+              Everything from transferring boosters to depositing money for a
+              bounty is recorded in a trustworthy and verifiable way.<br />
               <br />
               Steem is a decentralized content network with its own
               cryptocurrency to reward creators of good content. Merge Rewards
@@ -153,7 +153,9 @@ export default {
     Footer: () => import("@/components/Footer")
   },
   computed: {
-    ...mapGetters("steemconnect", { steemUser: "user" })
+    ...mapGetters("steemconnect", { steemUser: "user" }),
+    ...mapGetters("github", { githubUser: "user" }),
+    ...mapGetters(["balance", "accountPrice"])
   }
 };
 </script>

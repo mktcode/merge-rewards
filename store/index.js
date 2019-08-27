@@ -1,11 +1,13 @@
 import Vue from "vue";
+import { getAge } from "../lib/helpers";
 
 export const state = () => ({
   claims: [],
   withdrawals: [],
   bounties: [],
   balance: {
-    balance: 0,
+    sbdBalance: 0,
+    usdBalance: 0,
     pending: 0
   },
   boosters: {
@@ -207,7 +209,7 @@ export const actions = {
         }
       )
       .then(response => {
-        const pullRequests = response.data.user.pullRequests.nodes.filter(
+        let pullRequests = response.data.user.pullRequests.nodes.filter(
           pr => !pr.repository.viewerCanAdminister
         );
         const claims = getters.claims;
@@ -217,6 +219,13 @@ export const actions = {
           if (claims.find(c => c.pullRequestId === pr.id)) {
             pr.claimed = true;
           }
+        });
+        pullRequests = pullRequests.filter(
+          pr =>
+            (pr.claimed || pr.merged) &&
+            getAge(pr.mergedAt) <= process.env.PR_MAX_AGE
+        );
+        pullRequests.forEach(pr => {
           // check if pr closes issues
           pr.issues = [];
           let searchText = pr.body;

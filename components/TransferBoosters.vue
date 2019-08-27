@@ -1,13 +1,8 @@
 <template>
-  <div
-    class="modal fade"
-    id="transfer-boosters-modal"
-    tabindex="-1"
-    role="dialog"
-  >
-    <div class="modal-dialog text-dark text-left" role="document">
+  <div class="modal modal-fs fade" id="transfer-boosters-modal" tabindex="-1">
+    <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header align-items-center">
           <h5 class="modal-title">
             <font-awesome-icon icon="paper-plane" /> Transfer Boosters
           </h5>
@@ -21,56 +16,58 @@
           </button>
         </div>
         <div class="modal-body">
-          <label>Receiving GitHub Account:</label>
-          <input
-            type="text"
-            v-model="receiver"
-            class="form-control form-control-lg"
-          />
-          <div class="container mt-3">
-            <div class="row">
-              <div
-                class="col-sm-6 text-center mb-3"
-                v-for="(count, name) in boosters"
-              >
-                <div class="btn-group">
-                  <button class="btn btn-outline-dark" disabled>
-                    <font-awesome-icon
-                      :icon="getBoosterIcon(name)"
-                      fixed-width
-                    />
-                    &times;{{ count }}
-                  </button>
-                  <button
-                    class="btn btn-dark"
-                    @click="removeItem(name)"
-                    :disabled="count === 0"
-                  >
-                    <font-awesome-icon icon="minus" class="small" />
-                  </button>
-                  <button
-                    class="btn btn-dark"
-                    @click="addItem(name)"
-                    :disabled="count === availableBoosters[name]"
-                  >
-                    <font-awesome-icon icon="plus" class="small" />
-                  </button>
+          <div class="container col-md-6">
+            <label>Receiving GitHub Account:</label>
+            <input
+              type="text"
+              v-model="receiver"
+              class="form-control form-control-lg"
+            />
+            <div class="container mt-3">
+              <div class="row">
+                <div
+                  class="col-sm-6 text-center mb-3"
+                  v-for="(count, name) in boosters"
+                >
+                  <div class="btn-group">
+                    <button class="btn btn-outline-dark" disabled>
+                      <font-awesome-icon
+                        :icon="getBoosterIcon(name)"
+                        fixed-width
+                      />
+                      &times;{{ count }}
+                    </button>
+                    <button
+                      class="btn btn-dark"
+                      @click="removeItem(name)"
+                      :disabled="count === 0"
+                    >
+                      <font-awesome-icon icon="minus" class="small" />
+                    </button>
+                    <button
+                      class="btn btn-dark"
+                      @click="addItem(name)"
+                      :disabled="count === availableBoosters[name]"
+                    >
+                      <font-awesome-icon icon="plus" class="small" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div v-if="showSuccessMessage" class="alert alert-success mt-3">
-            Transfer successful!
-          </div>
-          <div v-if="showErrorMessage" class="alert alert-danger mt-3">
-            Transfer failed!
+            <div v-if="showSuccessMessage" class="alert alert-success mt-3">
+              Transfer successful!
+            </div>
+            <div v-if="showErrorMessage" class="alert alert-danger mt-3">
+              Transfer failed!
+            </div>
           </div>
         </div>
         <div class="modal-footer">
           <button
             @click.prevent="transfer()"
             type="button"
-            class="btn btn-success"
+            class="btn btn-green"
             :disabled="
               !receiver ||
                 !(
