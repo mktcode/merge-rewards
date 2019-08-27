@@ -21,14 +21,22 @@
         <div class="modal-body" v-if="bounty">
           <div class="container col-md-6">
             <h1 class="text-center">
-              ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
+              {{ bounty.usdBalance ? bounty.usdBalance.toFixed(2) : "0.00" }}
+              USD
+            </h1>
+            <h1 class="text-center">
+              {{ bounty.sbdBalance ? bounty.sbdBalance.toFixed(2) : "0.00" }}
+              SBD
             </h1>
 
             <p class="lead text-center">
               Do you really want to delete this bounty?
             </p>
 
-            <div class="alert alert-info" v-if="bounty.balance > 0">
+            <div
+              class="alert alert-info"
+              v-if="bounty.sbdBalance + bounty.usdBalance > 0"
+            >
               Existing deposits as well as deposits made after deleting the
               bounty will be transfered to your GitHub account.
             </div>
