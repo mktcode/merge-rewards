@@ -1,7 +1,7 @@
 <template>
   <div>
     <nuxt />
-    <Deposit />
+    <DepositModal />
     <Withdraw />
     <WithdrawPaypal />
   </div>
@@ -10,7 +10,7 @@
 <script>
 export default {
   components: {
-    Deposit: () => import("@/components/Deposit"),
+    DepositModal: () => import("@/components/deposit/Modal"),
     Withdraw: () => import("@/components/Withdraw"),
     WithdrawPaypal: () => import("@/components/WithdrawPaypal")
   }
