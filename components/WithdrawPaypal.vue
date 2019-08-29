@@ -2,17 +2,7 @@
   <div class="modal modal-fs fade" id="withdraw-paypal-modal" tabindex="-1">
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h5 class="modal-title">Withdraw USD</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+        <ModalHeader title="Withdraw USD" />
         <div class="modal-body">
           <div class="container col-md-6">
             <div class="alert alert-info">

@@ -2,20 +2,7 @@
   <div class="modal modal-fs fade" id="deposit-bounty-modal" tabindex="-1">
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h5 class="modal-title">
-            <font-awesome-icon :icon="['fab', 'paypal']" />
-            Deposit
-          </h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+        <ModalHeader title="Deposit" />
         <div class="modal-body">
           <div class="container col-md-6">
             <div class="input-group mb-3 w-50 mx-auto">

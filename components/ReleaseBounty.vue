@@ -7,17 +7,7 @@
   >
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h5 class="modal-title">Release Bounty</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+        <ModalHeader title="Release Bounty" />
         <div class="modal-body" v-if="bounty">
           <div class="container col-md-6">
             <h1 class="text-center">

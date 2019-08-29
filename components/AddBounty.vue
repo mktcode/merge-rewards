@@ -7,17 +7,7 @@
   >
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h5 class="modal-title">Add Bounty</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+        <ModalHeader title="Add Bounty" />
         <div class="modal-body">
           <div class="container col-md-6">
             <div>Paste the full issue URL here:</div>

@@ -2,17 +2,7 @@
   <div class="modal fade modal-fs" id="withdraw-modal" tabindex="-1">
     <div class="modal-dialog text-dark text-left">
       <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h5 class="modal-title">Withdraw SBD</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+        <ModalHeader title="Withdraw SBD" />
         <div class="modal-body">
           <div class="container col-md-6">
             <div class="alert alert-info">
