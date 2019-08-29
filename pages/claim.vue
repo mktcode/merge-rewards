@@ -4,17 +4,6 @@
     <div v-if="githubUser" class="py-5">
       <h1 class="container mt-5 mb-3">Your Contributions</h1>
       <div class="container mb-2 text-right">
-        <div>
-          <button
-            class="btn btn-sm btn-green"
-            data-toggle="modal"
-            data-target="#boost-modal"
-          >
-            <font-awesome-icon icon="plus" />
-            Add Boosters
-            <font-awesome-icon icon="rocket" />
-          </button>
-        </div>
         <div class="btn-group mt-2">
           <button
             :class="
@@ -82,6 +71,13 @@
             "
           >
             <font-awesome-icon icon="paper-plane" fixed-width />
+          </button>
+          <button
+            class="btn btn-sm btn-green"
+            data-toggle="modal"
+            data-target="#boost-modal"
+          >
+            <font-awesome-icon icon="plus" />
           </button>
         </div>
         <Boost />
