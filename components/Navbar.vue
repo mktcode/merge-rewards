@@ -43,13 +43,13 @@
         </li> -->
       </ul>
       <div class="navbar-text" v-if="githubUser">
-        <!-- <button
+        <button
           class="btn btn-sm btn-light mr-1"
           data-target="#deposit-modal"
           data-toggle="modal"
         >
           <font-awesome-icon icon="plus" class="text-success" />
-        </button> -->
+        </button>
         <div class="btn-group mr-1">
           <a
             href="#"
@@ -73,6 +73,12 @@
             :to="'/user/' + githubUser.login"
             class="btn btn-sm btn-light"
           >
+            <span
+              v-if="false"
+              class="badge badge-success position-absolute rounded-circle"
+              style="left: -5px; top: -5px;"
+              >2</span
+            >
             <img
               src="/steem-icon-dark.png"
               style="width: 14px; margin-top: -3px; opacity: 0.8;"
