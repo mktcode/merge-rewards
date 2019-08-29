@@ -1,5 +1,8 @@
 @import 'mixins'
 
+*
+  outline: none !important
+
 body
   font-family: 'Montserrat', sans-serif
   overflow-x: hidden
@@ -12,10 +15,11 @@ body
   background-color: #444 !important
 .btn
   border-radius: 25px
-  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2)
-  transition: box-shadow 0.3s, background-position 0.3s
-  &:hover
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3)
+  &:not(.disabled):not([disabled]),
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2)
+    transition: box-shadow 0.3s, background-position 0.3s
+    &:hover
+      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3)
 .btn-green
   @include green-gradient
   color: white
