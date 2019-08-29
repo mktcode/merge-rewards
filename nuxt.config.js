@@ -73,7 +73,8 @@ export default {
   plugins: [
     "~/plugins/font-awesome",
     "~/plugins/vue-steemconnect",
-    "~/plugins/load"
+    "~/plugins/load",
+    "~/plugins/globals.js"
   ],
   /*
    ** Nuxt.js modules
