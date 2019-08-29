@@ -5,6 +5,24 @@
     <CreateAccount />
     <div class="container py-5">
       <div v-if="isCurrentUser">
+        <h3 class="pb-2 mb-0 text-muted">Pending</h3>
+        <table class="table">
+          <tr>
+            <td>Withdrawal</td>
+            <td class="text-danger text-right">
+              <a href="#" class="text-danger mr-5">
+                <font-awesome-icon icon="times" />
+                cancel
+              </a>
+              -2.7 SBD
+            </td>
+          </tr>
+          <tr>
+            <td>Pull Request</td>
+            <td class="text-success text-right">+1.86 SBD</td>
+          </tr>
+        </table>
+
         <h3 class="pb-2 mb-0 text-muted">History</h3>
         <table class="table">
           <tr>
