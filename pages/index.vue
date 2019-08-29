@@ -12,53 +12,34 @@
       </div>
       <div class="row my-5">
         <div class="col-md-6 mb-3">
-          <h1 class="mb-4">Contribute and earn!</h1>
+          <h1 class="mb-4">Contribute and earn</h1>
           <p>
             Contribute to other people's Open Source projects on GitHub. Your
             contributions can be anything, from developing new features to
-            fixing typos in a project's documentation.<br />
+            fixing typos in a project's documentation. All merged pull request
+            are rewarded with cryptocurrency.<br />
             <br />
-            As long as there's a pull request that the project owner decided to
-            merge into the project, you'll be able to claim your rewards by just
-            clicking a button.
+            Project maintainers can also set up bounties for solving issues or
+            pay you directly, both in fiat- and cryptocurrency.
           </p>
-          <nuxt-link to="/claim">
+          <nuxt-link to="/claim" class="btn btn-sm btn-green">
             Claim Rewards
           </nuxt-link>
         </div>
         <div class="col-md-6">
-          <img src="/pull-requests.png" alt="pull-requests.png" class="w-100" />
-        </div>
-      </div>
-      <div class="row my-5">
-        <div class="col-md-6 order-md-2 mb-3">
-          <h1 class="mb-4">Reach developers!</h1>
+          <h1 class="mb-4">Reach developers</h1>
           <p>
-            Bounties give you the opportunity to directly pay developers for
-            helping you with your project in a very convenient way. You can send
-            any amount of crypto or fiat money to any issue on GitHub.<br />
-            <br />
-            Whoever resolves the issue receives the money, either autmoatically
-            with a related pull request or whenever you decide to release it
-            manually.<br />
-            <br />
-            The contributor can withdraw the bounty in any of the supported
-            currencies, including Euro and Dollar.
+            Deposit money on any issue or project on GitHub and get listed in
+            our feeds. Reward contributors manually or fully automated for
+            working on your project.
           </p>
-          <nuxt-link to="/bounties">
+          <nuxt-link to="/bounties" class="btn btn-sm btn-green">
             Create Bounty
           </nuxt-link>
         </div>
-        <div class="col-md-6 order-md-1">
-          <img
-            src="/bounties.png"
-            alt="bounties.png"
-            class="w-100"
-            style="max-width: 357px"
-          />
-        </div>
       </div>
     </div>
+    <Deposit title="Support Users and Projects" class="mb-5" />
     <div class="container-fluid steem text-light py-5">
       <div class="container">
         <div class="row">
@@ -150,7 +131,8 @@ export default {
   components: {
     Navbar: () => import("@/components/Navbar"),
     Header: () => import("@/components/Header"),
-    Footer: () => import("@/components/Footer")
+    Footer: () => import("@/components/Footer"),
+    Deposit: () => import("@/components/deposit/Deposit")
   },
   computed: {
     ...mapGetters("steemconnect", { steemUser: "user" }),
