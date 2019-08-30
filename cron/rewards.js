@@ -36,9 +36,9 @@ database.query(QUERY_PENDING_CLAIMS, (error, claims) => {
                 let pendingRewards = null;
                 if (comment.last_payout === "1970-01-01T00:00:00") {
                   // not payed out yet
-                  // total payout - 25% curator rewards (* 0.75) and minus SP part (/ 2)
+                  // total payout - 50% curator rewards (* 0.5) and minus SP part (/ 2)
                   pendingRewards = comment.pending_payout_value.split(" ")[0];
-                  pendingRewards = (parseFloat(pendingRewards) * 0.75) / 2;
+                  pendingRewards = (parseFloat(pendingRewards) * 0.5) / 2;
                 } else {
                   // payed out, curator rewards are already substracted
                   rewards = comment.total_payout_value.split(" ")[0];
