@@ -1,11 +1,8 @@
 <template>
   <nav
     :class="[
-      'navbar navbar-expand-md position-fixed w-100',
-      {
-        'navbar-transparent':
-          ['index', 'user-username'].includes($route.name) && !scrolled
-      }
+      'navbar navbar-expand-md bg-dark position-fixed w-100',
+      { scrolled }
     ]"
   >
     <nuxt-link class="navbar-brand pt-0" to="/">
@@ -116,10 +113,15 @@
 
 .navbar
   z-index: 1
-  background-color: #F4D03F
-  @include green-gradient
-  &.navbar-transparent
-    background: none
+  padding-top: 0.75rem
+  padding-bottom: 0.75rem
+  transition: padding-top 0.3s, padding-bottom 0.3s
+  &.scrolled
+    padding-top: 0
+    padding-bottom: 0
+    &:hover
+      padding-top: 0.75rem
+      padding-bottom: 0.75rem
 .navbar-nav .nav-link
   color: rgba(255, 255, 255, 0.5)
   &.nuxt-link-active,
@@ -171,7 +173,7 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", e => {
-      this.scrolled = window.scrollY > 100;
+      this.scrolled = window.scrollY > 500;
     });
   }
 };
