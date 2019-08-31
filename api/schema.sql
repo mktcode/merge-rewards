@@ -98,3 +98,31 @@ ALTER TABLE `claims`
 
 ALTER TABLE `withdrawals`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE VIEW balances AS
+  SELECT
+      `t1`.`dest` AS `account`,
+      `t1`.`currency` AS `currency`,
+      COALESCE(SUM(`t1`.`amount`),
+      0) AS `incoming`,
+      COALESCE(SUM(`t2`.`amount`),
+      0) AS `outgoing`
+  FROM
+      (
+          `transfers` `t1`
+      LEFT JOIN
+          (
+          SELECT
+              `transfers`.`src` AS `src`,
+              `transfers`.`currency` AS `currency`,
+              SUM(`transfers`.`amount`) AS `amount`
+          FROM
+              `transfers`
+          GROUP BY
+              `transfers`.`src`, `transfers`.`currency`
+      ) `t2`
+  ON
+      ((`t1`.`dest` = `t2`.`src` AND `t1`.`currency` = `t2`.`currency`))
+      )
+  GROUP BY
+      `t1`.`dest`, `t1`.`currency`
