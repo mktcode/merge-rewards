@@ -5,45 +5,61 @@
     <CreateAccount />
     <div class="container py-5">
       <div v-if="isCurrentUser">
-        <h3 class="pb-2 mb-0 text-muted">Pending</h3>
-        <table class="table">
-          <tr>
-            <td>Withdrawal</td>
-            <td class="text-danger text-right">
-              <a href="#" class="text-danger mr-5">
-                <font-awesome-icon icon="times" />
-                cancel
-              </a>
-              -2.7 SBD
-            </td>
-          </tr>
-          <tr>
-            <td>Pull Request</td>
-            <td class="text-success text-right">+1.86 SBD</td>
-          </tr>
-        </table>
-
         <h3 class="pb-2 mb-0 text-muted">History</h3>
         <table class="table">
           <tr>
-            <td>Withdrawal</td>
-            <td class="text-danger text-right">-2.7 SBD</td>
+            <th>From</th>
+            <th>To</th>
+            <th class="text-right">Amount</th>
+            <th>Currency</th>
+            <th>Memo</th>
+            <th>Date</th>
+            <th></th>
           </tr>
           <tr>
-            <td>Pull Request</td>
-            <td class="text-success text-right">+1.86 SBD</td>
+            <td>System</td>
+            <td>You</td>
+            <td class="text-success text-right">+100</td>
+            <td>SBD</td>
+            <td>Deposit</td>
+            <td>2019-08-19 23:54</td>
+            <td></td>
           </tr>
           <tr>
-            <td>Pull Request</td>
-            <td class="text-success text-right">+0.96 SBD</td>
+            <td>You</td>
+            <td>Project:MMNIKDWNJKkdu=</td>
+            <td class="text-danger text-right">-10</td>
+            <td>USD</td>
+            <td>Deposit</td>
+            <td>2019-08-19 23:54</td>
+            <td class="text-right">
+              <button class="btn btn-sm btn-light">
+                Refund
+              </button>
+            </td>
           </tr>
           <tr>
-            <td>Steem Account</td>
-            <td class="text-danger text-right">-3.12 SBD</td>
+            <td>System</td>
+            <td>You</td>
+            <td class="text-success text-right">+1.89</td>
+            <td>SBD</td>
+            <td>
+              Pull Request (<a href="https://github-com" target="_blank">open</a
+              >)
+            </td>
+            <td>2019-08-19 23:54</td>
+            <td></td>
           </tr>
           <tr>
-            <td>Bounty</td>
-            <td class="text-success text-right">+50 SBD<br />+100 USD</td>
+            <td>Issue:MDJalDLAJdLAJw</td>
+            <td>You</td>
+            <td class="text-success text-right">+10</td>
+            <td>USD</td>
+            <td>
+              Bounty (<a href="https://github-com" target="_blank">open</a>)
+            </td>
+            <td>2019-08-19 23:54</td>
+            <td></td>
           </tr>
         </table>
 
