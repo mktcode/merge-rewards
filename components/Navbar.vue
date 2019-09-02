@@ -1,10 +1,5 @@
 <template>
-  <nav
-    :class="[
-      'navbar navbar-expand-md bg-dark position-fixed w-100',
-      { scrolled }
-    ]"
-  >
+  <nav class="navbar navbar-expand-md bg-dark position-fixed w-100">
     <nuxt-link class="navbar-brand pt-0" to="/">
       <img src="/logo.png" alt="logo.png" />
     </nuxt-link>
@@ -113,15 +108,6 @@
 
 .navbar
   z-index: 1
-  padding-top: 0.75rem
-  padding-bottom: 0.75rem
-  transition: padding-top 0.3s, padding-bottom 0.3s
-  &.scrolled
-    padding-top: 0
-    padding-bottom: 0
-    &:hover
-      padding-top: 0.75rem
-      padding-bottom: 0.75rem
 .navbar-nav .nav-link
   color: rgba(255, 255, 255, 0.5)
   &.nuxt-link-active,
@@ -170,11 +156,6 @@ export default {
         pr => !pr.claimed && pr.merged && getAge(pr.mergedAt) <= this.prMaxAge
       ).length;
     }
-  },
-  mounted() {
-    window.addEventListener("scroll", e => {
-      this.scrolled = window.scrollY > 500;
-    });
   }
 };
 </script>
