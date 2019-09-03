@@ -3,6 +3,7 @@ import express from "express";
 import scoreController from "./controllers/score";
 import githubAccessTokenController from "./controllers/github-access-token";
 import databaseController from "./controllers/database";
+import transfersController from "./controllers/transfers";
 import balanceController from "./controllers/balance";
 import claimController from "./controllers/claim";
 import withdrawController from "./controllers/withdraw";
@@ -26,6 +27,7 @@ app.use(express.json());
 
 app.post("/github-access-token", githubAccessTokenController);
 app.get("/database/:table", databaseController);
+app.get("/transfers/:account", transfersController);
 app.get("/balance/:account", balanceController);
 app.post("/score", scoreController);
 app.post("/claim", auth, claimController);

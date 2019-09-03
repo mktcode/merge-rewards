@@ -12,60 +12,31 @@
             <th>To</th>
             <th class="text-right">Amount</th>
             <th>Currency</th>
-            <th>Memo</th>
             <th>Date</th>
             <th></th>
           </tr>
-          <tr>
-            <td>System</td>
-            <td>You</td>
-            <td class="text-success text-right">+100</td>
-            <td>SBD</td>
-            <td>Deposit</td>
-            <td>2019-08-19 23:54</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>You</td>
-            <td>Project:MMNIKDWNJKkdu=</td>
-            <td class="text-danger text-right">-10</td>
-            <td>USD</td>
-            <td>Deposit</td>
-            <td>2019-08-19 23:54</td>
-            <td class="text-right">
-              <button class="btn btn-sm btn-light">
-                Refund
-              </button>
+          <tr v-for="transfer in transfers">
+            <td>{{ displayAccount(transfer.src) }}</td>
+            <td>{{ displayAccount(transfer.dest) }}</td>
+            <td
+              :class="
+                'text-right text-' +
+                  (transfer.src === 'user:' + profile.login
+                    ? 'danger'
+                    : 'success')
+              "
+            >
+              {{ transfer.src === "user:" + profile.login ? "-" : "+" }}
+              {{ transfer.amount }}
             </td>
-          </tr>
-          <tr>
-            <td>System</td>
-            <td>You</td>
-            <td class="text-success text-right">+1.89</td>
-            <td>SBD</td>
+            <td>{{ transfer.currency }}</td>
             <td>
-              Pull Request (<a href="https://github-com" target="_blank">open</a
-              >)
+              {{ new Date(transfer.timestamp).toLocaleDateString() }}
+              {{ new Date(transfer.timestamp).toLocaleTimeString() }}
             </td>
-            <td>2019-08-19 23:54</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Issue:MDJalDLAJdLAJw</td>
-            <td>You</td>
-            <td class="text-success text-right">+10</td>
-            <td>USD</td>
-            <td>
-              Bounty (<a href="https://github-com" target="_blank">open</a>)
-            </td>
-            <td>2019-08-19 23:54</td>
             <td></td>
           </tr>
         </table>
-
-        <div class="text-right">
-          <a href="#">Full History</a>
-        </div>
 
         <h3 class="pb-2 mb-4 mt-4 border-bottom text-muted">Steem Account</h3>
         <p>
@@ -119,13 +90,13 @@ export default {
   },
   data() {
     return {
+      transfers: [],
       profile: null,
       balance: {
         sbd: 0,
         usd: 0,
         eur: 0
-      },
-      loading: false
+      }
     };
   },
   computed: {
@@ -140,8 +111,17 @@ export default {
       );
     }
   },
+  methods: {
+    displayAccount(account) {
+      if (!account) {
+        return "System";
+      } else if (account === "user:" + this.profile.login) {
+        return "You";
+      }
+      return account;
+    }
+  },
   mounted() {
-    this.loading = true;
     this.$axios
       .$get("https://api.github.com/users/" + this.$route.params.username)
       .then(response => {
@@ -153,6 +133,14 @@ export default {
             this.loading = false;
           })
           .catch(e => console.log(e));
+      })
+      .catch(e => console.log(e));
+    this.$axios
+      .$get(
+        process.env.API_URL + "/transfers/user:" + this.$route.params.username
+      )
+      .then(response => {
+        this.transfers = response;
       })
       .catch(e => console.log(e));
   }
