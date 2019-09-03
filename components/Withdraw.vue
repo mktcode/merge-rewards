@@ -93,7 +93,7 @@ export default {
             address: this.address
           })
           .then(() => {
-            this.$store.dispatch("loadBalance", this.githubUser);
+            this.$store.dispatch("loadUserBalance", this.githubUser);
             this.showSuccessMessage = true;
             setTimeout(() => {
               this.showSuccessMessage = false;

@@ -11,11 +11,17 @@
         <div class="modal-body" v-if="bounty">
           <div class="container col-md-6">
             <h1 class="text-center">
-              {{ bounty.usdBalance ? bounty.usdBalance.toFixed(2) : "0.00" }}
+              {{
+                bounty.balance.usd ? bounty.balance.usd.toFixed(2) : "0.00"
+              }}
               USD
-            </h1>
-            <h1 class="text-center">
-              {{ bounty.sbdBalance ? bounty.sbdBalance.toFixed(2) : "0.00" }}
+              {{
+                bounty.balance.eur ? bounty.balance.eur.toFixed(2) : "0.00"
+              }}
+              EUR
+              {{
+                bounty.balance.sbd ? bounty.balance.sbd.toFixed(2) : "0.00"
+              }}
               SBD
             </h1>
 
@@ -25,7 +31,9 @@
 
             <div
               class="alert alert-info"
-              v-if="bounty.sbdBalance + bounty.usdBalance > 0"
+              v-if="
+                bounty.balance.sbd + bounty.balance.usd + bounty.balance.eur > 0
+              "
             >
               Existing deposits as well as deposits made after deleting the
               bounty will be transfered to your GitHub account.

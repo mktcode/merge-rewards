@@ -42,14 +42,22 @@
         >
           <font-awesome-icon icon="plus" class="text-success" />
         </button>
-        <div class="btn-group mr-1">
+        <div class="btn-group mr-1" v-if="balance">
           <a
             href="#"
             data-toggle="modal"
             data-target="#withdraw-paypal-modal"
             class="btn btn-sm btn-light"
           >
-            ${{ balance.usdBalance.toFixed(2) }}
+            ${{ balance.usd.toFixed(2) }}
+          </a>
+          <a
+            href="#"
+            data-toggle="modal"
+            data-target="#withdraw-paypal-modal"
+            class="btn btn-sm btn-light"
+          >
+            {{ balance.eur.toFixed(2) }} €
           </a>
           <a
             href="#"
@@ -57,7 +65,7 @@
             data-target="#withdraw-modal"
             class="btn btn-sm btn-light"
           >
-            {{ balance.sbdBalance.toFixed(2) }} SBD
+            {{ balance.sbd.toFixed(2) }} SBD
           </a>
         </div>
         <div class="btn-group">

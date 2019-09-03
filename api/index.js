@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.post("/github-access-token", githubAccessTokenController);
 app.get("/database/:table", databaseController);
-app.get("/balance/:githubUser", balanceController);
+app.get("/balance/:account", balanceController);
 app.post("/score", scoreController);
 app.post("/claim", auth, claimController);
 app.post("/withdraw", auth, withdrawController);

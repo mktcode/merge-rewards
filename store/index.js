@@ -6,9 +6,9 @@ export const state = () => ({
   withdrawals: [],
   bounties: [],
   balance: {
-    sbdBalance: 0,
-    usdBalance: 0,
-    pending: 0
+    sbd: 0,
+    usd: 0,
+    eur: 0
   },
   boosters: {
     strikes: 0,
@@ -100,11 +100,11 @@ export const actions = {
       const githubUser = getters["github/user"];
       const githubAccessToken = getters["github/accessToken"];
       if (githubUser && githubAccessToken) {
-        dispatch("loadBalance", githubUser);
+        dispatch("loadUserBalance", githubUser);
         dispatch("loadBoosters", githubUser);
         dispatch("loadAccountPrice");
         setInterval(() => {
-          dispatch("loadBalance", githubUser);
+          dispatch("loadUserBalance", githubUser);
           dispatch("loadBoosters", githubUser);
           dispatch("loadAccountPrice");
         }, 60000);
@@ -124,9 +124,9 @@ export const actions = {
       commit("withdrawals", values[1]);
     });
   },
-  loadBalance({ commit }, githubUser) {
+  loadUserBalance({ commit }, githubUser) {
     return this.$axios
-      .$get(process.env.API_URL + "/balance/" + githubUser.login)
+      .$get(process.env.API_URL + "/balance/user:" + githubUser.login)
       .then(balance => commit("balance", balance));
   },
   loadBoosters({ commit }, githubUser) {

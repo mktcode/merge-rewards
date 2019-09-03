@@ -11,7 +11,18 @@
         <div class="modal-body" v-if="bounty">
           <div class="container col-md-6">
             <h1 class="text-center">
-              ${{ bounty.balance ? bounty.balance.toFixed(2) : "0.00" }}
+              ${{
+                bounty.balance.usd ? bounty.balance.usd.toFixed(2) : "0.00"
+              }}
+              USD<br />
+              ${{
+                bounty.balance.eur ? bounty.balance.eur.toFixed(2) : "0.00"
+              }}
+              EUR<br />
+              ${{
+                bounty.balance.sbd ? bounty.balance.sbd.toFixed(2) : "0.00"
+              }}
+              SBD
             </h1>
             <div class="custom-control custom-checkbox">
               <input

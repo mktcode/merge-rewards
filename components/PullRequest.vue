@@ -29,27 +29,11 @@
       <div
         class="col-md-3 mt-2 mt-md-0 d-flex align-items-center justify-content-end"
       >
-        <div class="btn-group mr-1">
-          <a
-            v-for="issue in pr.issues"
-            :href="issue.url"
-            class="btn btn-sm btn-outline-dark"
-            target="_blank"
-          >
-            <font-awesome-icon icon="exclamation-circle" />
-            <font-awesome-icon
-              v-if="issue.closed"
-              icon="check"
-              class="text-success position-absolute"
-              style="right: 3px; bottom: 3px;"
-            />
-          </a>
-          <span
-            class="btn btn-sm btn-outline-dark disabled"
-            v-if="bountyBalance"
-            >${{ bountyBalance.toFixed(2) }}</span
-          >
-        </div>
+        <PullRequestIssue
+          v-for="issue in pr.issues"
+          :issue="issue"
+          :key="issue.id"
+        />
         <div
           v-if="getAge(pr.mergedAt) <= prMaxAge || pr.claimed"
           class="flex-fill"
@@ -121,6 +105,9 @@ import { mapGetters } from "vuex";
 import { getAge } from "@/lib/helpers";
 
 export default {
+  components: {
+    PullRequestIssue: () => import("@/components/PullRequestIssue")
+  },
   props: ["pr", "booster"],
   data() {
     return {
@@ -152,18 +139,12 @@ export default {
         return "?";
       }
       return this.score.score;
-    },
-    bountyBalance() {
-      return this.bounties
-        .filter(
-          bounty =>
-            this.pr.issues.map(issue => issue.id).includes(bounty.issueId) &&
-            bounty.autoRelease
-        )
-        .reduce((a, b) => a + b.balance, 0);
     }
   },
   methods: {
+    bountyBalance(issue) {
+      return false;
+    },
     claim(pr) {
       if (!this.$parent.blockClaiming) {
         this.claiming = true;
@@ -178,7 +159,7 @@ export default {
           .then(() => {
             this.$parent.blockClaiming = 5;
             this.$store.commit("claimed", pr.id);
-            this.$store.dispatch("loadBalance", this.githubUser);
+            this.$store.dispatch("loadUserBalance", this.githubUser);
             this.$store.dispatch("loadBoosters", this.githubUser).then(() => {
               if (!this.boosters[this.booster]) {
                 this.$parent.selectedBooster = null;

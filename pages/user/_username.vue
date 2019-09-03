@@ -77,7 +77,7 @@
           class="btn btn-green"
           data-toggle="modal"
           data-target="#account-creation-modal"
-          v-if="balance.sbdBalance > accountPrice"
+          v-if="balance.sbd > accountPrice"
         >
           Create a Steem account for <b>{{ accountPrice }} SBD</b>
         </button>
@@ -121,8 +121,9 @@ export default {
     return {
       profile: null,
       balance: {
-        sbdBalance: 0,
-        usdBalance: 0
+        sbd: 0,
+        usd: 0,
+        eur: 0
       },
       loading: false
     };
@@ -146,7 +147,7 @@ export default {
       .then(response => {
         this.profile = response;
         this.$axios
-          .$get(process.env.API_URL + "/balance/" + this.profile.login)
+          .$get(process.env.API_URL + "/balance/user:" + this.profile.login)
           .then(response => {
             this.balance = response;
             this.loading = false;

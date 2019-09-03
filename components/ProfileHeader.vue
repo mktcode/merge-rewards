@@ -12,8 +12,8 @@
           Followers: {{ profile.followers }}
         </h4>
         <h4 class="mb-5 text-nowrap" v-if="profile">
-          Earned: ${{ balance.usdBalance.toFixed(2) }} /
-          {{ balance.sbdBalance.toFixed(2) }} SBD
+          Balance: ${{ balance.usd.toFixed(2) }},
+          {{ balance.eur.toFixed(2) }} €, {{ balance.sbd.toFixed(2) }} SBD
         </h4>
       </div>
       <div class="col-sm-5" v-if="profile">

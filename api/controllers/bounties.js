@@ -2,7 +2,7 @@ import database from "../database";
 import { decimalFloor } from "../../lib/helpers";
 
 const QUERY_BOUNTIES =
-  "SELECT b.*, SUM(bd.sbdAmount) as sbdBalance, SUM(bd.usdAmount) as usdBalance FROM bounties b LEFT JOIN bountyDeposits bd ON bd.bountyId = b.id WHERE b.deletedAt IS NULL GROUP BY b.id ORDER BY createdAt ASC";
+  "SELECT SUBSTR(account, 7) as issueId, currency, incoming - outgoing as balance FROM balances WHERE account LIKE 'issue:%'";
 
 export default (req, res) => {
   database.query(QUERY_BOUNTIES, (error, result) => {
@@ -10,7 +10,29 @@ export default (req, res) => {
       res.status(500);
       res.send("Error: Reading from database failed.");
     } else {
-      res.json(result);
+      const bounties = [];
+      result.forEach(r => {
+        const existing = bounties.find(b => r.issueId === b.issueId);
+        if (existing) {
+          if (r.currency === "USD") existing.balance.usd = r.balance;
+          if (r.currency === "EUR") existing.balance.eur = r.balance;
+          if (r.currency === "SBD") exisitng.balance.sbd = r.balance;
+        } else {
+          const bounty = {
+            issueId: r.issueId,
+            balance: {
+              usd: 0,
+              eur: 0,
+              sbd: 0
+            }
+          };
+          if (r.currency === "USD") bounty.balance.usd = r.balance;
+          if (r.currency === "EUR") bounty.balance.eur = r.balance;
+          if (r.currency === "SBD") bounty.balance.sbd = r.balance;
+          bounties.push(bounty);
+        }
+      });
+      res.json(bounties);
     }
   });
 };

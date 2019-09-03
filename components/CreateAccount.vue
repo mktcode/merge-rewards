@@ -122,7 +122,7 @@ export default {
       githubUser: "user",
       githubAccessToken: "accessToken"
     }),
-    ...mapGetters(["balance", "accountPrice"]),
+    ...mapGetters(["accountPrice"]),
     accountPriceFixed() {
       return Number(this.accountPrice).toFixed(2);
     },

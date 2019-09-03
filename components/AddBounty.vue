@@ -82,8 +82,7 @@ export default {
     ...mapGetters("github", {
       githubUser: "user",
       githubAccessToken: "accessToken"
-    }),
-    ...mapGetters(["balance"])
+    })
   },
   watch: {
     issueUrl(url) {
